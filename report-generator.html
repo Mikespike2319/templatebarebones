@@ -237,18 +237,54 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .compliance-item {
+            margin-bottom: 20px;
+        }
+
+        .compliance-item h3 {
+            color: var(--tmh-blue);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
         .compliance-bar {
             height: 25px;
             background-color: var(--border-color);
             border-radius: 12px;
-            margin: 15px 0;
+            margin: 10px 0;
             overflow: hidden;
+            position: relative;
         }
 
         .compliance-fill {
             height: 100%;
             background-color: var(--success-color);
             transition: width 0.3s ease;
+            border-radius: 12px;
+        }
+
+        .compliance-text {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .data-table {
@@ -533,41 +569,57 @@
 
             <div class="compliance-section">
                 <h2>Compliance Status</h2>
-                <div class="compliance-bar">
-                    <div id="iosCompliant" class="compliance-fill" style="width: 0%"></div>
+                <div class="compliance-item">
+                    <h3>iOS Compliance</h3>
+                    <div class="compliance-bar">
+                        <div id="iosCompliant" class="compliance-fill" style="width: 0%"></div>
+                        <div id="iosComplianceText" class="compliance-text">0%</div>
+                    </div>
                 </div>
-                <div class="compliance-bar">
-                    <div id="androidCompliant" class="compliance-fill" style="width: 0%"></div>
+                <div class="compliance-item">
+                    <h3>Android Compliance</h3>
+                    <div class="compliance-bar">
+                        <div id="androidCompliant" class="compliance-fill" style="width: 0%"></div>
+                        <div id="androidComplianceText" class="compliance-text">0%</div>
+                    </div>
+                </div>
+                <div class="compliance-item">
+                    <h3>Windows Compliance</h3>
+                    <div class="compliance-bar">
+                        <div id="windowsCompliant" class="compliance-fill" style="width: 0%"></div>
+                        <div id="windowsComplianceText" class="compliance-text">0%</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="data-section">
-                <h2>Operating System Breakdown</h2>
-                <table class="data-table" id="osTable">
-                    <thead>
-                        <tr>
-                            <th>Operating System</th>
-                            <th>Count</th>
-                            <th>Percentage</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            <div class="data-grid">
+                <div class="data-section">
+                    <h2>Operating System Breakdown</h2>
+                    <table class="data-table" id="osTable">
+                        <thead>
+                            <tr>
+                                <th>Operating System</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
 
-            <div class="data-section">
-                <h2>Device Models</h2>
-                <table class="data-table" id="modelTable">
-                    <thead>
-                        <tr>
-                            <th>Model</th>
-                            <th>Manufacturer</th>
-                            <th>Count</th>
-                            <th>Operating System</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div class="data-section">
+                    <h2>Device Models by OS</h2>
+                    <table class="data-table" id="modelTable">
+                        <thead>
+                            <tr>
+                                <th>Operating System</th>
+                                <th>Model</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="urgent-items">
@@ -838,18 +890,34 @@
                     const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
                     const windowsCompliancePercent = windowsDevices.length > 0 ? (windowsCompliant / windowsDevices.length) * 100 : 0;
                     
+                    // Update iOS compliance
                     const iosComplianceElement = document.getElementById('iosCompliant');
-                    const androidComplianceElement = document.getElementById('androidCompliant');
-                    const windowsComplianceElement = document.getElementById('windowsCompliant');
-                    
-                    if (iosComplianceElement) {
+                    const iosComplianceTextElement = document.getElementById('iosComplianceText');
+                    if (iosComplianceElement && iosComplianceTextElement) {
                         iosComplianceElement.style.width = `${iosCompliancePercent}%`;
+                        iosComplianceTextElement.textContent = `${iosCompliancePercent.toFixed(1)}% (${iosCompliant}/${iosDevices.length})`;
                     }
-                    if (androidComplianceElement) {
+                    
+                    // Update Android compliance
+                    const androidComplianceElement = document.getElementById('androidCompliant');
+                    const androidComplianceTextElement = document.getElementById('androidComplianceText');
+                    if (androidComplianceElement && androidComplianceTextElement) {
                         androidComplianceElement.style.width = `${androidCompliancePercent}%`;
+                        androidComplianceTextElement.textContent = `${androidCompliancePercent.toFixed(1)}% (${androidCompliant}/${androidDevices.length})`;
                     }
-                    if (windowsComplianceElement) {
+                    
+                    // Update Windows compliance
+                    const windowsComplianceElement = document.getElementById('windowsCompliant');
+                    const windowsComplianceTextElement = document.getElementById('windowsComplianceText');
+                    if (windowsComplianceElement && windowsComplianceTextElement) {
                         windowsComplianceElement.style.width = `${windowsCompliancePercent}%`;
+                        windowsComplianceTextElement.textContent = `${windowsCompliancePercent.toFixed(1)}% (${windowsCompliant}/${windowsDevices.length})`;
+                    }
+                } else {
+                    // Hide compliance section if no compliance data
+                    const complianceSection = document.querySelector('.compliance-section');
+                    if (complianceSection) {
+                        complianceSection.style.display = 'none';
                     }
                 }
 
@@ -886,7 +954,7 @@
                 }
 
                 // Populate device models table (only if model data exists)
-                if (foundColumns.includes('model') || foundColumns.includes('manufacturer')) {
+                if (foundColumns.includes('model') || foundColumns.includes('operatingSystem')) {
                     populateModelTable(activeDevices);
                 } else {
                     // Hide model table if no model data
@@ -957,18 +1025,16 @@
             
             tbody.innerHTML = '';
 
-            // Count devices by model and group by manufacturer and OS
+            // Count devices by model grouped by OS
             const modelCounts = {};
             devices.forEach(device => {
-                const model = device.model || 'Unknown';
-                const manufacturer = device.manufacturer || 'Unknown';
-                const os = device.operatingSystem || 'Unknown';
-                const key = `${model}|${manufacturer}|${os}`;
+                const model = device.model || 'Unknown Model';
+                const os = device.operatingSystem || 'Unknown OS';
+                const key = `${os}|${model}`;
                 
                 if (!modelCounts[key]) {
                     modelCounts[key] = {
                         model,
-                        manufacturer,
                         os,
                         count: 0
                     };
@@ -976,15 +1042,19 @@
                 modelCounts[key].count++;
             });
 
-            // Sort by count (descending)
-            const sortedModels = Object.values(modelCounts).sort((a, b) => b.count - a.count);
+            // Sort by OS first, then by count (descending)
+            const sortedModels = Object.values(modelCounts).sort((a, b) => {
+                if (a.os === b.os) {
+                    return b.count - a.count; // Same OS, sort by count descending
+                }
+                return a.os.localeCompare(b.os); // Different OS, sort alphabetically
+            });
 
             sortedModels.forEach(item => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = item.model;
-                row.insertCell(1).textContent = item.manufacturer;
+                row.insertCell(0).textContent = item.os;
+                row.insertCell(1).textContent = item.model;
                 row.insertCell(2).textContent = item.count;
-                row.insertCell(3).textContent = item.os;
             });
         }
 
