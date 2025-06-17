@@ -930,13 +930,13 @@
 
         // Add this before the file input event listener
         const columnMappings = {
-            // Core device information
+            // Core device information (prioritizing user-specified names)
             deviceKey: ['deviceKey', 'devicekey', 'device_key', 'key'],
             deviceId: ['deviceId', 'deviceid', 'device_id', 'id', 'Device ID'],
-            deviceName: ['deviceName', 'devicename', 'device_name', 'name', 'Device name'],
-            operatingSystem: ['operatingSystem', 'operatingsystem', 'os', 'operating_system', 'platform'],
-            complianceStateKey: ['complianceStateKey', 'compliancestatekey', 'compliance_state', 'compliance', 'compliancestate', 'Compliance'],
-            lastSyncDateTime: ['lastSyncDateTime', 'lastsyncdatetime', 'last_sync', 'lastsync', 'lastSync', 'Last check-in', 'lastcheckin'],
+            deviceName: ['Device name', 'deviceName', 'devicename', 'device_name', 'name'],
+            operatingSystem: ['operatingSystem', 'operatingsystem', 'os', 'operating_system', 'platform', 'Operating System', 'OS'],
+            complianceStateKey: ['Compliance', 'complianceStateKey', 'compliancestatekey', 'compliance_state', 'compliance', 'compliancestate'],
+            lastSyncDateTime: ['Last check-in', 'lastSyncDateTime', 'lastsyncdatetime', 'last_sync', 'lastsync', 'lastSync', 'lastcheckin'],
             encryptionState: ['encryptionState', 'encryptionstate', 'encryption_state', 'encryption'],
             // User-specified column names (exact matches prioritized)
             model: ['Model', 'model', 'deviceModel', 'devicemodel', 'device_model'],
@@ -1145,6 +1145,7 @@
             try {
                 console.log('Processing data:', data.length, 'devices');
                 console.log('Available columns:', foundColumns);
+                console.log('Sample data row:', data[0]);
                 
                 // Clear previous report data
                 clearReportData();
@@ -1157,18 +1158,40 @@
                 // Store global devices data for modal windows
                 globalDevicesData = activeDevices;
                 
-                // Calculate critical metrics (only if operatingSystem column exists)
+                // Calculate critical metrics - try to find OS data regardless of column mapping
                 let iosDevices = [], androidDevices = [], windowsDevices = [];
+                
+                // First try with mapped column
                 if (foundColumns.includes('operatingSystem')) {
+                    console.log('Using operatingSystem column mapping');
                     iosDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios'));
                     androidDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android'));
                     windowsDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('windows'));
+                } else {
+                    // Fallback: try to find OS data in any field that might contain it
+                    console.log('No operatingSystem column found, trying fallback detection');
+                    activeDevices.forEach((device, index) => {
+                        if (index < 3) console.log(`Device ${index}:`, device); // Log first few devices for debugging
+                        
+                        // Check all fields for OS-like values
+                        const deviceStr = JSON.stringify(device).toLowerCase();
+                        if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
+                            iosDevices.push(device);
+                        } else if (deviceStr.includes('android')) {
+                            androidDevices.push(device);
+                        } else if (deviceStr.includes('windows')) {
+                            windowsDevices.push(device);
+                        }
+                    });
                 }
+                
                 const totalDevices = activeDevices.length;
 
+                console.log('Device counts after processing:');
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
                 console.log('Windows devices:', windowsDevices.length);
+                console.log('Total devices:', totalDevices);
 
                 // Calculate compliance and security metrics (only if compliance column exists)
                 let iosCompliant = 0, androidCompliant = 0, windowsCompliant = 0, nonCompliantDevices = [];
@@ -1291,18 +1314,18 @@
                     }
                 }
 
-                // Populate the new section tables
-                if (foundColumns.includes('operatingSystem')) {
+                // Always populate tables if we have device data
+                if (totalDevices > 0) {
                     populateOSTable(activeDevices);
-                    populateDeviceCategoriesTables(activeDevices, foundColumns);
+                    populateDeviceCategoriesTables(activeDevices, foundColumns, iosDevices, androidDevices);
                 } else {
-                    // Hide sections if no OS data
+                    // Hide sections if no device data
                     const osSection = document.getElementById('osTable')?.closest('.section');
                     if (osSection) osSection.style.display = 'none';
                 }
 
-                // Populate lifecycle table with iOS devices
-                if (foundColumns.includes('model') && foundColumns.includes('operatingSystem')) {
+                // Populate lifecycle table with iOS devices if we have any
+                if (iosDevices.length > 0) {
                     populateLifecycleTable(iosDevices);
                 }
 
@@ -1358,13 +1381,18 @@
             });
         }
 
-        function populateDeviceCategoriesTables(devices, foundColumns) {
-            const iosDevices = devices.filter(d => 
-                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
-            );
-            const androidDevices = devices.filter(d => 
-                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
-            );
+        function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = []) {
+            // Use provided device arrays if available, otherwise filter from all devices
+            if (iosDevices.length === 0 && androidDevices.length === 0) {
+                iosDevices = devices.filter(d => 
+                    d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
+                );
+                androidDevices = devices.filter(d => 
+                    d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
+                );
+            }
+
+            console.log('Populating category tables - iOS:', iosDevices.length, 'Android:', androidDevices.length);
 
             // Populate iOS categories table
             populateIOSCategoriesTable(iosDevices, foundColumns);
@@ -1382,12 +1410,37 @@
             
             tbody.innerHTML = '';
 
-            // Count devices by category
+            console.log('Populating iOS categories table with', iosDevices.length, 'devices');
+
+            // Count devices by category - try multiple ways to find category
             const categoryCounts = {};
-            iosDevices.forEach(device => {
-                const category = device.deviceCategoryKey || device.category || '(blank)';
+            iosDevices.forEach((device, index) => {
+                let category = '(no category)';
+                
+                // Try different ways to find category
+                if (device.deviceCategoryKey) {
+                    category = device.deviceCategoryKey;
+                } else if (device.category) {
+                    category = device.category;
+                } else if (foundColumns.includes('deviceCategoryKey')) {
+                    category = '(blank)';
+                } else {
+                    // If no category column found, categorize by device type
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('ipad')) {
+                        category = 'iPad';
+                    } else if (deviceStr.includes('iphone')) {
+                        category = 'iPhone';
+                    } else {
+                        category = 'iOS Device';
+                    }
+                }
+                
+                if (index < 3) console.log(`iOS Device ${index} category:`, category, 'from device:', device);
                 categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             });
+
+            console.log('iOS category counts:', categoryCounts);
 
             // Sort by count (descending)
             const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
@@ -1420,12 +1473,39 @@
             
             tbody.innerHTML = '';
 
-            // Count devices by category
+            console.log('Populating Android categories table with', androidDevices.length, 'devices');
+
+            // Count devices by category - try multiple ways to find category
             const categoryCounts = {};
-            androidDevices.forEach(device => {
-                const category = device.deviceCategoryKey || device.category || '(blank)';
+            androidDevices.forEach((device, index) => {
+                let category = '(no category)';
+                
+                // Try different ways to find category
+                if (device.deviceCategoryKey) {
+                    category = device.deviceCategoryKey;
+                } else if (device.category) {
+                    category = device.category;
+                } else if (foundColumns.includes('deviceCategoryKey')) {
+                    category = '(blank)';
+                } else {
+                    // If no category column found, categorize by device type or model
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner')) {
+                        category = 'Scanner/Zebra';
+                    } else if (deviceStr.includes('tablet')) {
+                        category = 'Android Tablet';
+                    } else if (deviceStr.includes('phone')) {
+                        category = 'Android Phone';
+                    } else {
+                        category = 'Android Device';
+                    }
+                }
+                
+                if (index < 3) console.log(`Android Device ${index} category:`, category, 'from device:', device);
                 categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             });
+
+            console.log('Android category counts:', categoryCounts);
 
             // Sort by count (descending)
             const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
