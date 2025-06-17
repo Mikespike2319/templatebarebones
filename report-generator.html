@@ -10,18 +10,6 @@
     <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #0056b3;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --light-bg: #f8f9fa;
-            --border-color: #dee2e6;
-            --tmh-blue: #003366;
-            --tmh-gray: #4a4a4a;
-            --accent: #e0e7ef;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -29,36 +17,35 @@
         }
 
         body {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: var(--tmh-gray);
-            background-color: var(--light-bg);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            color: #333;
+            background-color: #f8f9fa;
         }
 
         .header {
-            background-color: var(--tmh-blue);
+            background: linear-gradient(135deg, #003d5c 0%, #0056b3 100%);
             color: white;
-            padding: 30px 20px;
+            padding: 0.8rem 0;
             text-align: center;
-            margin-bottom: 30px;
-            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+            font-weight: 300;
         }
 
         .header p {
-            font-size: 1.2em;
+            font-size: 0.9rem;
             opacity: 0.9;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0.8rem;
         }
 
         .auth-section {
@@ -200,33 +187,66 @@
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .card {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
+            background: white;
+            border-radius: 6px;
+            padding: 0.8rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 3px solid #0056b3;
+            text-align: center;
         }
 
         .card h3 {
-            color: var(--tmh-blue);
-            margin-bottom: 15px;
-            font-size: 1.2em;
+            color: #003d5c;
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        .card p {
-            font-size: 2em;
+        .card .number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 0.2rem;
+        }
+
+        .card .description {
+            color: #666;
+            font-size: 0.7rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            background: #003d5c;
+            color: white;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: var(--tmh-gray);
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
         }
 
         .compliance-section {
@@ -287,6 +307,31 @@
             }
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        th, td {
+            padding: 0.3rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #003d5c;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.3px;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: separate;
@@ -303,11 +348,11 @@
         .data-table td {
             padding: 8px 12px;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #e9ecef;
         }
 
         .data-table th {
-            background-color: var(--tmh-blue);
+            background-color: #003d5c;
             color: white;
             font-weight: 600;
             border-right: 1px solid #274472;
@@ -323,7 +368,7 @@
         }
 
         .data-table tr:nth-child(even) {
-            background-color: var(--accent);
+            background-color: #f8f9fa;
         }
 
         .data-table tr:hover {
@@ -586,13 +631,64 @@
             border: 1px solid #c3e6cb;
             color: #155724;
         }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .trend-positive {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .trend-negative {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .trend-neutral {
+            background-color: #e2e3e5;
+            color: #495057;
+        }
+
+        .status-supported {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-security {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-ended {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>TMH Device Inventory Report</h1>
-            <p>Generate comprehensive device reports from Intune exports</p>
+            <h1>Device Inventory Report</h1>
+            <p>Tallahassee Memorial Hospital - IT Asset Management</p>
         </div>
 
         <div class="upload-section">
@@ -625,20 +721,24 @@
             
             <div class="summary-cards">
                 <div class="card">
-                    <h3>iOS Devices</h3>
-                    <p id="iosTotal">0</p>
+                    <h3>Total iOS Devices</h3>
+                    <div class="number" id="iosTotal">0</div>
+                    <div class="description">Active iPad & iPhone inventory</div>
                 </div>
                 <div class="card">
-                    <h3>Android Devices</h3>
-                    <p id="androidTotal">0</p>
+                    <h3>Total Android Devices</h3>
+                    <div class="number" id="androidTotal">0</div>
+                    <div class="description">Zebra scanners and other Android devices</div>
+                </div>
+                <div class="card">
+                    <h3>Total Device Count</h3>
+                    <div class="number" id="totalDevices">0</div>
+                    <div class="description">Combined iOS and Android inventory</div>
                 </div>
                 <div class="card">
                     <h3>Windows Devices</h3>
-                    <p id="windowsTotal">0</p>
-                </div>
-                <div class="card">
-                    <h3>Total Devices</h3>
-                    <p id="totalDevices">0</p>
+                    <div class="number" id="windowsTotal">0</div>
+                    <div class="description">Windows-based devices</div>
                 </div>
             </div>
 
@@ -667,9 +767,60 @@
                 </div>
             </div>
 
-            <div class="data-grid">
-                <div class="data-section">
-                    <h2>Operating System Breakdown</h2>
+            <!-- Device Details & Lifecycle -->
+            <div class="section">
+                <div class="section-header">Device Categories & Compliance Status</div>
+                <div class="three-column" style="padding: 0.8rem;">
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">iOS Device Categories</h4>
+                        <table id="iosTable">
+                            <thead>
+                                <tr><th>Category</th><th>Count</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
+                            <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">iOS Compliance</h5>
+                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="iosCompliantCount">0</span> | <strong>Non-Compliant:</strong> <span id="iosNonCompliantCount">0</span></p>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill" id="iosComplianceFill" style="width: 0%;"></div>
+                            </div>
+                            <p style="text-align: center; font-size: 0.7rem;"><strong><span id="iosCompliancePercent">0%</span> Compliance</strong></p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Android Device Categories</h4>
+                        <table id="androidTable">
+                            <thead>
+                                <tr><th>Category</th><th>Count</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
+                            <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">Android Compliance</h5>
+                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="androidCompliantCount">0</span> | <strong>Non-Compliant:</strong> <span id="androidNonCompliantCount">0</span></p>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill" id="androidComplianceFill" style="width: 0%;"></div>
+                            </div>
+                            <p style="text-align: center; font-size: 0.7rem;"><strong><span id="androidCompliancePercent">0%</span> Compliance</strong></p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">iOS Device Lifecycle (Key Models)</h4>
+                        <table id="lifecycleTable">
+                            <thead>
+                                <tr><th>Device Model</th><th>Count</th><th>EOL</th><th>Status</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operating System Breakdown -->
+            <div class="section">
+                <div class="section-header">Operating System Breakdown</div>
+                <div style="padding: 0.8rem;">
                     <table class="data-table" id="osTable">
                         <thead>
                             <tr>
@@ -681,26 +832,17 @@
                         <tbody></tbody>
                     </table>
                 </div>
-
-                <div class="data-section">
-                    <h2>Device Models by OS</h2>
-                    <table class="data-table" id="modelTable">
-                        <thead>
-                            <tr>
-                                <th>Operating System</th>
-                                <th>Model</th>
-                                <th>Count</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
             </div>
 
             <div class="urgent-items">
                 <h2>Urgent Items</h2>
                 <div id="urgentItems"></div>
             </div>
+        </div>
+        
+        <div class="footer" style="background-color: #003d5c; color: white; text-align: center; padding: 1rem; margin-top: 2rem; border-radius: 10px;">
+            <p>&copy; 2025 Tallahassee Memorial Hospital - IT Asset Management Report</p>
+            <p>Generated on <span id="reportDate"></span></p>
         </div>
     </div>
 
@@ -1110,26 +1252,19 @@
                     }
                 }
 
-                // Populate operating system breakdown table (only if OS data exists)
+                // Populate the new section tables
                 if (foundColumns.includes('operatingSystem')) {
                     populateOSTable(activeDevices);
+                    populateDeviceCategoriesTables(activeDevices, foundColumns);
                 } else {
-                    // Hide OS table if no OS data
-                    const osTable = document.getElementById('osTable');
-                    if (osTable && osTable.closest('.data-section')) {
-                        osTable.closest('.data-section').style.display = 'none';
-                    }
+                    // Hide sections if no OS data
+                    const osSection = document.getElementById('osTable')?.closest('.section');
+                    if (osSection) osSection.style.display = 'none';
                 }
 
-                // Populate device models table (only if model data exists)
-                if (foundColumns.includes('model') || foundColumns.includes('operatingSystem')) {
-                    populateModelTable(activeDevices);
-                } else {
-                    // Hide model table if no model data
-                    const modelTable = document.getElementById('modelTable');
-                    if (modelTable && modelTable.closest('.data-section')) {
-                        modelTable.closest('.data-section').style.display = 'none';
-                    }
+                // Populate lifecycle table with iOS devices
+                if (foundColumns.includes('model') && foundColumns.includes('operatingSystem')) {
+                    populateLifecycleTable(iosDevices);
                 }
 
                 // Show report container
@@ -1184,45 +1319,140 @@
             });
         }
 
-        function populateModelTable(devices) {
-            const modelTable = document.getElementById('modelTable');
-            if (!modelTable) return;
+        function populateDeviceCategoriesTables(devices, foundColumns) {
+            const iosDevices = devices.filter(d => 
+                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
+            );
+            const androidDevices = devices.filter(d => 
+                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
+            );
+
+            // Populate iOS categories table
+            populateIOSCategoriesTable(iosDevices, foundColumns);
             
-            const tbody = modelTable.getElementsByTagName('tbody')[0];
+            // Populate Android categories table  
+            populateAndroidCategoriesTable(androidDevices, foundColumns);
+        }
+
+        function populateIOSCategoriesTable(iosDevices, foundColumns) {
+            const iosTable = document.getElementById('iosTable');
+            if (!iosTable) return;
+            
+            const tbody = iosTable.getElementsByTagName('tbody')[0];
             if (!tbody) return;
             
             tbody.innerHTML = '';
 
-            // Count devices by model grouped by OS
-            const modelCounts = {};
-            devices.forEach(device => {
-                const model = device.model || 'Unknown Model';
-                const os = device.operatingSystem || 'Unknown OS';
-                const key = `${os}|${model}`;
-                
-                if (!modelCounts[key]) {
-                    modelCounts[key] = {
-                        model,
-                        os,
-                        count: 0
-                    };
-                }
-                modelCounts[key].count++;
+            // Count devices by category
+            const categoryCounts = {};
+            iosDevices.forEach(device => {
+                const category = device.deviceCategoryKey || device.category || '(blank)';
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             });
 
-            // Sort by OS first, then by count (descending)
-            const sortedModels = Object.values(modelCounts).sort((a, b) => {
-                if (a.os === b.os) {
-                    return b.count - a.count; // Same OS, sort by count descending
-                }
-                return a.os.localeCompare(b.os); // Different OS, sort alphabetically
-            });
+            // Sort by count (descending)
+            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
 
-            sortedModels.forEach(item => {
+            sortedCategories.forEach(([category, count]) => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = item.os;
-                row.insertCell(1).textContent = item.model;
-                row.insertCell(2).textContent = item.count;
+                row.insertCell(0).textContent = category;
+                row.insertCell(1).textContent = count;
+            });
+
+            // Update iOS compliance
+            if (foundColumns.includes('complianceStateKey')) {
+                const compliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const nonCompliant = iosDevices.length - compliant;
+                const compliancePercent = iosDevices.length > 0 ? (compliant / iosDevices.length) * 100 : 0;
+                
+                document.getElementById('iosCompliantCount').textContent = compliant;
+                document.getElementById('iosNonCompliantCount').textContent = nonCompliant;
+                document.getElementById('iosComplianceFill').style.width = `${compliancePercent}%`;
+                document.getElementById('iosCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
+            }
+        }
+
+        function populateAndroidCategoriesTable(androidDevices, foundColumns) {
+            const androidTable = document.getElementById('androidTable');
+            if (!androidTable) return;
+            
+            const tbody = androidTable.getElementsByTagName('tbody')[0];
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+
+            // Count devices by category
+            const categoryCounts = {};
+            androidDevices.forEach(device => {
+                const category = device.deviceCategoryKey || device.category || '(blank)';
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            });
+
+            // Sort by count (descending)
+            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+
+            sortedCategories.forEach(([category, count]) => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = category;
+                row.insertCell(1).textContent = count;
+            });
+
+            // Update Android compliance
+            if (foundColumns.includes('complianceStateKey')) {
+                const compliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const nonCompliant = androidDevices.length - compliant;
+                const compliancePercent = androidDevices.length > 0 ? (compliant / androidDevices.length) * 100 : 0;
+                
+                document.getElementById('androidCompliantCount').textContent = compliant;
+                document.getElementById('androidNonCompliantCount').textContent = nonCompliant;
+                document.getElementById('androidComplianceFill').style.width = `${compliancePercent}%`;
+                document.getElementById('androidCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
+            }
+        }
+
+        function populateLifecycleTable(iosDevices) {
+            const lifecycleTable = document.getElementById('lifecycleTable');
+            if (!lifecycleTable) return;
+            
+            const tbody = lifecycleTable.getElementsByTagName('tbody')[0];
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+
+            // Count devices by model
+            const modelCounts = {};
+            iosDevices.forEach(device => {
+                const model = device.model || 'Unknown Model';
+                modelCounts[model] = (modelCounts[model] || 0) + 1;
+            });
+
+            // Sort by count (descending) and limit to top models
+            const sortedModels = Object.entries(modelCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10); // Show top 10 models
+
+            sortedModels.forEach(([model, count]) => {
+                const lifecycle = iosLifecycle[model];
+                const deviceStatus = getDeviceStatus(model);
+                
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = model;
+                row.insertCell(1).textContent = count;
+                row.insertCell(2).textContent = lifecycle ? lifecycle.endOfLife : 'Unknown';
+                
+                const statusCell = row.insertCell(3);
+                const statusSpan = document.createElement('span');
+                statusSpan.textContent = deviceStatus.status;
+                
+                if (deviceStatus.class === 'eol-good') {
+                    statusSpan.className = 'status-supported';
+                } else if (deviceStatus.class === 'eol-warning') {
+                    statusSpan.className = 'status-security';
+                } else {
+                    statusSpan.className = 'status-ended';
+                }
+                
+                statusCell.appendChild(statusSpan);
             });
         }
 
@@ -1377,13 +1607,30 @@
             });
             
             // Clear tables
-            const tables = ['osTable', 'modelTable'];
+            const tables = ['osTable', 'iosTable', 'androidTable', 'lifecycleTable'];
             tables.forEach(tableId => {
                 const table = document.getElementById(tableId);
                 if (table) {
                     const tbody = table.getElementsByTagName('tbody')[0];
                     if (tbody) tbody.innerHTML = '';
                 }
+            });
+            
+            // Clear new compliance elements
+            const newComplianceElements = [
+                'iosCompliantCount', 'iosNonCompliantCount', 'iosCompliancePercent',
+                'androidCompliantCount', 'androidNonCompliantCount', 'androidCompliancePercent'
+            ];
+            newComplianceElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) element.textContent = '0';
+            });
+            
+            // Clear compliance bars
+            const complianceFills = ['iosComplianceFill', 'androidComplianceFill'];
+            complianceFills.forEach(fillId => {
+                const fill = document.getElementById(fillId);
+                if (fill) fill.style.width = '0%';
             });
             
             // Clear urgent items
