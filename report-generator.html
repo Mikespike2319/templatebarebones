@@ -120,6 +120,69 @@
             border-radius: 8px;
             margin-bottom: 30px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .upload-container {
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--tmh-blue);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .file-label:hover {
+            background-color: #002244;
+            transform: translateY(-2px);
+        }
+
+        .file-name {
+            display: block;
+            margin-top: 10px;
+            color: var(--tmh-gray);
+        }
+
+        .status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .status-waiting {
+            background-color: var(--light-bg);
+            color: var(--tmh-gray);
+        }
+
+        .status-processing {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        #reportContainer {
+            display: none;
+            margin-top: 30px;
         }
 
         .summary-cards {
@@ -337,51 +400,6 @@
             }
         }
 
-        /* File input styling */
-        input[type="file"] {
-            display: none;
-        }
-
-        .file-input-label {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: var(--tmh-blue);
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .file-input-label:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .file-name {
-            margin-left: 15px;
-            color: var(--tmh-gray);
-        }
-
-        .status-message {
-            margin: 20px 0 0 0;
-            padding: 15px;
-            border-radius: 6px;
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-        .status-waiting {
-            background: #e9ecef;
-            color: #333;
-        }
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-        }
         .report-summary {
             background: var(--accent);
             border-left: 4px solid var(--tmh-blue);
@@ -460,8 +478,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Tallahassee Memorial Hospital</h1>
-            <p>IT Asset Management - Device Inventory Report</p>
+            <h1>TMH Device Inventory Report</h1>
+            <p>Generate comprehensive device reports from Intune exports</p>
         </div>
 
         <div class="upload-section">
@@ -474,72 +492,37 @@
             </div>
             <span id="fileName" class="file-name"></span>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
-            <div class="actions">
-                <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
-                <button class="btn btn-secondary" onclick="exportToHTML()">Export to HTML</button>
-            </div>
         </div>
 
-        <div id="reportContent" style="display: none;">
-            <div class="report-summary" id="reportSummary"></div>
-            <div class="key-insights" id="keyInsights"></div>
+        <div id="reportContainer">
             <div class="summary-cards">
                 <div class="card">
-                    <h3>Total Devices</h3>
-                    <p id="totalDevices">-</p>
-                </div>
-                <div class="card">
                     <h3>iOS Devices</h3>
-                    <p id="iosDevices">-</p>
+                    <p id="iosTotal">0</p>
                 </div>
                 <div class="card">
                     <h3>Android Devices</h3>
-                    <p id="androidDevices">-</p>
+                    <p id="androidTotal">0</p>
                 </div>
                 <div class="card">
-                    <h3>BackStock Devices</h3>
-                    <p id="backstockDevices">-</p>
+                    <h3>Total Devices</h3>
+                    <p id="totalDevices">0</p>
                 </div>
             </div>
 
             <div class="compliance-section">
-                <h2>Compliance Overview</h2>
-                <div id="complianceBars"></div>
-            </div>
-
-            <div class="chart-container">
-                <h2>Monthly Trends</h2>
-                <div id="monthlyTrends"></div>
-            </div>
-
-            <div class="chart-container">
-                <h2>Device Categories</h2>
-                <div id="deviceCategories"></div>
-            </div>
-
-            <div class="chart-container">
-                <h2>iOS Lifecycle Status</h2>
-                <table class="data-table" id="iosLifecycleTable">
-                    <thead>
-                        <tr>
-                            <th>Model</th>
-                            <th>Count</th>
-                            <th>EOL Year</th>
-                            <th>Support Status</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <h2>Compliance Status</h2>
+                <div class="compliance-bar">
+                    <div id="iosCompliant" class="compliance-fill" style="width: 0%"></div>
+                </div>
+                <div class="compliance-bar">
+                    <div id="androidCompliant" class="compliance-fill" style="width: 0%"></div>
+                </div>
             </div>
 
             <div class="urgent-items">
                 <h2>Urgent Items</h2>
                 <div id="urgentItems"></div>
-            </div>
-
-            <div class="footer">
-                <p>Tallahassee Memorial Hospital - IT Asset Management</p>
-                <p>v1.0 – Generated on <span id="generatedDate"></span></p>
             </div>
         </div>
     </div>
@@ -920,90 +903,103 @@
         }
 
         async function processExcelData(data) {
-            // Filter out deleted devices
-            const activeDevices = data.filter(device => !device.isDeleted);
-            
-            // Calculate critical metrics
-            const iosDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('ios'));
-            const androidDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('android'));
-            const totalDevices = activeDevices.length;
+            try {
+                // Filter out deleted devices
+                const activeDevices = data.filter(device => !device.isDeleted);
+                
+                // Calculate critical metrics
+                const iosDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('ios'));
+                const androidDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('android'));
+                const totalDevices = activeDevices.length;
 
-            // Calculate compliance and security metrics
-            const iosCompliant = iosDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
-            const androidCompliant = androidDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
-            const nonCompliantDevices = activeDevices.filter(d => d.complianceStateKey?.toLowerCase() !== 'compliant');
-            
-            // Calculate encryption status
-            const unencryptedDevices = activeDevices.filter(d => d.encryptionState?.toLowerCase() !== 'encrypted');
-            
-            // Calculate devices not synced in last 30 days
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            const staleDevices = activeDevices.filter(d => {
-                const lastSync = new Date(d.lastSyncDateTime);
-                return lastSync < thirtyDaysAgo;
-            });
-
-            // Update summary cards with critical metrics
-            document.getElementById('iosTotal').textContent = iosDevices.length;
-            document.getElementById('androidTotal').textContent = androidDevices.length;
-            document.getElementById('totalDevices').textContent = totalDevices;
-
-            // Create urgent items section
-            const urgentItems = [];
-            
-            if (nonCompliantDevices.length > 0) {
-                urgentItems.push({
-                    severity: 'high',
-                    title: 'Non-Compliant Devices',
-                    count: nonCompliantDevices.length,
-                    description: `${nonCompliantDevices.length} devices require immediate attention`
+                // Calculate compliance and security metrics
+                const iosCompliant = iosDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
+                const androidCompliant = androidDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
+                const nonCompliantDevices = activeDevices.filter(d => d.complianceStateKey?.toLowerCase() !== 'compliant');
+                
+                // Calculate encryption status
+                const unencryptedDevices = activeDevices.filter(d => d.encryptionState?.toLowerCase() !== 'encrypted');
+                
+                // Calculate devices not synced in last 30 days
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const staleDevices = activeDevices.filter(d => {
+                    const lastSync = new Date(d.lastSyncDateTime);
+                    return lastSync < thirtyDaysAgo;
                 });
-            }
-            
-            if (unencryptedDevices.length > 0) {
-                urgentItems.push({
-                    severity: 'high',
-                    title: 'Unencrypted Devices',
-                    count: unencryptedDevices.length,
-                    description: 'Security risk - devices not encrypted'
-                });
-            }
-            
-            if (staleDevices.length > 0) {
-                urgentItems.push({
-                    severity: 'medium',
-                    title: 'Inactive Devices',
-                    count: staleDevices.length,
-                    description: 'Devices not synced in last 30 days'
-                });
-            }
 
-            // Update compliance bars
-            document.getElementById('iosCompliant').style.width = `${(iosCompliant / iosDevices.length) * 100}%`;
-            document.getElementById('androidCompliant').style.width = `${(androidCompliant / androidDevices.length) * 100}%`;
+                // Update summary cards with critical metrics
+                document.getElementById('iosTotal').textContent = iosDevices.length;
+                document.getElementById('androidTotal').textContent = androidDevices.length;
+                document.getElementById('totalDevices').textContent = totalDevices;
 
-            // Update urgent items section
-            const urgentItemsContainer = document.getElementById('urgentItems');
-            urgentItemsContainer.innerHTML = '';
-            
-            if (urgentItems.length === 0) {
-                urgentItemsContainer.innerHTML = '<div class="no-urgent-items">No urgent items requiring attention</div>';
-            } else {
-                urgentItems.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.className = `urgent-item ${item.severity}`;
-                    itemElement.innerHTML = `
-                        <h3>${item.title}</h3>
-                        <div class="count">${item.count}</div>
-                        <p>${item.description}</p>
-                    `;
-                    urgentItemsContainer.appendChild(itemElement);
-                });
+                // Create urgent items section
+                const urgentItems = [];
+                
+                if (nonCompliantDevices.length > 0) {
+                    urgentItems.push({
+                        severity: 'high',
+                        title: 'Non-Compliant Devices',
+                        count: nonCompliantDevices.length,
+                        description: `${nonCompliantDevices.length} devices require immediate attention`
+                    });
+                }
+                
+                if (unencryptedDevices.length > 0) {
+                    urgentItems.push({
+                        severity: 'high',
+                        title: 'Unencrypted Devices',
+                        count: unencryptedDevices.length,
+                        description: 'Security risk - devices not encrypted'
+                    });
+                }
+                
+                if (staleDevices.length > 0) {
+                    urgentItems.push({
+                        severity: 'medium',
+                        title: 'Inactive Devices',
+                        count: staleDevices.length,
+                        description: 'Devices not synced in last 30 days'
+                    });
+                }
+
+                // Update compliance bars
+                const iosCompliancePercent = iosDevices.length > 0 ? (iosCompliant / iosDevices.length) * 100 : 0;
+                const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
+                
+                document.getElementById('iosCompliant').style.width = `${iosCompliancePercent}%`;
+                document.getElementById('androidCompliant').style.width = `${androidCompliancePercent}%`;
+
+                // Update urgent items section
+                const urgentItemsContainer = document.getElementById('urgentItems');
+                urgentItemsContainer.innerHTML = '';
+                
+                if (urgentItems.length === 0) {
+                    urgentItemsContainer.innerHTML = '<div class="no-urgent-items">No urgent items requiring attention</div>';
+                } else {
+                    urgentItems.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = `urgent-item ${item.severity}`;
+                        itemElement.innerHTML = `
+                            <h3>${item.title}</h3>
+                            <div class="count">${item.count}</div>
+                            <p>${item.description}</p>
+                        `;
+                        urgentItemsContainer.appendChild(itemElement);
+                    });
+                }
+
+                // Show report container
+                document.getElementById('reportContainer').style.display = 'block';
+                
+                // Update status message
+                document.getElementById('statusMessage').textContent = 'Report generated successfully';
+                document.getElementById('statusMessage').className = 'status-message status-success';
+            } catch (error) {
+                console.error('Error processing data:', error);
+                document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('statusMessage').className = 'status-message status-error';
             }
-
-            // Show report container
-            document.getElementById('reportContainer').style.display = 'block';
         }
     </script>
 </body>
