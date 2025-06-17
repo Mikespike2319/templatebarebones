@@ -733,10 +733,10 @@
 
         <div class="upload-section">
             <div class="upload-container">
-                <input type="file" id="fileInput" accept=".xlsx,.xlsm" class="file-input" />
+                <input type="file" id="fileInput" accept=".xlsx,.xlsm,.csv" class="file-input" />
                 <label for="fileInput" class="file-label">
                     <i class="fas fa-file-excel"></i>
-                    Choose Excel File
+                    Choose Excel or CSV File
                 </label>
             </div>
             <span id="fileName" class="file-name"></span>
@@ -1029,7 +1029,7 @@
 
         function regenerateReport() {
             if (!workbookGlobal) {
-                alert('Please upload an Excel file first.');
+                alert('Please upload a file first. Note: CSV files cannot be regenerated - please re-upload the file.');
                 return;
             }
             
@@ -1070,11 +1070,43 @@
             }
         }
 
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const result = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const row = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        row.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                row.push(current.trim());
+                result.push(row);
+            }
+            
+            return result;
+        }
+
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const fileName = file.name;
+            const fileExtension = fileName.toLowerCase().split('.').pop();
             document.getElementById('fileName').textContent = fileName;
             document.getElementById('statusMessage').textContent = 'Processing file...';
             document.getElementById('statusMessage').className = 'status-message status-processing';
@@ -1082,22 +1114,42 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    workbookGlobal = workbook;
+                    let jsonData;
                     
-                    // Populate sheet selector
-                    populateSheetSelector(workbook);
-                    
-                    // Process the first sheet by default
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    if (fileExtension === 'csv') {
+                        // Process CSV file
+                        console.log('Processing CSV file');
+                        const csvText = e.target.result;
+                        jsonData = parseCSV(csvText);
+                        
+                        // For CSV, we don't have sheets, so hide sheet selector
+                        const sheetSelectorContainer = document.getElementById('sheetSelectorContainer');
+                        if (sheetSelectorContainer) {
+                            sheetSelectorContainer.style.display = 'none';
+                        }
+                        workbookGlobal = null; // No workbook for CSV
+                        
+                    } else {
+                        // Process Excel file
+                        console.log('Processing Excel file');
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        workbookGlobal = workbook;
+                        
+                        // Populate sheet selector
+                        populateSheetSelector(workbook);
+                        
+                        // Process the first sheet by default
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    }
                     
                     // Get headers and map columns
                     const headers = jsonData[0];
                     const { columnMap, foundColumns } = mapColumns(headers);
                     
                     console.log('Found columns:', foundColumns);
+                    console.log('Headers:', headers);
                     
                     // Show a status message about what columns were found
                     const statusMsg = `Found ${foundColumns.length} recognized columns: ${foundColumns.join(', ')}`;
@@ -1120,7 +1172,13 @@
                     document.getElementById('statusMessage').className = 'status-message status-error';
                 }
             };
-            reader.readAsArrayBuffer(file);
+            
+            // Read file based on type
+            if (fileExtension === 'csv') {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
         });
 
         // Add event listener for sheet selection

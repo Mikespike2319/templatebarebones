@@ -5,7 +5,7 @@ A self-contained, offline HTML tool for generating comprehensive device inventor
 ## Features
 
 - **Fully Offline**: Works without internet connection after initial load
-- **Excel Processing**: Parses Intune OData feed exports (.xlsx, .xlsm)
+- **File Processing**: Parses Intune OData feed exports (.xlsx, .xlsm, .csv)
 - **Multi-Sheet Support**: Choose from multiple Excel sheets when available
 - **Flexible Column Recognition**: Automatically detects and works with available data columns
 - **Comprehensive Analytics**:
@@ -36,10 +36,10 @@ A self-contained, offline HTML tool for generating comprehensive device inventor
 1. **Open the Report Generator**
    - Open `report-generator.html` in any modern web browser (Chrome, Edge, Firefox recommended)
 
-2. **Upload Excel File**
-   - Click "Choose Excel File"
-   - Select your Intune export (.xlsx or .xlsm file)
-   - If multiple sheets exist, choose the desired sheet from the dropdown
+2. **Upload File**
+   - Click "Choose Excel or CSV File"
+   - Select your Intune export (.xlsx, .xlsm, or .csv file)
+   - If uploading Excel with multiple sheets, choose the desired sheet from the dropdown
    - The report will generate automatically
 
 3. **View Report**
@@ -87,7 +87,7 @@ The tool automatically recognizes and works with any combination of the followin
 - **Automatic Adaptation**: Report sections appear/hide based on available data
 - **Column Name Variations**: Recognizes multiple naming conventions (camelCase, snake_case, Title Case)
 - **Partial Data Support**: Provides useful insights even with incomplete data sets
-- **Multi-Format Support**: Handles various Excel export formats from different systems
+- **Multi-Format Support**: Handles Excel (.xlsx, .xlsm) and CSV (.csv) export formats from different systems
 
 ## Report Sections
 
