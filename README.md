@@ -15,11 +15,19 @@ A self-contained, offline HTML tool for generating comprehensive device inventor
   - Compliance status analysis by OS
   - Security status monitoring (encryption)
   - Device activity tracking (last check-in)
+- **iOS Lifecycle Management**:
+  - End-of-life (EOL) tracking for iOS devices
+  - Device lifecycle status indicators (Good, Warning, Critical)
+  - Hardcoded iOS device EOL database for accurate reporting
 - **Executive-Focused Reporting**:
   - Critical issues highlighted as "Urgent Items"
   - Professional summary cards
   - Visual compliance indicators
   - Detailed data tables for analysis
+- **Device Model Windows**: Separate detailed views for iOS and Android device inventories
+- **Export Capabilities**: 
+  - PDF export for professional reporting
+  - Print-optimized layouts
 - **Adaptive Interface**: Shows only relevant sections based on available data
 - **Print-Ready**: Optimized for A4 paper size and professional presentation
 
@@ -39,7 +47,13 @@ A self-contained, offline HTML tool for generating comprehensive device inventor
    - **Compliance Status**: Visual bars showing compliance by OS
    - **Operating System Breakdown**: Detailed count and percentage by OS
    - **Device Models**: Comprehensive model inventory with manufacturer info
+   - **iOS Lifecycle**: End-of-life tracking and status for iOS devices
    - **Urgent Items**: Critical issues requiring immediate attention
+
+4. **Export Options**
+   - **PDF Export**: Click "Export to PDF" for professional single-page reports
+   - **iOS Models**: Click "iOS Models" to view detailed iOS device inventory in separate window
+   - **Android Models**: Click "Android Models" to view detailed Android device inventory in separate window
 
 ## Supported Data Columns
 
@@ -83,10 +97,37 @@ The tool generates the following sections (when relevant data is available):
 2. **Compliance Status**: Visual compliance indicators by operating system
 3. **Operating System Breakdown**: Detailed OS distribution with percentages
 4. **Device Models**: Comprehensive model inventory sorted by count
-5. **Urgent Items**: Critical issues requiring immediate attention:
+5. **iOS Device Lifecycle**: End-of-life tracking with status indicators:
+   - **Good**: Device supported with current iOS versions
+   - **Warning**: Device approaching end-of-life
+   - **Critical**: Device past end-of-life, security risk
+6. **Urgent Items**: Critical issues requiring immediate attention:
    - Non-compliant devices
    - Unencrypted devices
    - Inactive devices (not synced in 30+ days)
+
+## Export Features
+
+### PDF Export
+- Single-page professional reports optimized for A4 paper
+- Maintains TMH branding and formatting
+- Suitable for executive presentations and archival
+
+### Device Model Windows
+- **iOS Models Window**: Dedicated view showing all iOS devices with:
+  - Device names and models
+  - Compliance status
+  - End-of-life information
+  - Manufacturer details
+- **Android Models Window**: Dedicated view showing all Android devices with detailed specifications
+
+## iOS Lifecycle Database
+
+The tool includes a comprehensive hardcoded database of iOS device end-of-life dates for accurate lifecycle tracking:
+- iPhone models from iPhone 5s through iPhone 15 series
+- iPad models including Air, mini, and Pro variants
+- iPod touch models
+- Automatic status calculation based on current date vs. EOL date
 
 ## Browser Compatibility
 
@@ -97,7 +138,14 @@ The tool generates the following sections (when relevant data is available):
 
 ## Version History
 
-- **v2.0 (Current)**
+- **v2.1 (Current)**
+  - PDF export functionality with single-page optimization
+  - iOS lifecycle management with EOL tracking
+  - Separate iOS and Android device model windows
+  - Enhanced device status indicators
+  - Improved executive reporting format
+
+- **v2.0**
   - Multi-sheet Excel support with sheet selection
   - Operating system breakdown table with percentages
   - Device models inventory with manufacturer details
