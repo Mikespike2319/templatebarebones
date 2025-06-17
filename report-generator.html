@@ -857,6 +857,50 @@
                 </div>
             </div>
 
+            <!-- Windows ConfigMgr & Special Categories Section -->
+            <div class="section" id="windowsSpecialSection" style="display: none;">
+                <div class="section-header">Windows & Special Categories</div>
+                <div class="two-column" style="padding: 0.8rem;">
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">ConfigMgr Managed Devices</h4>
+                        <div class="special-info-card" style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 0.8rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                            <p style="margin: 0; font-size: 0.75rem; color: #856404;">
+                                <strong>See ConfigMgr:</strong> <span id="configMgrCount" style="font-size: 1.2rem; font-weight: bold;">0</span> devices
+                            </p>
+                            <p style="margin: 0.3rem 0 0 0; font-size: 0.65rem; color: #856404;">
+                                These devices are managed through System Center Configuration Manager
+                            </p>
+                        </div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem; margin-top: 1rem;">Unassigned Categories</h4>
+                        <div class="special-info-card" style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 0.8rem; border-radius: 4px;">
+                            <p style="margin: 0; font-size: 0.75rem; color: #721c24;">
+                                <strong>Unassigned:</strong> <span id="unassignedCount" style="font-size: 1.2rem; font-weight: bold;">0</span> devices
+                            </p>
+                            <p style="margin: 0.3rem 0 0 0; font-size: 0.65rem; color: #721c24;">
+                                Devices without assigned categories requiring review
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Windows Device Categories</h4>
+                        <table id="windowsTable">
+                            <thead>
+                                <tr><th>Category</th><th>Count</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
+                            <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">Windows Compliance</h5>
+                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="windowsCompliantCount">0</span> | <strong>ConfigMgr:</strong> <span id="windowsConfigMgrCount">0</span></p>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill" id="windowsComplianceFill" style="width: 0%;"></div>
+                            </div>
+                            <p style="text-align: center; font-size: 0.7rem;"><strong><span id="windowsCompliancePercent">0%</span> Intune Compliance</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Operating System Breakdown -->
             <div class="section">
                 <div class="section-header">Operating System Breakdown</div>
@@ -1255,15 +1299,32 @@
 
                 // Calculate compliance metrics using Compliance column
                 let iosCompliant = 0, androidCompliant = 0, windowsCompliant = 0, nonCompliantDevices = [];
+                let configMgrDevices = 0, unassignedDevices = 0;
+                
                 if (foundColumns.includes('complianceStateKey')) {
                     console.log('Processing compliance data...');
                     iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                     androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                     windowsCompliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
-                    nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || !d.complianceStateKey.toString().toLowerCase().includes('compliant'));
+                    
+                    // Count ConfigMgr devices (Windows devices with "see configmgr" compliance)
+                    configMgrDevices = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('configmgr')).length;
+                    
+                    nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || 
+                        (!d.complianceStateKey.toString().toLowerCase().includes('compliant') && 
+                         !d.complianceStateKey.toString().toLowerCase().includes('configmgr')));
                     
                     console.log('Compliance counts - iOS:', iosCompliant, 'Android:', androidCompliant, 'Windows:', windowsCompliant);
+                    console.log('ConfigMgr devices:', configMgrDevices);
                     console.log('Non-compliant devices:', nonCompliantDevices.length);
+                }
+                
+                // Count unassigned category devices
+                if (foundColumns.includes('deviceCategoryKey')) {
+                    unassignedDevices = activeDevices.filter(d => !d.deviceCategoryKey || 
+                        d.deviceCategoryKey.toString().toLowerCase().includes('unassigned') ||
+                        d.deviceCategoryKey.toString().trim() === '').length;
+                    console.log('Unassigned category devices:', unassignedDevices);
                 }
                 
                 // Calculate devices not synced in last 30 days using Last check-in column
@@ -1370,7 +1431,10 @@
                 // Always populate tables if we have device data
                 if (totalDevices > 0) {
                     populateOSTable(activeDevices);
-                    populateDeviceCategoriesTables(activeDevices, foundColumns, iosDevices, androidDevices);
+                    populateDeviceCategoriesTables(activeDevices, foundColumns, iosDevices, androidDevices, windowsDevices);
+                    
+                    // Update ConfigMgr and unassigned counts
+                    updateSpecialCounts(configMgrDevices, unassignedDevices, windowsDevices, foundColumns);
                 } else {
                     // Hide sections if no device data
                     const osSection = document.getElementById('osTable')?.closest('.section');
@@ -1434,24 +1498,56 @@
             });
         }
 
-        function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = []) {
+        function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = [], windowsDevices = []) {
             // Use provided device arrays if available, otherwise filter from all devices
-            if (iosDevices.length === 0 && androidDevices.length === 0) {
+            if (iosDevices.length === 0 && androidDevices.length === 0 && windowsDevices.length === 0) {
                 iosDevices = devices.filter(d => 
                     d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
                 );
                 androidDevices = devices.filter(d => 
                     d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
                 );
+                windowsDevices = devices.filter(d => 
+                    d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('windows')
+                );
             }
 
-            console.log('Populating category tables - iOS:', iosDevices.length, 'Android:', androidDevices.length);
+            console.log('Populating category tables - iOS:', iosDevices.length, 'Android:', androidDevices.length, 'Windows:', windowsDevices.length);
 
             // Populate iOS categories table
             populateIOSCategoriesTable(iosDevices, foundColumns);
             
             // Populate Android categories table  
             populateAndroidCategoriesTable(androidDevices, foundColumns);
+            
+            // Populate Windows categories table
+            populateWindowsCategoriesTable(windowsDevices, foundColumns);
+        }
+
+        function updateSpecialCounts(configMgrDevices, unassignedDevices, windowsDevices, foundColumns) {
+            // Update ConfigMgr count
+            const configMgrElement = document.getElementById('configMgrCount');
+            if (configMgrElement) {
+                configMgrElement.textContent = configMgrDevices;
+            }
+            
+            // Update unassigned count
+            const unassignedElement = document.getElementById('unassignedCount');
+            if (unassignedElement) {
+                unassignedElement.textContent = unassignedDevices;
+            }
+            
+            // Show/hide the Windows special section based on whether we have Windows devices or special counts
+            const windowsSpecialSection = document.getElementById('windowsSpecialSection');
+            if (windowsSpecialSection) {
+                if (windowsDevices.length > 0 || configMgrDevices > 0 || unassignedDevices > 0) {
+                    windowsSpecialSection.style.display = 'block';
+                } else {
+                    windowsSpecialSection.style.display = 'none';
+                }
+            }
+            
+            console.log('Updated special counts - ConfigMgr:', configMgrDevices, 'Unassigned:', unassignedDevices);
         }
 
         function populateIOSCategoriesTable(iosDevices, foundColumns) {
@@ -1575,6 +1671,69 @@
                 document.getElementById('androidNonCompliantCount').textContent = nonCompliant;
                 document.getElementById('androidComplianceFill').style.width = `${compliancePercent}%`;
                 document.getElementById('androidCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
+            }
+        }
+
+        function populateWindowsCategoriesTable(windowsDevices, foundColumns) {
+            const windowsTable = document.getElementById('windowsTable');
+            if (!windowsTable) return;
+            
+            const tbody = windowsTable.getElementsByTagName('tbody')[0];
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+
+            console.log('Populating Windows categories table with', windowsDevices.length, 'devices');
+
+            // Count devices by Category column
+            const categoryCounts = {};
+            windowsDevices.forEach((device, index) => {
+                let category = '(no category)';
+                
+                // Use the Category column if available
+                if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                    category = device.deviceCategoryKey;
+                } else if (foundColumns.includes('deviceCategoryKey')) {
+                    category = '(blank)';
+                } else {
+                    // If no Category column found, categorize by device type
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('laptop') || deviceStr.includes('notebook')) {
+                        category = 'Laptop';
+                    } else if (deviceStr.includes('desktop') || deviceStr.includes('workstation')) {
+                        category = 'Desktop';
+                    } else if (deviceStr.includes('tablet')) {
+                        category = 'Windows Tablet';
+                    } else {
+                        category = 'Windows Device';
+                    }
+                }
+                
+                if (index < 3) console.log(`Windows Device ${index} category:`, category, 'from device:', device);
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            });
+
+            console.log('Windows category counts:', categoryCounts);
+
+            // Sort by count (descending)
+            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+
+            sortedCategories.forEach(([category, count]) => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = category;
+                row.insertCell(1).textContent = count;
+            });
+
+            // Update Windows compliance
+            if (foundColumns.includes('complianceStateKey')) {
+                const compliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
+                const configMgr = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('configmgr')).length;
+                const compliancePercent = windowsDevices.length > 0 ? (compliant / windowsDevices.length) * 100 : 0;
+                
+                document.getElementById('windowsCompliantCount').textContent = compliant;
+                document.getElementById('windowsConfigMgrCount').textContent = configMgr;
+                document.getElementById('windowsComplianceFill').style.width = `${compliancePercent}%`;
+                document.getElementById('windowsCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
             }
         }
 
@@ -1775,7 +1934,7 @@
             });
             
             // Clear tables
-            const tables = ['osTable', 'iosTable', 'androidTable', 'lifecycleTable'];
+            const tables = ['osTable', 'iosTable', 'androidTable', 'windowsTable', 'lifecycleTable'];
             tables.forEach(tableId => {
                 const table = document.getElementById(tableId);
                 if (table) {
@@ -1784,22 +1943,36 @@
                 }
             });
             
-            // Clear new compliance elements
-            const newComplianceElements = [
+            // Clear compliance text elements
+            const complianceTextElements = [
                 'iosCompliantCount', 'iosNonCompliantCount', 'iosCompliancePercent',
-                'androidCompliantCount', 'androidNonCompliantCount', 'androidCompliancePercent'
+                'androidCompliantCount', 'androidNonCompliantCount', 'androidCompliancePercent',
+                'windowsCompliantCount', 'windowsConfigMgrCount', 'windowsCompliancePercent'
             ];
-            newComplianceElements.forEach(elementId => {
+            complianceTextElements.forEach(elementId => {
                 const element = document.getElementById(elementId);
                 if (element) element.textContent = '0';
             });
             
             // Clear compliance bars
-            const complianceFills = ['iosComplianceFill', 'androidComplianceFill'];
+            const complianceFills = ['iosComplianceFill', 'androidComplianceFill', 'windowsComplianceFill'];
             complianceFills.forEach(fillId => {
                 const fill = document.getElementById(fillId);
                 if (fill) fill.style.width = '0%';
             });
+            
+            // Clear special counts
+            const specialElements = ['configMgrCount', 'unassignedCount'];
+            specialElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) element.textContent = '0';
+            });
+            
+            // Hide Windows special section by default
+            const windowsSpecialSection = document.getElementById('windowsSpecialSection');
+            if (windowsSpecialSection) {
+                windowsSpecialSection.style.display = 'none';
+            }
             
             // Clear urgent items
             const urgentItemsContainer = document.getElementById('urgentItems');
