@@ -266,6 +266,7 @@
             <label for="fileInput" class="file-input-label">Choose Excel File</label>
             <input type="file" id="fileInput" accept=".xlsx,.xls" />
             <span id="fileName" class="file-name"></span>
+            <select id="sheetSelect" style="display:none; margin-left:20px; padding:8px 12px; border-radius:6px; border:1px solid var(--border-color); font-size:1em;"></select>
             <div class="actions">
                 <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
                 <button class="btn btn-secondary" onclick="exportToHTML()">Export to HTML</button>
@@ -354,11 +355,23 @@
             minute: '2-digit'
         });
 
-        // File input handling
+        let workbookGlobal = null;
+        let currentSheetName = null;
+
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const fileName = e.target.files[0]?.name || '';
             document.getElementById('fileName').textContent = fileName;
             handleFileUpload(e);
+        });
+
+        document.getElementById('sheetSelect').addEventListener('change', function(e) {
+            const sheetName = e.target.value;
+            if (workbookGlobal && sheetName) {
+                currentSheetName = sheetName;
+                const sheet = workbookGlobal.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(sheet);
+                processData(jsonData);
+            }
         });
 
         function handleFileUpload(event) {
@@ -368,9 +381,21 @@
             reader.onload = function(e) {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                workbookGlobal = workbook;
+                const sheetNames = workbook.SheetNames;
+                const sheetSelect = document.getElementById('sheetSelect');
+                sheetSelect.innerHTML = '';
+                sheetNames.forEach((name, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    sheetSelect.appendChild(opt);
+                });
+                sheetSelect.style.display = sheetNames.length > 1 ? 'inline-block' : 'none';
+                currentSheetName = sheetNames[0];
+                sheetSelect.value = currentSheetName;
+                const firstSheet = workbook.Sheets[currentSheetName];
                 const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
                 processData(jsonData);
             };
 
