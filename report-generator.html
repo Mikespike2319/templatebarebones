@@ -407,6 +407,54 @@
         .key-insights li {
             margin-bottom: 4px;
         }
+
+        .urgent-items {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .urgent-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #ccc;
+            background: #f8f9fa;
+        }
+
+        .urgent-item.high {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .urgent-item.medium {
+            border-left-color: #ffc107;
+            background: #fff9e6;
+        }
+
+        .urgent-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .urgent-item .count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .urgent-item p {
+            margin: 5px 0 0 0;
+            color: #666;
+        }
+
+        .no-urgent-items {
+            text-align: center;
+            padding: 20px;
+            color: #28a745;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -417,8 +465,13 @@
         </div>
 
         <div class="upload-section">
-            <label for="fileInput" class="file-input-label">Choose Excel File</label>
-            <input type="file" id="fileInput" accept=".xlsx,.xls" />
+            <div class="upload-container">
+                <input type="file" id="excelFile" accept=".xlsx,.xlsm" class="file-input" />
+                <label for="excelFile" class="file-label">
+                    <i class="fas fa-file-excel"></i>
+                    Choose Excel File
+                </label>
+            </div>
             <span id="fileName" class="file-name"></span>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
             <div class="actions">
@@ -479,6 +532,11 @@
                 </table>
             </div>
 
+            <div class="urgent-items">
+                <h2>Urgent Items</h2>
+                <div id="urgentItems"></div>
+            </div>
+
             <div class="footer">
                 <p>Tallahassee Memorial Hospital - IT Asset Management</p>
                 <p>v1.0 – Generated on <span id="generatedDate"></span></p>
@@ -516,7 +574,7 @@
             status.className = 'status-message ' + type;
         }
 
-        document.getElementById('fileInput').addEventListener('change', function(e) {
+        document.getElementById('excelFile').addEventListener('change', function(e) {
             const fileName = e.target.files[0]?.name || '';
             document.getElementById('fileName').textContent = fileName;
             setStatus('Parsing file…', 'status-waiting');
@@ -856,6 +914,136 @@
             a.download = 'tmh-device-inventory-report.html';
             a.click();
             window.URL.revokeObjectURL(url);
+        }
+
+        async function processExcelData(data) {
+            const rows = data.slice(1); // Skip header row
+            const devices = rows.map(row => ({
+                deviceKey: row[0],
+                deviceId: row[1],
+                deviceName: row[2],
+                deviceTypeKey: row[3],
+                deviceRegistrationStateKey: row[4],
+                ownerTypeKey: row[5],
+                enrolledDateTime: row[6],
+                lastSyncDateTime: row[7],
+                managementAgentKey: row[8],
+                managementStateKey: row[9],
+                azureADDeviceId: row[10],
+                azureADRegistered: row[11],
+                deviceCategoryKey: row[12],
+                deviceEnrollmentTypeKey: row[13],
+                complianceStateKey: row[14],
+                osVersion: row[15],
+                easDeviceId: row[16],
+                serialNumber: row[17],
+                userId: row[18],
+                rowLastModifiedDateTimeUTC: row[19],
+                manufacturer: row[20],
+                model: row[21],
+                operatingSystem: row[22],
+                isDeleted: row[23],
+                androidSecurityPatchLevel: row[24],
+                meid: row[25],
+                isSupervised: row[26],
+                freeStorageSpaceInBytes: row[27],
+                totalStorageSpaceInBytes: row[28],
+                encryptionState: row[29],
+                subscriberCarrier: row[30],
+                phoneNumber: row[31],
+                imei: row[32],
+                cellularTechnology: row[33],
+                wiFiMacAddress: row[34],
+                ethernetMacAddress: row[35],
+                office365Version: row[36],
+                windowsOsEdition: row[37],
+                primaryUser: row[38]
+            }));
+
+            // Filter out deleted devices
+            const activeDevices = devices.filter(device => !device.isDeleted);
+            
+            // Calculate critical metrics
+            const iosDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('ios'));
+            const androidDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('android'));
+            const totalDevices = activeDevices.length;
+
+            // Calculate compliance and security metrics
+            const iosCompliant = iosDevices.filter(d => d.complianceStateKey === 'compliant').length;
+            const androidCompliant = androidDevices.filter(d => d.complianceStateKey === 'compliant').length;
+            const nonCompliantDevices = activeDevices.filter(d => d.complianceStateKey !== 'compliant');
+            
+            // Calculate encryption status
+            const unencryptedDevices = activeDevices.filter(d => d.encryptionState !== 'encrypted');
+            
+            // Calculate devices not synced in last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const staleDevices = activeDevices.filter(d => {
+                const lastSync = new Date(d.lastSyncDateTime);
+                return lastSync < thirtyDaysAgo;
+            });
+
+            // Update summary cards with critical metrics
+            document.getElementById('iosTotal').textContent = iosDevices.length;
+            document.getElementById('androidTotal').textContent = androidDevices.length;
+            document.getElementById('totalDevices').textContent = totalDevices;
+
+            // Create urgent items section
+            const urgentItems = [];
+            
+            if (nonCompliantDevices.length > 0) {
+                urgentItems.push({
+                    severity: 'high',
+                    title: 'Non-Compliant Devices',
+                    count: nonCompliantDevices.length,
+                    description: `${nonCompliantDevices.length} devices require immediate attention`
+                });
+            }
+            
+            if (unencryptedDevices.length > 0) {
+                urgentItems.push({
+                    severity: 'high',
+                    title: 'Unencrypted Devices',
+                    count: unencryptedDevices.length,
+                    description: 'Security risk - devices not encrypted'
+                });
+            }
+            
+            if (staleDevices.length > 0) {
+                urgentItems.push({
+                    severity: 'medium',
+                    title: 'Inactive Devices',
+                    count: staleDevices.length,
+                    description: 'Devices not synced in last 30 days'
+                });
+            }
+
+            // Update compliance bars
+            document.getElementById('iosCompliant').style.width = `${(iosCompliant / iosDevices.length) * 100}%`;
+            document.getElementById('androidCompliant').style.width = `${(androidCompliant / androidDevices.length) * 100}%`;
+
+            // Update urgent items section
+            const urgentItemsContainer = document.getElementById('urgentItems');
+            urgentItemsContainer.innerHTML = '';
+            
+            if (urgentItems.length === 0) {
+                urgentItemsContainer.innerHTML = '<div class="no-urgent-items">No urgent items requiring attention</div>';
+            } else {
+                urgentItems.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `urgent-item ${item.severity}`;
+                    itemElement.innerHTML = `
+                        <h3>${item.title}</h3>
+                        <div class="count">${item.count}</div>
+                        <p>${item.description}</p>
+                    `;
+                    urgentItemsContainer.appendChild(itemElement);
+                });
+            }
+
+            // Show report container
+            document.getElementById('reportContainer').style.display = 'block';
         }
     </script>
 </body>
