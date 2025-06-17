@@ -629,27 +629,28 @@
                 console.log('Active devices:', activeDevices.length);
                 
                 // Calculate critical metrics
-                const iosDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('ios'));
-                const androidDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('android'));
+                const iosDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios'));
+                const androidDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android'));
                 const totalDevices = activeDevices.length;
 
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
 
                 // Calculate compliance and security metrics
-                const iosCompliant = iosDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
-                const androidCompliant = androidDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
-                const nonCompliantDevices = activeDevices.filter(d => d.complianceStateKey?.toLowerCase() !== 'compliant');
+                const iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || d.complianceStateKey.toString().toLowerCase() !== 'compliant');
                 
                 // Calculate encryption status
-                const unencryptedDevices = activeDevices.filter(d => d.encryptionState?.toLowerCase() !== 'encrypted');
+                const unencryptedDevices = activeDevices.filter(d => !d.encryptionState || d.encryptionState.toString().toLowerCase() !== 'encrypted');
                 
                 // Calculate devices not synced in last 30 days
                 const thirtyDaysAgo = new Date();
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
                 const staleDevices = activeDevices.filter(d => {
+                    if (!d.lastSyncDateTime) return true;
                     const lastSync = new Date(d.lastSyncDateTime);
-                    return lastSync < thirtyDaysAgo;
+                    return isNaN(lastSync.getTime()) || lastSync < thirtyDaysAgo;
                 });
 
                 // Update summary cards with critical metrics
