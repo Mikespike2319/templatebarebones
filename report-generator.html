@@ -10,6 +10,19 @@
     <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --tmh-blue: #003d5c;
+            --tmh-blue-light: #0056b3;
+            --tmh-gray: #666;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --border-color: #dee2e6;
+            --light-bg: #f8f9fa;
+            --accent: #e9ecef;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -120,18 +133,25 @@
 
         .file-label {
             display: inline-block;
-            padding: 12px 24px;
+            padding: 15px 30px;
             background-color: var(--tmh-blue);
             color: white;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 16px;
             transition: all 0.3s ease;
+            border: 2px solid var(--tmh-blue);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .file-label:hover {
-            background-color: #002244;
-            transform: translateY(-2px);
+            background-color: var(--tmh-blue-light);
+            border-color: var(--tmh-blue-light);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         .file-name {
@@ -381,33 +401,53 @@
 
         .actions {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--tmh-blue);
         }
 
         .btn {
-            padding: 12px 24px;
-            border: none;
+            padding: 12px 20px;
+            border: 2px solid transparent;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            font-size: 1em;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .btn-primary {
             background-color: var(--tmh-blue);
             color: white;
+            border-color: var(--tmh-blue);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--tmh-blue-light);
+            border-color: var(--tmh-blue-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: white;
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
 
-        .btn:hover {
-            opacity: 0.9;
+        .btn-secondary:hover {
+            background-color: var(--secondary-color);
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .chart-container, .compliance-section {
@@ -700,11 +740,11 @@
                 </label>
             </div>
             <span id="fileName" class="file-name"></span>
-            <div id="sheetSelectorContainer" style="display: none; margin-top: 15px;">
-                <label for="sheetSelect">Select Sheet:</label>
-                <select id="sheetSelect" style="margin-left: 10px; padding: 5px;"></select>
-                <small style="display: block; margin-top: 5px; color: #666;">
-                    Note: Report will automatically regenerate when you select a different sheet
+            <div id="sheetSelectorContainer" style="display: none; margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 6px; border: 1px solid var(--border-color);">
+                <label for="sheetSelect" style="font-weight: 600; color: var(--tmh-blue); margin-right: 10px;">Select Sheet:</label>
+                <select id="sheetSelect" style="padding: 8px 12px; border: 2px solid var(--tmh-blue); border-radius: 4px; font-size: 14px; background-color: white; color: var(--tmh-blue); font-weight: 500;"></select>
+                <small style="display: block; margin-top: 8px; color: var(--tmh-gray); font-style: italic;">
+                    📊 Report will automatically regenerate when you select a different sheet
                 </small>
             </div>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
