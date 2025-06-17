@@ -466,8 +466,8 @@
 
         <div class="upload-section">
             <div class="upload-container">
-                <input type="file" id="excelFile" accept=".xlsx,.xlsm" class="file-input" />
-                <label for="excelFile" class="file-label">
+                <input type="file" id="fileInput" accept=".xlsx,.xlsm" class="file-input" />
+                <label for="fileInput" class="file-label">
                     <i class="fas fa-file-excel"></i>
                     Choose Excel File
                 </label>
@@ -556,94 +556,97 @@
             minute: '2-digit'
         });
 
-        // Required columns for validation
-        const REQUIRED_COLUMNS = [
-            'operatingSystem',
-            'model',
-            'deviceCategoryDisplayName',
-            'complianceState',
-            'lastSyncDateTime'
-        ];
+        // Add this before the file input event listener
+        const columnMappings = {
+            // Core device information
+            deviceKey: ['deviceKey', 'devicekey', 'device_key', 'key'],
+            deviceId: ['deviceId', 'deviceid', 'device_id', 'id'],
+            deviceName: ['deviceName', 'devicename', 'device_name', 'name'],
+            operatingSystem: ['operatingSystem', 'operatingsystem', 'os', 'operating_system', 'platform'],
+            complianceStateKey: ['complianceStateKey', 'compliancestatekey', 'compliance_state', 'compliance', 'compliancestate'],
+            lastSyncDateTime: ['lastSyncDateTime', 'lastsyncdatetime', 'last_sync', 'lastsync', 'lastSync'],
+            encryptionState: ['encryptionState', 'encryptionstate', 'encryption_state', 'encryption'],
+            // Additional mappings for future flexibility
+            model: ['model', 'deviceModel', 'devicemodel', 'device_model'],
+            manufacturer: ['manufacturer', 'make', 'brand'],
+            deviceCategoryKey: ['deviceCategoryKey', 'category', 'devicecategory', 'device_category'],
+            isDeleted: ['isDeleted', 'isdeleted', 'deleted', 'is_deleted']
+        };
 
-        let workbookGlobal = null;
-        let currentSheetName = null;
-
-        function setStatus(message, type) {
-            const status = document.getElementById('statusMessage');
-            status.textContent = message;
-            status.className = 'status-message ' + type;
+        function findColumnIndex(headers, possibleNames) {
+            for (const name of possibleNames) {
+                const index = headers.findIndex(h => 
+                    h && h.toString().toLowerCase() === name.toLowerCase()
+                );
+                if (index !== -1) return index;
+            }
+            return -1;
         }
 
-        document.getElementById('excelFile').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || '';
+        function mapColumns(headers) {
+            const columnMap = {};
+            let missingColumns = [];
+
+            // Map each required column
+            for (const [key, possibleNames] of Object.entries(columnMappings)) {
+                const index = findColumnIndex(headers, possibleNames);
+                if (index !== -1) {
+                    columnMap[key] = index;
+                } else {
+                    missingColumns.push(key);
+                }
+            }
+
+            return { columnMap, missingColumns };
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name;
             document.getElementById('fileName').textContent = fileName;
-            setStatus('Parsing file…', 'status-waiting');
-            handleFileUpload(e);
-        });
+            document.getElementById('statusMessage').textContent = 'Processing file...';
+            document.getElementById('statusMessage').className = 'status-message status-processing';
 
-        document.getElementById('sheetSelect').addEventListener('change', function(e) {
-            if (!workbookGlobal) return;
-            const sheetName = e.target.value;
-            const sheet = workbookGlobal.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(sheet);
-            validateAndProcess(jsonData);
-        });
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
             const reader = new FileReader();
-
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    workbookGlobal = workbook;
-                    const sheetNames = workbook.SheetNames;
-                    const validSheets = [];
-                    // Scan all sheets for required columns
-                    sheetNames.forEach(name => {
-                        const sheet = workbook.Sheets[name];
-                        const jsonData = XLSX.utils.sheet_to_json(sheet);
-                        if (jsonData.length > 0) {
-                            const firstRow = jsonData[0];
-                            const missing = REQUIRED_COLUMNS.filter(col => !(col in firstRow));
-                            if (missing.length === 0) {
-                                validSheets.push({ name, jsonData });
-                            }
-                        }
-                    });
-                    // Remove sheetSelect dropdown from UI
-                    // Aggregate all valid sheets
-                    if (validSheets.length === 0) {
-                        setStatus('No sheet contains all required columns: ' + REQUIRED_COLUMNS.join(', '), 'status-error');
-                        document.getElementById('reportContent').style.display = 'none';
-                        return;
+                    
+                    // Get the first sheet
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    // Get headers and map columns
+                    const headers = jsonData[0];
+                    const { columnMap, missingColumns } = mapColumns(headers);
+                    
+                    if (missingColumns.length > 0) {
+                        throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
                     }
-                    let combinedData = [];
-                    let sheetListMsg = '';
-                    if (validSheets.length === 1) {
-                        combinedData = validSheets[0].jsonData;
-                        sheetListMsg = 'Data from sheet: ' + validSheets[0].name;
-                    } else {
-                        validSheets.forEach(sheet => combinedData = combinedData.concat(sheet.jsonData));
-                        sheetListMsg = 'Data combined from ' + validSheets.length + ' matching sheets: ' + validSheets.map(s => s.name).join(', ');
-                    }
-                    // Sort by operatingSystem, then model
-                    combinedData.sort((a, b) => {
-                        if (a.operatingSystem === b.operatingSystem) {
-                            return (a.model || '').localeCompare(b.model || '');
+
+                    // Transform data using column mapping
+                    const mappedData = jsonData.slice(1).map(row => {
+                        const mappedRow = {};
+                        for (const [key, index] of Object.entries(columnMap)) {
+                            mappedRow[key] = row[index];
                         }
-                        return (a.operatingSystem || '').localeCompare(b.operatingSystem || '');
+                        return mappedRow;
                     });
-                    setStatus(sheetListMsg + ' — Parsed ' + combinedData.length + ' devices successfully.', 'status-success');
-                    validateAndProcess(combinedData, true);
-                } catch (err) {
-                    setStatus('Failed to parse file. Please ensure it is a valid Excel export.', 'status-error');
+                    
+                    processExcelData(mappedData);
+                    document.getElementById('statusMessage').textContent = 'File processed successfully';
+                    document.getElementById('statusMessage').className = 'status-message status-success';
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                    document.getElementById('statusMessage').className = 'status-message status-error';
                 }
             };
-
             reader.readAsArrayBuffer(file);
-        }
+        });
 
         function validateAndProcess(data, skipStatus) {
             if (!data || !Array.isArray(data) || data.length === 0) {
@@ -917,51 +920,8 @@
         }
 
         async function processExcelData(data) {
-            const rows = data.slice(1); // Skip header row
-            const devices = rows.map(row => ({
-                deviceKey: row[0],
-                deviceId: row[1],
-                deviceName: row[2],
-                deviceTypeKey: row[3],
-                deviceRegistrationStateKey: row[4],
-                ownerTypeKey: row[5],
-                enrolledDateTime: row[6],
-                lastSyncDateTime: row[7],
-                managementAgentKey: row[8],
-                managementStateKey: row[9],
-                azureADDeviceId: row[10],
-                azureADRegistered: row[11],
-                deviceCategoryKey: row[12],
-                deviceEnrollmentTypeKey: row[13],
-                complianceStateKey: row[14],
-                osVersion: row[15],
-                easDeviceId: row[16],
-                serialNumber: row[17],
-                userId: row[18],
-                rowLastModifiedDateTimeUTC: row[19],
-                manufacturer: row[20],
-                model: row[21],
-                operatingSystem: row[22],
-                isDeleted: row[23],
-                androidSecurityPatchLevel: row[24],
-                meid: row[25],
-                isSupervised: row[26],
-                freeStorageSpaceInBytes: row[27],
-                totalStorageSpaceInBytes: row[28],
-                encryptionState: row[29],
-                subscriberCarrier: row[30],
-                phoneNumber: row[31],
-                imei: row[32],
-                cellularTechnology: row[33],
-                wiFiMacAddress: row[34],
-                ethernetMacAddress: row[35],
-                office365Version: row[36],
-                windowsOsEdition: row[37],
-                primaryUser: row[38]
-            }));
-
             // Filter out deleted devices
-            const activeDevices = devices.filter(device => !device.isDeleted);
+            const activeDevices = data.filter(device => !device.isDeleted);
             
             // Calculate critical metrics
             const iosDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('ios'));
@@ -969,12 +929,12 @@
             const totalDevices = activeDevices.length;
 
             // Calculate compliance and security metrics
-            const iosCompliant = iosDevices.filter(d => d.complianceStateKey === 'compliant').length;
-            const androidCompliant = androidDevices.filter(d => d.complianceStateKey === 'compliant').length;
-            const nonCompliantDevices = activeDevices.filter(d => d.complianceStateKey !== 'compliant');
+            const iosCompliant = iosDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
+            const androidCompliant = androidDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
+            const nonCompliantDevices = activeDevices.filter(d => d.complianceStateKey?.toLowerCase() !== 'compliant');
             
             // Calculate encryption status
-            const unencryptedDevices = activeDevices.filter(d => d.encryptionState !== 'encrypted');
+            const unencryptedDevices = activeDevices.filter(d => d.encryptionState?.toLowerCase() !== 'encrypted');
             
             // Calculate devices not synced in last 30 days
             const thirtyDaysAgo = new Date();
