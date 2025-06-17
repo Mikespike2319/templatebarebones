@@ -838,28 +838,40 @@
                     const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
                     const windowsCompliancePercent = windowsDevices.length > 0 ? (windowsCompliant / windowsDevices.length) * 100 : 0;
                     
-                    document.getElementById('iosCompliant').style.width = `${iosCompliancePercent}%`;
-                    document.getElementById('androidCompliant').style.width = `${androidCompliancePercent}%`;
-                    document.getElementById('windowsCompliant').style.width = `${windowsCompliancePercent}%`;
+                    const iosComplianceElement = document.getElementById('iosCompliant');
+                    const androidComplianceElement = document.getElementById('androidCompliant');
+                    const windowsComplianceElement = document.getElementById('windowsCompliant');
+                    
+                    if (iosComplianceElement) {
+                        iosComplianceElement.style.width = `${iosCompliancePercent}%`;
+                    }
+                    if (androidComplianceElement) {
+                        androidComplianceElement.style.width = `${androidCompliancePercent}%`;
+                    }
+                    if (windowsComplianceElement) {
+                        windowsComplianceElement.style.width = `${windowsCompliancePercent}%`;
+                    }
                 }
 
                 // Update urgent items section
                 const urgentItemsContainer = document.getElementById('urgentItems');
-                urgentItemsContainer.innerHTML = '';
-                
-                if (urgentItems.length === 0) {
-                    urgentItemsContainer.innerHTML = '<div class="no-urgent-items">No urgent items requiring attention</div>';
-                } else {
-                    urgentItems.forEach(item => {
-                        const itemElement = document.createElement('div');
-                        itemElement.className = `urgent-item ${item.severity}`;
-                        itemElement.innerHTML = `
-                            <h3>${item.title}</h3>
-                            <div class="count">${item.count}</div>
-                            <p>${item.description}</p>
-                        `;
-                        urgentItemsContainer.appendChild(itemElement);
-                    });
+                if (urgentItemsContainer) {
+                    urgentItemsContainer.innerHTML = '';
+                    
+                    if (urgentItems.length === 0) {
+                        urgentItemsContainer.innerHTML = '<div class="no-urgent-items">No urgent items requiring attention</div>';
+                    } else {
+                        urgentItems.forEach(item => {
+                            const itemElement = document.createElement('div');
+                            itemElement.className = `urgent-item ${item.severity}`;
+                            itemElement.innerHTML = `
+                                <h3>${item.title}</h3>
+                                <div class="count">${item.count}</div>
+                                <p>${item.description}</p>
+                            `;
+                            urgentItemsContainer.appendChild(itemElement);
+                        });
+                    }
                 }
 
                 // Populate operating system breakdown table (only if OS data exists)
@@ -867,7 +879,10 @@
                     populateOSTable(activeDevices);
                 } else {
                     // Hide OS table if no OS data
-                    document.getElementById('osTable').closest('.data-section').style.display = 'none';
+                    const osTable = document.getElementById('osTable');
+                    if (osTable && osTable.closest('.data-section')) {
+                        osTable.closest('.data-section').style.display = 'none';
+                    }
                 }
 
                 // Populate device models table (only if model data exists)
@@ -875,27 +890,44 @@
                     populateModelTable(activeDevices);
                 } else {
                     // Hide model table if no model data
-                    document.getElementById('modelTable').closest('.data-section').style.display = 'none';
+                    const modelTable = document.getElementById('modelTable');
+                    if (modelTable && modelTable.closest('.data-section')) {
+                        modelTable.closest('.data-section').style.display = 'none';
+                    }
                 }
 
                 // Show report container
-                document.getElementById('reportContainer').style.display = 'block';
+                const reportContainer = document.getElementById('reportContainer');
+                if (reportContainer) {
+                    reportContainer.style.display = 'block';
+                }
                 
                 // Update status message
-                document.getElementById('statusMessage').textContent = `Report generated successfully with ${foundColumns.length} data columns`;
-                document.getElementById('statusMessage').className = 'status-message status-success';
+                const statusMessage = document.getElementById('statusMessage');
+                if (statusMessage) {
+                    statusMessage.textContent = `Report generated successfully with ${foundColumns.length} data columns`;
+                    statusMessage.className = 'status-message status-success';
+                }
                 
                 console.log('Report generated successfully');
             } catch (error) {
                 console.error('Error processing data:', error);
-                document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
-                document.getElementById('statusMessage').className = 'status-message status-error';
+                const statusMessage = document.getElementById('statusMessage');
+                if (statusMessage) {
+                    statusMessage.textContent = `Error: ${error.message}`;
+                    statusMessage.className = 'status-message status-error';
+                }
             }
         }
 
         function populateOSTable(devices) {
-            const osTable = document.getElementById('osTable').getElementsByTagName('tbody')[0];
-            osTable.innerHTML = '';
+            const osTable = document.getElementById('osTable');
+            if (!osTable) return;
+            
+            const tbody = osTable.getElementsByTagName('tbody')[0];
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
 
             // Count devices by operating system
             const osCounts = {};
@@ -909,7 +941,7 @@
 
             sortedOS.forEach(([os, count]) => {
                 const percentage = ((count / devices.length) * 100).toFixed(1);
-                const row = osTable.insertRow();
+                const row = tbody.insertRow();
                 row.insertCell(0).textContent = os;
                 row.insertCell(1).textContent = count;
                 row.insertCell(2).textContent = `${percentage}%`;
@@ -917,8 +949,13 @@
         }
 
         function populateModelTable(devices) {
-            const modelTable = document.getElementById('modelTable').getElementsByTagName('tbody')[0];
-            modelTable.innerHTML = '';
+            const modelTable = document.getElementById('modelTable');
+            if (!modelTable) return;
+            
+            const tbody = modelTable.getElementsByTagName('tbody')[0];
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
 
             // Count devices by model and group by manufacturer and OS
             const modelCounts = {};
@@ -943,7 +980,7 @@
             const sortedModels = Object.values(modelCounts).sort((a, b) => b.count - a.count);
 
             sortedModels.forEach(item => {
-                const row = modelTable.insertRow();
+                const row = tbody.insertRow();
                 row.insertCell(0).textContent = item.model;
                 row.insertCell(1).textContent = item.manufacturer;
                 row.insertCell(2).textContent = item.count;
