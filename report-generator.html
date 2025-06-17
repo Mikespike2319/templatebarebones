@@ -530,15 +530,6 @@
     <script>
         // Remove all MSAL and Intune live connection code
 
-        // Update generated date
-        document.getElementById('generatedDate').textContent = new Date().toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
         // Add this before the file input event listener
         const columnMappings = {
             // Core device information
@@ -620,8 +611,6 @@
                     });
                     
                     processExcelData(mappedData);
-                    document.getElementById('statusMessage').textContent = 'File processed successfully';
-                    document.getElementById('statusMessage').className = 'status-message status-success';
                 } catch (error) {
                     console.error('Error processing file:', error);
                     document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
@@ -631,286 +620,21 @@
             reader.readAsArrayBuffer(file);
         });
 
-        function validateAndProcess(data, skipStatus) {
-            if (!data || !Array.isArray(data) || data.length === 0) {
-                setStatus('No data found in the selected sheet.', 'status-error');
-                document.getElementById('reportContent').style.display = 'none';
-                return;
-            }
-            const firstRow = data[0];
-            const missing = REQUIRED_COLUMNS.filter(col => !(col in firstRow));
-            if (missing.length > 0) {
-                setStatus('⚠️ Missing columns: ' + missing.join(', '), 'status-error');
-                document.getElementById('reportContent').style.display = 'none';
-                return;
-            }
-            if (!skipStatus) setStatus('Parsed ' + data.length + ' devices successfully.', 'status-success');
-            processData(data);
-        }
-
-        function processData(data) {
-            // Calculate totals
-            const iosDevices = data.filter(d => d.operatingSystem?.toLowerCase().includes('ios')).length;
-            const androidDevices = data.filter(d => d.operatingSystem?.toLowerCase().includes('android')).length;
-            const backstockDevices = data.filter(d => d.deviceCategoryDisplayName === 'BackStock').length;
-            const compliantDevices = data.filter(d => d.complianceState === 'Compliant').length;
-            const nonCompliantDevices = data.length - compliantDevices;
-            const complianceRate = data.length ? (compliantDevices / data.length) * 100 : 0;
-
-            // Generate summary narrative
-            const summary = `As of <b>${new Date().toLocaleDateString()}</b>, there are <b>${data.length}</b> managed devices: <b>${iosDevices}</b> iOS, <b>${androidDevices}</b> Android, and <b>${backstockDevices}</b> BackStock. Overall compliance is <b>${complianceRate.toFixed(1)}%</b> (${compliantDevices} compliant, ${nonCompliantDevices} non-compliant).`;
-            document.getElementById('reportSummary').innerHTML = summary;
-
-            // Generate key insights
-            const insights = [];
-            // EOL iOS models
-            const iosEOL = {};
-            data.forEach(device => {
-                if (device.operatingSystem?.toLowerCase().includes('ios')) {
-                    const model = device.model || 'Unknown';
-                    const lifecycle = iosLifecycleMap[model];
-                    if (lifecycle && lifecycle.status === 'EOL') {
-                        iosEOL[model] = (iosEOL[model] || 0) + 1;
-                    }
-                }
-            });
-            if (Object.keys(iosEOL).length > 0) {
-                insights.push(`EOL iOS models in use: ` + Object.entries(iosEOL).map(([m, c]) => `<b>${m}</b> (${c})`).join(', '));
-            }
-            // BackStock trend (compare this month vs last month)
-            const now = new Date();
-            const thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-            const lastMonth = now.getMonth() === 0 ? (now.getFullYear() - 1) + '-12' : now.getFullYear() + '-' + String(now.getMonth()).padStart(2, '0');
-            let backstockThisMonth = 0, backstockLastMonth = 0;
-            data.forEach(device => {
-                if (device.deviceCategoryDisplayName === 'BackStock') {
-                    const d = new Date(device.lastSyncDateTime);
-                    const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-                    if (ym === thisMonth) backstockThisMonth++;
-                    if (ym === lastMonth) backstockLastMonth++;
-                }
-            });
-            if (backstockLastMonth > 0) {
-                const diff = backstockThisMonth - backstockLastMonth;
-                const pct = ((diff / backstockLastMonth) * 100).toFixed(1);
-                insights.push(`BackStock devices changed by <b>${diff >= 0 ? '+' : ''}${diff}</b> (${pct}%) compared to last month.`);
-            }
-            // Compliance insight
-            if (complianceRate < 90) {
-                insights.push(`Compliance rate is below 90%. Consider reviewing non-compliant devices.`);
-            }
-            document.getElementById('keyInsights').innerHTML = insights.length ? `<b>Key Insights:</b><ul><li>${insights.join('</li><li>')}</li></ul>` : '';
-
-            // Update summary cards
-            document.getElementById('totalDevices').textContent = data.length;
-            document.getElementById('iosDevices').textContent = iosDevices;
-            document.getElementById('androidDevices').textContent = androidDevices;
-            document.getElementById('backstockDevices').textContent = backstockDevices;
-
-            // Process compliance data
-            processComplianceData(data);
-
-            // Process monthly trends
-            processMonthlyTrends(data);
-
-            // Process device categories
-            processDeviceCategories(data);
-
-            // Process iOS lifecycle
-            processIOSLifecycle(data);
-
-            // Show report content
-            document.getElementById('reportContent').style.display = 'block';
-        }
-
-        function processComplianceData(data) {
-            const complianceBars = document.getElementById('complianceBars');
-            complianceBars.innerHTML = '';
-
-            const osTypes = [...new Set(data.map(d => d.operatingSystem))];
-            
-            osTypes.forEach(os => {
-                const osDevices = data.filter(d => d.operatingSystem === os);
-                const compliant = osDevices.filter(d => d.complianceState === 'Compliant').length;
-                const nonCompliant = osDevices.length - compliant;
-                const complianceRate = (compliant / osDevices.length) * 100;
-
-                const barHtml = `
-                    <div class="compliance-section">
-                        <h3>${os}</h3>
-                        <div class="compliance-bar">
-                            <div class="compliance-fill" style="width: ${complianceRate}%"></div>
-                        </div>
-                        <p>Compliant: ${compliant} (${complianceRate.toFixed(1)}%)</p>
-                        <p>Non-Compliant: ${nonCompliant} (${(100 - complianceRate).toFixed(1)}%)</p>
-                    </div>
-                `;
-                complianceBars.innerHTML += barHtml;
-            });
-        }
-
-        function processMonthlyTrends(data) {
-            const monthlyTrends = document.getElementById('monthlyTrends');
-            monthlyTrends.innerHTML = '';
-
-            // Group by month and OS
-            const trends = {};
-            data.forEach(device => {
-                const date = new Date(device.lastSyncDateTime);
-                const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-                const os = device.operatingSystem;
-
-                if (!trends[monthYear]) {
-                    trends[monthYear] = {};
-                }
-                if (!trends[monthYear][os]) {
-                    trends[monthYear][os] = 0;
-                }
-                trends[monthYear][os]++;
-            });
-
-            // Create table
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            // Add headers
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th>Month</th><th>iOS</th><th>Android</th>';
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-            // Add data rows
-            const tbody = document.createElement('tbody');
-            Object.keys(trends).sort().forEach(month => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${month}</td>
-                    <td>${trends[month]['iOS'] || 0}</td>
-                    <td>${trends[month]['Android'] || 0}</td>
-                `;
-                tbody.appendChild(row);
-            });
-            table.appendChild(tbody);
-            monthlyTrends.appendChild(table);
-        }
-
-        function processDeviceCategories(data) {
-            const deviceCategories = document.getElementById('deviceCategories');
-            deviceCategories.innerHTML = '';
-
-            // Group by OS and category
-            const categories = {};
-            data.forEach(device => {
-                const os = device.operatingSystem;
-                const category = device.deviceCategoryDisplayName || 'Uncategorized';
-
-                if (!categories[os]) {
-                    categories[os] = {};
-                }
-                if (!categories[os][category]) {
-                    categories[os][category] = 0;
-                }
-                categories[os][category]++;
-            });
-
-            // Create table
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            // Add headers
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th>Operating System</th><th>Category</th><th>Count</th>';
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-            // Add data rows
-            const tbody = document.createElement('tbody');
-            Object.keys(categories).forEach(os => {
-                Object.keys(categories[os]).forEach(category => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${os}</td>
-                        <td>${category}</td>
-                        <td>${categories[os][category]}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            });
-            table.appendChild(tbody);
-            deviceCategories.appendChild(table);
-        }
-
-        function processIOSLifecycle(data) {
-            const tbody = document.getElementById('iosLifecycleTable').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = '';
-
-            // Count devices by model
-            const modelCounts = {};
-            data.forEach(device => {
-                if (device.operatingSystem?.toLowerCase().includes('ios')) {
-                    const model = device.model || 'Unknown';
-                    modelCounts[model] = (modelCounts[model] || 0) + 1;
-                }
-            });
-
-            // Create rows
-            Object.keys(modelCounts).forEach(model => {
-                const lifecycle = iosLifecycleMap[model] || { eolYear: 'Unknown', status: 'Unknown' };
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${model}</td>
-                    <td>${modelCounts[model]}</td>
-                    <td>${lifecycle.eolYear}</td>
-                    <td>${lifecycle.status}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const element = document.getElementById('reportContent');
-            
-            html2canvas(element).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-                const imgX = (pdfWidth - imgWidth * ratio) / 2;
-                const imgY = 30;
-                
-                pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-                pdf.save('tmh-device-inventory-report.pdf');
-            });
-        }
-
-        function exportToHTML() {
-            const element = document.getElementById('reportContent');
-            const html = element.outerHTML;
-            const blob = new Blob([html], { type: 'text/html' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'tmh-device-inventory-report.html';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-
         async function processExcelData(data) {
             try {
+                console.log('Processing data:', data.length, 'devices');
+                
                 // Filter out deleted devices
                 const activeDevices = data.filter(device => !device.isDeleted);
+                console.log('Active devices:', activeDevices.length);
                 
                 // Calculate critical metrics
                 const iosDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('ios'));
                 const androidDevices = activeDevices.filter(d => d.operatingSystem?.toLowerCase().includes('android'));
                 const totalDevices = activeDevices.length;
+
+                console.log('iOS devices:', iosDevices.length);
+                console.log('Android devices:', androidDevices.length);
 
                 // Calculate compliance and security metrics
                 const iosCompliant = iosDevices.filter(d => d.complianceStateKey?.toLowerCase() === 'compliant').length;
@@ -995,11 +719,46 @@
                 // Update status message
                 document.getElementById('statusMessage').textContent = 'Report generated successfully';
                 document.getElementById('statusMessage').className = 'status-message status-success';
+                
+                console.log('Report generated successfully');
             } catch (error) {
                 console.error('Error processing data:', error);
                 document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
                 document.getElementById('statusMessage').className = 'status-message status-error';
             }
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const element = document.getElementById('reportContent');
+            
+            html2canvas(element).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const imgX = (pdfWidth - imgWidth * ratio) / 2;
+                const imgY = 30;
+                
+                pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                pdf.save('tmh-device-inventory-report.pdf');
+            });
+        }
+
+        function exportToHTML() {
+            const element = document.getElementById('reportContent');
+            const html = element.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tmh-device-inventory-report.html';
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
     </script>
 </body>
