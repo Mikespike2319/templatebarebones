@@ -382,6 +382,31 @@
             background: #f8d7da;
             color: #721c24;
         }
+        .report-summary {
+            background: var(--accent);
+            border-left: 4px solid var(--tmh-blue);
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            font-size: 1.08em;
+            font-weight: 500;
+            border-radius: 7px;
+        }
+        .key-insights {
+            background: #fffbe6;
+            border-left: 4px solid #ffc107;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            font-size: 1em;
+            border-radius: 7px;
+            color: #856404;
+        }
+        .key-insights ul {
+            margin: 0 0 0 18px;
+            padding: 0;
+        }
+        .key-insights li {
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -391,18 +416,10 @@
             <p>IT Asset Management - Device Inventory Report</p>
         </div>
 
-        <div class="auth-section">
-            <h2>Microsoft Intune Connection</h2>
-            <div id="authStatus"></div>
-            <button id="loginButton" class="btn btn-primary">Connect to Intune</button>
-            <div id="connectionStatus"></div>
-        </div>
-
         <div class="upload-section">
             <label for="fileInput" class="file-input-label">Choose Excel File</label>
             <input type="file" id="fileInput" accept=".xlsx,.xls" />
             <span id="fileName" class="file-name"></span>
-            <select id="sheetSelect" style="display:none; margin-left:20px; padding:8px 12px; border-radius:6px; border:1px solid var(--border-color); font-size:1em;"></select>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
             <div class="actions">
                 <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
@@ -411,6 +428,8 @@
         </div>
 
         <div id="reportContent" style="display: none;">
+            <div class="report-summary" id="reportSummary"></div>
+            <div class="key-insights" id="keyInsights"></div>
             <div class="summary-cards">
                 <div class="card">
                     <h3>Total Devices</h3>
@@ -468,139 +487,7 @@
     </div>
 
     <script>
-        // MSAL Configuration
-        const msalConfig = {
-            auth: {
-                clientId: "YOUR_CLIENT_ID", // Replace with your Azure AD app client ID
-                authority: "https://login.microsoftonline.com/YOUR_TENANT_ID", // Replace with your tenant ID
-                redirectUri: window.location.origin,
-            },
-            cache: {
-                cacheLocation: "sessionStorage",
-                storeAuthStateInCookie: false
-            }
-        };
-
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
-        const loginRequest = {
-            scopes: ["DeviceManagementManagedDevices.Read.All"]
-        };
-
-        let isAuthenticated = false;
-        let accessToken = null;
-
-        // Initialize MSAL
-        async function initializeMsal() {
-            try {
-                const response = await msalInstance.handleRedirectPromise();
-                if (response) {
-                    accessToken = response.accessToken;
-                    isAuthenticated = true;
-                    updateAuthStatus(true);
-                }
-            } catch (error) {
-                console.error("Error during MSAL initialization:", error);
-                updateAuthStatus(false, error.message);
-            }
-        }
-
-        // Login function
-        async function login() {
-            try {
-                const response = await msalInstance.loginPopup(loginRequest);
-                accessToken = response.accessToken;
-                isAuthenticated = true;
-                updateAuthStatus(true);
-                fetchIntuneData();
-            } catch (error) {
-                console.error("Login error:", error);
-                updateAuthStatus(false, error.message);
-            }
-        }
-
-        // Update authentication status UI
-        function updateAuthStatus(success, message = "") {
-            const authStatus = document.getElementById('authStatus');
-            const loginButton = document.getElementById('loginButton');
-            
-            if (success) {
-                authStatus.className = "auth-status success";
-                authStatus.textContent = "Connected to Intune";
-                loginButton.textContent = "Refresh Data";
-                loginButton.onclick = fetchIntuneData;
-            } else {
-                authStatus.className = "auth-status error";
-                authStatus.textContent = message || "Not connected to Intune";
-                loginButton.textContent = "Connect to Intune";
-                loginButton.onclick = login;
-            }
-        }
-
-        // Fetch data from Intune
-        async function fetchIntuneData() {
-            if (!isAuthenticated || !accessToken) {
-                updateAuthStatus(false, "Not authenticated");
-                return;
-            }
-
-            const statusDiv = document.getElementById('connectionStatus');
-            statusDiv.innerHTML = '<div class="loading"></div> Fetching data from Intune...';
-
-            try {
-                const response = await fetch('https://graph.microsoft.com/v1.0/deviceManagement/managedDevices', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                processIntuneData(data.value);
-                statusDiv.textContent = "Data fetched successfully";
-            } catch (error) {
-                console.error("Error fetching Intune data:", error);
-                statusDiv.textContent = `Error: ${error.message}`;
-                updateAuthStatus(false, "Failed to fetch data");
-            }
-        }
-
-        // Process Intune data
-        function processIntuneData(data) {
-            // Transform Intune data to match our expected format
-            const transformedData = data.map(device => ({
-                operatingSystem: device.operatingSystem,
-                model: device.model,
-                deviceCategoryDisplayName: device.deviceCategoryDisplayName,
-                complianceState: device.complianceState,
-                lastSyncDateTime: device.lastSyncDateTime
-            }));
-
-            // Process the transformed data
-            processData(transformedData);
-        }
-
-        // Initialize the application
-        initializeMsal();
-        document.getElementById('loginButton').onclick = login;
-
-        // iOS device lifecycle mapping
-        const iosLifecycleMap = {
-            'iPhone 6s': { eolYear: 2023, status: 'EOL' },
-            'iPhone 7': { eolYear: 2024, status: 'Active' },
-            'iPhone 8': { eolYear: 2024, status: 'Active' },
-            'iPhone X': { eolYear: 2024, status: 'Active' },
-            'iPhone XR': { eolYear: 2025, status: 'Active' },
-            'iPhone XS': { eolYear: 2025, status: 'Active' },
-            'iPhone 11': { eolYear: 2026, status: 'Active' },
-            'iPhone 12': { eolYear: 2027, status: 'Active' },
-            'iPhone 13': { eolYear: 2028, status: 'Active' },
-            'iPhone 14': { eolYear: 2029, status: 'Active' },
-            'iPhone 15': { eolYear: 2030, status: 'Active' }
-        };
+        // Remove all MSAL and Intune live connection code
 
         // Update generated date
         document.getElementById('generatedDate').textContent = new Date().toLocaleString('en-US', {
@@ -637,13 +524,11 @@
         });
 
         document.getElementById('sheetSelect').addEventListener('change', function(e) {
+            if (!workbookGlobal) return;
             const sheetName = e.target.value;
-            if (workbookGlobal && sheetName) {
-                currentSheetName = sheetName;
-                const sheet = workbookGlobal.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(sheet);
-                validateAndProcess(jsonData);
-            }
+            const sheet = workbookGlobal.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(sheet);
+            validateAndProcess(jsonData);
         });
 
         function handleFileUpload(event) {
@@ -656,20 +541,44 @@
                     const workbook = XLSX.read(data, { type: 'array' });
                     workbookGlobal = workbook;
                     const sheetNames = workbook.SheetNames;
-                    const sheetSelect = document.getElementById('sheetSelect');
-                    sheetSelect.innerHTML = '';
-                    sheetNames.forEach((name, idx) => {
-                        const opt = document.createElement('option');
-                        opt.value = name;
-                        opt.textContent = name;
-                        sheetSelect.appendChild(opt);
+                    const validSheets = [];
+                    // Scan all sheets for required columns
+                    sheetNames.forEach(name => {
+                        const sheet = workbook.Sheets[name];
+                        const jsonData = XLSX.utils.sheet_to_json(sheet);
+                        if (jsonData.length > 0) {
+                            const firstRow = jsonData[0];
+                            const missing = REQUIRED_COLUMNS.filter(col => !(col in firstRow));
+                            if (missing.length === 0) {
+                                validSheets.push({ name, jsonData });
+                            }
+                        }
                     });
-                    sheetSelect.style.display = sheetNames.length > 1 ? 'inline-block' : 'none';
-                    currentSheetName = sheetNames[0];
-                    sheetSelect.value = currentSheetName;
-                    const firstSheet = workbook.Sheets[currentSheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                    validateAndProcess(jsonData);
+                    // Remove sheetSelect dropdown from UI
+                    // Aggregate all valid sheets
+                    if (validSheets.length === 0) {
+                        setStatus('No sheet contains all required columns: ' + REQUIRED_COLUMNS.join(', '), 'status-error');
+                        document.getElementById('reportContent').style.display = 'none';
+                        return;
+                    }
+                    let combinedData = [];
+                    let sheetListMsg = '';
+                    if (validSheets.length === 1) {
+                        combinedData = validSheets[0].jsonData;
+                        sheetListMsg = 'Data from sheet: ' + validSheets[0].name;
+                    } else {
+                        validSheets.forEach(sheet => combinedData = combinedData.concat(sheet.jsonData));
+                        sheetListMsg = 'Data combined from ' + validSheets.length + ' matching sheets: ' + validSheets.map(s => s.name).join(', ');
+                    }
+                    // Sort by operatingSystem, then model
+                    combinedData.sort((a, b) => {
+                        if (a.operatingSystem === b.operatingSystem) {
+                            return (a.model || '').localeCompare(b.model || '');
+                        }
+                        return (a.operatingSystem || '').localeCompare(b.operatingSystem || '');
+                    });
+                    setStatus(sheetListMsg + ' — Parsed ' + combinedData.length + ' devices successfully.', 'status-success');
+                    validateAndProcess(combinedData, true);
                 } catch (err) {
                     setStatus('Failed to parse file. Please ensure it is a valid Excel export.', 'status-error');
                 }
@@ -678,7 +587,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        function validateAndProcess(data) {
+        function validateAndProcess(data, skipStatus) {
             if (!data || !Array.isArray(data) || data.length === 0) {
                 setStatus('No data found in the selected sheet.', 'status-error');
                 document.getElementById('reportContent').style.display = 'none';
@@ -691,7 +600,7 @@
                 document.getElementById('reportContent').style.display = 'none';
                 return;
             }
-            setStatus('Parsed ' + data.length + ' devices successfully.', 'status-success');
+            if (!skipStatus) setStatus('Parsed ' + data.length + ' devices successfully.', 'status-success');
             processData(data);
         }
 
@@ -700,6 +609,53 @@
             const iosDevices = data.filter(d => d.operatingSystem?.toLowerCase().includes('ios')).length;
             const androidDevices = data.filter(d => d.operatingSystem?.toLowerCase().includes('android')).length;
             const backstockDevices = data.filter(d => d.deviceCategoryDisplayName === 'BackStock').length;
+            const compliantDevices = data.filter(d => d.complianceState === 'Compliant').length;
+            const nonCompliantDevices = data.length - compliantDevices;
+            const complianceRate = data.length ? (compliantDevices / data.length) * 100 : 0;
+
+            // Generate summary narrative
+            const summary = `As of <b>${new Date().toLocaleDateString()}</b>, there are <b>${data.length}</b> managed devices: <b>${iosDevices}</b> iOS, <b>${androidDevices}</b> Android, and <b>${backstockDevices}</b> BackStock. Overall compliance is <b>${complianceRate.toFixed(1)}%</b> (${compliantDevices} compliant, ${nonCompliantDevices} non-compliant).`;
+            document.getElementById('reportSummary').innerHTML = summary;
+
+            // Generate key insights
+            const insights = [];
+            // EOL iOS models
+            const iosEOL = {};
+            data.forEach(device => {
+                if (device.operatingSystem?.toLowerCase().includes('ios')) {
+                    const model = device.model || 'Unknown';
+                    const lifecycle = iosLifecycleMap[model];
+                    if (lifecycle && lifecycle.status === 'EOL') {
+                        iosEOL[model] = (iosEOL[model] || 0) + 1;
+                    }
+                }
+            });
+            if (Object.keys(iosEOL).length > 0) {
+                insights.push(`EOL iOS models in use: ` + Object.entries(iosEOL).map(([m, c]) => `<b>${m}</b> (${c})`).join(', '));
+            }
+            // BackStock trend (compare this month vs last month)
+            const now = new Date();
+            const thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            const lastMonth = now.getMonth() === 0 ? (now.getFullYear() - 1) + '-12' : now.getFullYear() + '-' + String(now.getMonth()).padStart(2, '0');
+            let backstockThisMonth = 0, backstockLastMonth = 0;
+            data.forEach(device => {
+                if (device.deviceCategoryDisplayName === 'BackStock') {
+                    const d = new Date(device.lastSyncDateTime);
+                    const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                    if (ym === thisMonth) backstockThisMonth++;
+                    if (ym === lastMonth) backstockLastMonth++;
+                }
+            });
+            if (backstockLastMonth > 0) {
+                const diff = backstockThisMonth - backstockLastMonth;
+                const pct = ((diff / backstockLastMonth) * 100).toFixed(1);
+                insights.push(`BackStock devices changed by <b>${diff >= 0 ? '+' : ''}${diff}</b> (${pct}%) compared to last month.`);
+            }
+            // Compliance insight
+            if (complianceRate < 90) {
+                insights.push(`Compliance rate is below 90%. Consider reviewing non-compliant devices.`);
+            }
+            document.getElementById('keyInsights').innerHTML = insights.length ? `<b>Key Insights:</b><ul><li>${insights.join('</li><li>')}</li></ul>` : '';
 
             // Update summary cards
             document.getElementById('totalDevices').textContent = data.length;
