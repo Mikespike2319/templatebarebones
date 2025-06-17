@@ -5,49 +5,45 @@ A self-contained, offline HTML tool for generating device inventory reports from
 ## Features
 
 - **Fully Offline**: Works without internet connection after initial load
-- **Excel Processing**: Parses Intune OData feed exports (.xlsx)
+- **Excel Processing**: Parses Intune OData feed exports (.xlsx, .xlsm)
 - **Automatic Calculations**:
   - Total device counts (iOS, Android, Combined)
-  - BackStock device count
-  - Compliance breakdown
-  - Monthly trends
-  - Device category counts
-  - iOS lifecycle status
-- **Export Options**:
-  - PDF export
-  - HTML export
+  - Compliance status by OS
+  - Security status (encryption)
+  - Device activity status
+- **Urgent Items Highlighting**:
+  - Non-compliant devices
+  - Unencrypted devices
+  - Inactive devices (30+ days)
 - **Print-Ready**: Optimized for A4 paper size
 
 ## Usage Instructions
 
 1. **Open the Report Generator**
-   - Extract `report-generator.html` from the zip file
-   - Open in any modern web browser (Chrome, Edge, Firefox recommended)
+   - Open `report-generator.html` in any modern web browser (Chrome, Edge, Firefox recommended)
 
 2. **Upload Excel File**
    - Click "Choose Excel File"
-   - Select your Intune export (.xlsx file)
+   - Select your Intune export (.xlsx or .xlsm file)
    - The report will generate automatically
 
 3. **View Report**
    - Summary cards show key metrics
    - Compliance bars display status by OS
-   - Tables show detailed breakdowns
-   - iOS lifecycle status includes EOL information
-
-4. **Export Options**
-   - Click "Export to PDF" for a PDF version
-   - Click "Export to HTML" for an HTML version
-   - Use browser's print function (Ctrl+P/Cmd+P) for direct printing
+   - Urgent items are highlighted for immediate attention
 
 ## Excel File Requirements
 
 The tool expects an Excel file exported from Microsoft Intune with the following columns:
+- deviceKey
+- deviceId
+- deviceName
 - operatingSystem
-- model
-- deviceCategoryDisplayName
-- complianceState
+- complianceStateKey
 - lastSyncDateTime
+- encryptionState
+
+The tool is flexible and will recognize common variations of these column names.
 
 ## Browser Compatibility
 
@@ -58,10 +54,14 @@ The tool expects an Excel file exported from Microsoft Intune with the following
 
 ## Version History
 
-- v1.0 (Current)
+- v1.1 (Current)
+  - Added flexible column mapping
+  - Improved error handling
+  - Enhanced UI/UX
+  - Added urgent items section
+- v1.0
   - Initial release
-  - Full TMH branding
-  - All core features implemented
+  - Core features implemented
 
 ## Support
 
