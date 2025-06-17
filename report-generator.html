@@ -522,6 +522,70 @@
             color: #28a745;
             font-weight: bold;
         }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: none;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .modal h2 {
+            color: var(--tmh-blue);
+            margin-bottom: 20px;
+        }
+
+        .eol-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .eol-critical {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .eol-good {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
     </style>
 </head>
 <body>
@@ -543,11 +607,22 @@
             <div id="sheetSelectorContainer" style="display: none; margin-top: 15px;">
                 <label for="sheetSelect">Select Sheet:</label>
                 <select id="sheetSelect" style="margin-left: 10px; padding: 5px;"></select>
+                <small style="display: block; margin-top: 5px; color: #666;">
+                    Note: Report will automatically regenerate when you select a different sheet
+                </small>
             </div>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
         </div>
 
         <div id="reportContainer">
+            <div class="actions">
+                <button class="btn btn-primary" onclick="regenerateReport()">Regenerate Report</button>
+                <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
+                <button class="btn btn-secondary" onclick="exportToHTML()">Export to HTML</button>
+                <button class="btn btn-secondary" onclick="showIOSModels()">iOS Models</button>
+                <button class="btn btn-secondary" onclick="showAndroidModels()">Android Models</button>
+            </div>
+            
             <div class="summary-cards">
                 <div class="card">
                     <h3>iOS Devices</h3>
@@ -629,6 +704,45 @@
         </div>
     </div>
 
+    <!-- iOS Models Modal -->
+    <div id="iosModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('iosModal')">&times;</span>
+            <h2>iOS Device Models</h2>
+            <table class="data-table" id="iosModelTable">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Count</th>
+                        <th>Release Year</th>
+                        <th>End of Life</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Android Models Modal -->
+    <div id="androidModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('androidModal')">&times;</span>
+            <h2>Android Device Models</h2>
+            <table class="data-table" id="androidModelTable">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Count</th>
+                        <th>Manufacturer</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
         // Remove all MSAL and Intune live connection code
 
@@ -705,21 +819,22 @@
             
             const sheetSelect = document.getElementById('sheetSelect');
             const selectedSheet = sheetSelect.value;
-            const sheet = workbookGlobal.Sheets[selectedSheet];
-            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            
+            // Update status to show processing
+            document.getElementById('statusMessage').textContent = `Processing sheet: ${selectedSheet}...`;
+            document.getElementById('statusMessage').className = 'status-message status-processing';
             
             try {
+                const sheet = workbookGlobal.Sheets[selectedSheet];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                
                 // Get headers and map columns
                 const headers = jsonData[0];
                 const { columnMap, foundColumns } = mapColumns(headers);
                 
+                console.log('Processing sheet:', selectedSheet);
                 console.log('Found columns:', foundColumns);
                 
-                // Show a status message about what columns were found
-                const statusMsg = `Found ${foundColumns.length} recognized columns: ${foundColumns.join(', ')}`;
-                document.getElementById('statusMessage').textContent = statusMsg;
-                document.getElementById('statusMessage').className = 'status-message status-processing';
-
                 // Transform data using column mapping
                 const mappedData = jsonData.slice(1).map(row => {
                     const mappedRow = {};
@@ -729,10 +844,54 @@
                     return mappedRow;
                 });
                 
+                // Process the data and regenerate the report
                 processExcelData(mappedData, foundColumns);
             } catch (error) {
                 console.error('Error processing sheet:', error);
-                document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('statusMessage').textContent = `Error processing sheet: ${error.message}`;
+                document.getElementById('statusMessage').className = 'status-message status-error';
+            }
+        }
+
+        function regenerateReport() {
+            if (!workbookGlobal) {
+                alert('Please upload an Excel file first.');
+                return;
+            }
+            
+            // Get the currently selected sheet
+            const sheetSelect = document.getElementById('sheetSelect');
+            const selectedSheet = sheetSelect.value || workbookGlobal.SheetNames[0];
+            
+            // Update status
+            document.getElementById('statusMessage').textContent = `Regenerating report from sheet: ${selectedSheet}...`;
+            document.getElementById('statusMessage').className = 'status-message status-processing';
+            
+            try {
+                const sheet = workbookGlobal.Sheets[selectedSheet];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                
+                // Get headers and map columns
+                const headers = jsonData[0];
+                const { columnMap, foundColumns } = mapColumns(headers);
+                
+                console.log('Regenerating report from sheet:', selectedSheet);
+                console.log('Found columns:', foundColumns);
+                
+                // Transform data using column mapping
+                const mappedData = jsonData.slice(1).map(row => {
+                    const mappedRow = {};
+                    for (const [key, index] of Object.entries(columnMap)) {
+                        mappedRow[key] = row[index];
+                    }
+                    return mappedRow;
+                });
+                
+                // Process the data and regenerate the report
+                processExcelData(mappedData, foundColumns);
+            } catch (error) {
+                console.error('Error regenerating report:', error);
+                document.getElementById('statusMessage').textContent = `Error regenerating report: ${error.message}`;
                 document.getElementById('statusMessage').className = 'status-message status-error';
             }
         }
@@ -794,7 +953,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             const sheetSelect = document.getElementById('sheetSelect');
             if (sheetSelect) {
-                sheetSelect.addEventListener('change', processSelectedSheet);
+                sheetSelect.addEventListener('change', function() {
+                    console.log('Sheet selection changed to:', sheetSelect.value);
+                    processSelectedSheet();
+                });
             }
         });
 
@@ -803,10 +965,16 @@
                 console.log('Processing data:', data.length, 'devices');
                 console.log('Available columns:', foundColumns);
                 
+                // Clear previous report data
+                clearReportData();
+                
                 // Filter out deleted devices (if isDeleted column exists)
                 const activeDevices = foundColumns.includes('isDeleted') ? 
                     data.filter(device => !device.isDeleted) : data;
                 console.log('Active devices:', activeDevices.length);
+                
+                // Store global devices data for modal windows
+                globalDevicesData = activeDevices;
                 
                 // Calculate critical metrics (only if operatingSystem column exists)
                 let iosDevices = [], androidDevices = [], windowsDevices = [];
@@ -1060,28 +1228,75 @@
 
         function exportToPDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const element = document.getElementById('reportContent');
             
-            html2canvas(element).then(canvas => {
+            // Hide action buttons before capture
+            const actionButtons = document.querySelector('.actions');
+            const originalDisplay = actionButtons.style.display;
+            actionButtons.style.display = 'none';
+            
+            // Get the report container element
+            const element = document.getElementById('reportContainer');
+            
+            html2canvas(element, {
+                scale: 0.8, // Reduce scale to fit better
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
-                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-                const imgX = (pdfWidth - imgWidth * ratio) / 2;
-                const imgY = 30;
                 
-                pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                // Calculate dimensions to fit on one page with margins
+                const margin = 10;
+                const availableWidth = pdfWidth - (2 * margin);
+                const availableHeight = pdfHeight - (2 * margin);
+                const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
+                
+                const finalWidth = imgWidth * ratio;
+                const finalHeight = imgHeight * ratio;
+                const imgX = (pdfWidth - finalWidth) / 2;
+                const imgY = margin;
+                
+                pdf.addImage(imgData, 'PNG', imgX, imgY, finalWidth, finalHeight);
                 pdf.save('tmh-device-inventory-report.pdf');
+                
+                // Restore action buttons
+                actionButtons.style.display = originalDisplay;
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                // Restore action buttons even if there's an error
+                actionButtons.style.display = originalDisplay;
             });
         }
 
         function exportToHTML() {
-            const element = document.getElementById('reportContent');
-            const html = element.outerHTML;
+            const element = document.getElementById('reportContainer');
+            const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>TMH Device Inventory Report</title>
+                <style>
+                    ${document.querySelector('style').innerHTML}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>TMH Device Inventory Report</h1>
+                        <p>Device Inventory Summary Report</p>
+                    </div>
+                    ${element.innerHTML}
+                </div>
+            </body>
+            </html>
+            `;
             const blob = new Blob([html], { type: 'text/html' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1089,6 +1304,213 @@
             a.download = 'tmh-device-inventory-report.html';
             a.click();
             window.URL.revokeObjectURL(url);
+        }
+
+        // iOS device lifecycle data
+        const iosLifecycle = {
+            'iPhone 15 Pro Max': { releaseYear: 2023, endOfLife: 2030 },
+            'iPhone 15 Pro': { releaseYear: 2023, endOfLife: 2030 },
+            'iPhone 15 Plus': { releaseYear: 2023, endOfLife: 2030 },
+            'iPhone 15': { releaseYear: 2023, endOfLife: 2030 },
+            'iPhone 14 Pro Max': { releaseYear: 2022, endOfLife: 2029 },
+            'iPhone 14 Pro': { releaseYear: 2022, endOfLife: 2029 },
+            'iPhone 14 Plus': { releaseYear: 2022, endOfLife: 2029 },
+            'iPhone 14': { releaseYear: 2022, endOfLife: 2029 },
+            'iPhone 13 Pro Max': { releaseYear: 2021, endOfLife: 2028 },
+            'iPhone 13 Pro': { releaseYear: 2021, endOfLife: 2028 },
+            'iPhone 13 mini': { releaseYear: 2021, endOfLife: 2028 },
+            'iPhone 13': { releaseYear: 2021, endOfLife: 2028 },
+            'iPhone 12 Pro Max': { releaseYear: 2020, endOfLife: 2027 },
+            'iPhone 12 Pro': { releaseYear: 2020, endOfLife: 2027 },
+            'iPhone 12 mini': { releaseYear: 2020, endOfLife: 2027 },
+            'iPhone 12': { releaseYear: 2020, endOfLife: 2027 },
+            'iPhone SE (3rd generation)': { releaseYear: 2022, endOfLife: 2029 },
+            'iPhone 11 Pro Max': { releaseYear: 2019, endOfLife: 2026 },
+            'iPhone 11 Pro': { releaseYear: 2019, endOfLife: 2026 },
+            'iPhone 11': { releaseYear: 2019, endOfLife: 2026 },
+            'iPhone XS Max': { releaseYear: 2018, endOfLife: 2025 },
+            'iPhone XS': { releaseYear: 2018, endOfLife: 2025 },
+            'iPhone XR': { releaseYear: 2018, endOfLife: 2025 },
+            'iPhone X': { releaseYear: 2017, endOfLife: 2024 },
+            'iPhone 8 Plus': { releaseYear: 2017, endOfLife: 2024 },
+            'iPhone 8': { releaseYear: 2017, endOfLife: 2024 },
+            'iPhone 7 Plus': { releaseYear: 2016, endOfLife: 2023 },
+            'iPhone 7': { releaseYear: 2016, endOfLife: 2023 },
+            'iPhone SE (2nd generation)': { releaseYear: 2020, endOfLife: 2027 },
+            'iPhone 6s Plus': { releaseYear: 2015, endOfLife: 2022 },
+            'iPhone 6s': { releaseYear: 2015, endOfLife: 2022 },
+            'iPhone 6 Plus': { releaseYear: 2014, endOfLife: 2021 },
+            'iPhone 6': { releaseYear: 2014, endOfLife: 2021 },
+            'iPad Pro 12.9-inch (6th generation)': { releaseYear: 2022, endOfLife: 2029 },
+            'iPad Pro 11-inch (4th generation)': { releaseYear: 2022, endOfLife: 2029 },
+            'iPad Air (5th generation)': { releaseYear: 2022, endOfLife: 2029 },
+            'iPad (10th generation)': { releaseYear: 2022, endOfLife: 2029 },
+            'iPad mini (6th generation)': { releaseYear: 2021, endOfLife: 2028 },
+            'iPad Pro 12.9-inch (5th generation)': { releaseYear: 2021, endOfLife: 2028 },
+            'iPad Pro 11-inch (3rd generation)': { releaseYear: 2021, endOfLife: 2028 },
+            'iPad Air (4th generation)': { releaseYear: 2020, endOfLife: 2027 },
+            'iPad (9th generation)': { releaseYear: 2021, endOfLife: 2028 },
+            'iPad (8th generation)': { releaseYear: 2020, endOfLife: 2027 }
+        };
+
+        let globalDevicesData = [];
+
+        function clearReportData() {
+            // Clear summary cards
+            document.getElementById('iosTotal').textContent = '0';
+            document.getElementById('androidTotal').textContent = '0';
+            document.getElementById('windowsTotal').textContent = '0';
+            document.getElementById('totalDevices').textContent = '0';
+            
+            // Clear compliance bars
+            const complianceElements = [
+                { fill: 'iosCompliant', text: 'iosComplianceText' },
+                { fill: 'androidCompliant', text: 'androidComplianceText' },
+                { fill: 'windowsCompliant', text: 'windowsComplianceText' }
+            ];
+            
+            complianceElements.forEach(({ fill, text }) => {
+                const fillElement = document.getElementById(fill);
+                const textElement = document.getElementById(text);
+                if (fillElement) fillElement.style.width = '0%';
+                if (textElement) textElement.textContent = '0%';
+            });
+            
+            // Clear tables
+            const tables = ['osTable', 'modelTable'];
+            tables.forEach(tableId => {
+                const table = document.getElementById(tableId);
+                if (table) {
+                    const tbody = table.getElementsByTagName('tbody')[0];
+                    if (tbody) tbody.innerHTML = '';
+                }
+            });
+            
+            // Clear urgent items
+            const urgentItemsContainer = document.getElementById('urgentItems');
+            if (urgentItemsContainer) {
+                urgentItemsContainer.innerHTML = '';
+            }
+            
+            // Show compliance section (in case it was hidden)
+            const complianceSection = document.querySelector('.compliance-section');
+            if (complianceSection) {
+                complianceSection.style.display = 'block';
+            }
+            
+            // Show data sections (in case they were hidden)
+            const dataSections = document.querySelectorAll('.data-section');
+            dataSections.forEach(section => {
+                section.style.display = 'block';
+            });
+        }
+
+        function getDeviceStatus(model, currentYear = new Date().getFullYear()) {
+            const lifecycle = iosLifecycle[model];
+            if (!lifecycle) return { status: 'Unknown', class: 'eol-warning' };
+            
+            const yearsUntilEOL = lifecycle.endOfLife - currentYear;
+            
+            if (yearsUntilEOL <= 0) {
+                return { status: 'End of Life', class: 'eol-critical' };
+            } else if (yearsUntilEOL <= 2) {
+                return { status: `EOL in ${yearsUntilEOL} year${yearsUntilEOL > 1 ? 's' : ''}`, class: 'eol-warning' };
+            } else {
+                return { status: `Supported until ${lifecycle.endOfLife}`, class: 'eol-good' };
+            }
+        }
+
+        function showIOSModels() {
+            const iosDevices = globalDevicesData.filter(d => 
+                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
+            );
+            
+            // Count devices by model
+            const modelCounts = {};
+            iosDevices.forEach(device => {
+                const model = device.model || 'Unknown Model';
+                modelCounts[model] = (modelCounts[model] || 0) + 1;
+            });
+
+            // Populate iOS modal table
+            const tbody = document.querySelector('#iosModelTable tbody');
+            tbody.innerHTML = '';
+
+            // Sort by count (descending)
+            const sortedModels = Object.entries(modelCounts).sort((a, b) => b[1] - a[1]);
+
+            sortedModels.forEach(([model, count]) => {
+                const lifecycle = iosLifecycle[model];
+                const deviceStatus = getDeviceStatus(model);
+                
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = model;
+                row.insertCell(1).textContent = count;
+                row.insertCell(2).textContent = lifecycle ? lifecycle.releaseYear : 'Unknown';
+                row.insertCell(3).textContent = lifecycle ? lifecycle.endOfLife : 'Unknown';
+                
+                const statusCell = row.insertCell(4);
+                statusCell.textContent = deviceStatus.status;
+                statusCell.className = deviceStatus.class;
+            });
+
+            document.getElementById('iosModal').style.display = 'block';
+        }
+
+        function showAndroidModels() {
+            const androidDevices = globalDevicesData.filter(d => 
+                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
+            );
+            
+            // Count devices by model and manufacturer
+            const modelCounts = {};
+            androidDevices.forEach(device => {
+                const model = device.model || 'Unknown Model';
+                const manufacturer = device.manufacturer || 'Unknown';
+                const key = `${manufacturer}|${model}`;
+                
+                if (!modelCounts[key]) {
+                    modelCounts[key] = {
+                        model,
+                        manufacturer,
+                        count: 0
+                    };
+                }
+                modelCounts[key].count++;
+            });
+
+            // Populate Android modal table
+            const tbody = document.querySelector('#androidModelTable tbody');
+            tbody.innerHTML = '';
+
+            // Sort by count (descending)
+            const sortedModels = Object.values(modelCounts).sort((a, b) => b.count - a.count);
+
+            sortedModels.forEach(item => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = item.model;
+                row.insertCell(1).textContent = item.count;
+                row.insertCell(2).textContent = item.manufacturer;
+                row.insertCell(3).textContent = 'Support varies by manufacturer';
+            });
+
+            document.getElementById('androidModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const iosModal = document.getElementById('iosModal');
+            const androidModal = document.getElementById('androidModal');
+            if (event.target === iosModal) {
+                iosModal.style.display = 'none';
+            }
+            if (event.target === androidModal) {
+                androidModal.style.display = 'none';
+            }
         }
     </script>
 </body>
