@@ -615,19 +615,18 @@
 
         function mapColumns(headers) {
             const columnMap = {};
-            let missingColumns = [];
+            let foundColumns = [];
 
-            // Map each required column
+            // Map each column (all optional now)
             for (const [key, possibleNames] of Object.entries(columnMappings)) {
                 const index = findColumnIndex(headers, possibleNames);
                 if (index !== -1) {
                     columnMap[key] = index;
-                } else {
-                    missingColumns.push(key);
+                    foundColumns.push(key);
                 }
             }
 
-            return { columnMap, missingColumns };
+            return { columnMap, foundColumns };
         }
 
         function populateSheetSelector(workbook) {
@@ -660,11 +659,14 @@
             try {
                 // Get headers and map columns
                 const headers = jsonData[0];
-                const { columnMap, missingColumns } = mapColumns(headers);
+                const { columnMap, foundColumns } = mapColumns(headers);
                 
-                if (missingColumns.length > 0) {
-                    throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
-                }
+                console.log('Found columns:', foundColumns);
+                
+                // Show a status message about what columns were found
+                const statusMsg = `Found ${foundColumns.length} recognized columns: ${foundColumns.join(', ')}`;
+                document.getElementById('statusMessage').textContent = statusMsg;
+                document.getElementById('statusMessage').className = 'status-message status-processing';
 
                 // Transform data using column mapping
                 const mappedData = jsonData.slice(1).map(row => {
@@ -675,7 +677,7 @@
                     return mappedRow;
                 });
                 
-                processExcelData(mappedData);
+                processExcelData(mappedData, foundColumns);
             } catch (error) {
                 console.error('Error processing sheet:', error);
                 document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
@@ -708,11 +710,14 @@
                     
                     // Get headers and map columns
                     const headers = jsonData[0];
-                    const { columnMap, missingColumns } = mapColumns(headers);
+                    const { columnMap, foundColumns } = mapColumns(headers);
                     
-                    if (missingColumns.length > 0) {
-                        throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
-                    }
+                    console.log('Found columns:', foundColumns);
+                    
+                    // Show a status message about what columns were found
+                    const statusMsg = `Found ${foundColumns.length} recognized columns: ${foundColumns.join(', ')}`;
+                    document.getElementById('statusMessage').textContent = statusMsg;
+                    document.getElementById('statusMessage').className = 'status-message status-processing';
 
                     // Transform data using column mapping
                     const mappedData = jsonData.slice(1).map(row => {
@@ -723,7 +728,7 @@
                         return mappedRow;
                     });
                     
-                    processExcelData(mappedData);
+                    processExcelData(mappedData, foundColumns);
                 } catch (error) {
                     console.error('Error processing file:', error);
                     document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
@@ -741,41 +746,55 @@
             }
         });
 
-        async function processExcelData(data) {
+        async function processExcelData(data, foundColumns = []) {
             try {
                 console.log('Processing data:', data.length, 'devices');
+                console.log('Available columns:', foundColumns);
                 
-                // Filter out deleted devices
-                const activeDevices = data.filter(device => !device.isDeleted);
+                // Filter out deleted devices (if isDeleted column exists)
+                const activeDevices = foundColumns.includes('isDeleted') ? 
+                    data.filter(device => !device.isDeleted) : data;
                 console.log('Active devices:', activeDevices.length);
                 
-                // Calculate critical metrics
-                const iosDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios'));
-                const androidDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android'));
-                const windowsDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('windows'));
+                // Calculate critical metrics (only if operatingSystem column exists)
+                let iosDevices = [], androidDevices = [], windowsDevices = [];
+                if (foundColumns.includes('operatingSystem')) {
+                    iosDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios'));
+                    androidDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android'));
+                    windowsDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('windows'));
+                }
                 const totalDevices = activeDevices.length;
 
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
                 console.log('Windows devices:', windowsDevices.length);
 
-                // Calculate compliance and security metrics
-                const iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
-                const androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
-                const windowsCompliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
-                const nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || d.complianceStateKey.toString().toLowerCase() !== 'compliant');
+                // Calculate compliance and security metrics (only if compliance column exists)
+                let iosCompliant = 0, androidCompliant = 0, windowsCompliant = 0, nonCompliantDevices = [];
+                if (foundColumns.includes('complianceStateKey')) {
+                    iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                    androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                    windowsCompliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                    nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || d.complianceStateKey.toString().toLowerCase() !== 'compliant');
+                }
                 
-                // Calculate encryption status
-                const unencryptedDevices = activeDevices.filter(d => !d.encryptionState || d.encryptionState.toString().toLowerCase() !== 'encrypted');
+                // Calculate encryption status (only if encryption column exists)
+                let unencryptedDevices = [];
+                if (foundColumns.includes('encryptionState')) {
+                    unencryptedDevices = activeDevices.filter(d => !d.encryptionState || d.encryptionState.toString().toLowerCase() !== 'encrypted');
+                }
                 
-                // Calculate devices not synced in last 30 days
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                const staleDevices = activeDevices.filter(d => {
-                    if (!d.lastSyncDateTime) return true;
-                    const lastSync = new Date(d.lastSyncDateTime);
-                    return isNaN(lastSync.getTime()) || lastSync < thirtyDaysAgo;
-                });
+                // Calculate devices not synced in last 30 days (only if lastSync column exists)
+                let staleDevices = [];
+                if (foundColumns.includes('lastSyncDateTime')) {
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    staleDevices = activeDevices.filter(d => {
+                        if (!d.lastSyncDateTime) return true;
+                        const lastSync = new Date(d.lastSyncDateTime);
+                        return isNaN(lastSync.getTime()) || lastSync < thirtyDaysAgo;
+                    });
+                }
 
                 // Update summary cards with critical metrics
                 document.getElementById('iosTotal').textContent = iosDevices.length;
@@ -783,10 +802,10 @@
                 document.getElementById('windowsTotal').textContent = windowsDevices.length;
                 document.getElementById('totalDevices').textContent = totalDevices;
 
-                // Create urgent items section
+                // Create urgent items section (only for available data)
                 const urgentItems = [];
                 
-                if (nonCompliantDevices.length > 0) {
+                if (foundColumns.includes('complianceStateKey') && nonCompliantDevices.length > 0) {
                     urgentItems.push({
                         severity: 'high',
                         title: 'Non-Compliant Devices',
@@ -795,7 +814,7 @@
                     });
                 }
                 
-                if (unencryptedDevices.length > 0) {
+                if (foundColumns.includes('encryptionState') && unencryptedDevices.length > 0) {
                     urgentItems.push({
                         severity: 'high',
                         title: 'Unencrypted Devices',
@@ -804,7 +823,7 @@
                     });
                 }
                 
-                if (staleDevices.length > 0) {
+                if (foundColumns.includes('lastSyncDateTime') && staleDevices.length > 0) {
                     urgentItems.push({
                         severity: 'medium',
                         title: 'Inactive Devices',
@@ -813,14 +832,16 @@
                     });
                 }
 
-                // Update compliance bars
-                const iosCompliancePercent = iosDevices.length > 0 ? (iosCompliant / iosDevices.length) * 100 : 0;
-                const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
-                const windowsCompliancePercent = windowsDevices.length > 0 ? (windowsCompliant / windowsDevices.length) * 100 : 0;
-                
-                document.getElementById('iosCompliant').style.width = `${iosCompliancePercent}%`;
-                document.getElementById('androidCompliant').style.width = `${androidCompliancePercent}%`;
-                document.getElementById('windowsCompliant').style.width = `${windowsCompliancePercent}%`;
+                // Update compliance bars (only if compliance data exists)
+                if (foundColumns.includes('complianceStateKey')) {
+                    const iosCompliancePercent = iosDevices.length > 0 ? (iosCompliant / iosDevices.length) * 100 : 0;
+                    const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
+                    const windowsCompliancePercent = windowsDevices.length > 0 ? (windowsCompliant / windowsDevices.length) * 100 : 0;
+                    
+                    document.getElementById('iosCompliant').style.width = `${iosCompliancePercent}%`;
+                    document.getElementById('androidCompliant').style.width = `${androidCompliancePercent}%`;
+                    document.getElementById('windowsCompliant').style.width = `${windowsCompliancePercent}%`;
+                }
 
                 // Update urgent items section
                 const urgentItemsContainer = document.getElementById('urgentItems');
@@ -841,17 +862,27 @@
                     });
                 }
 
-                // Populate operating system breakdown table
-                populateOSTable(activeDevices);
+                // Populate operating system breakdown table (only if OS data exists)
+                if (foundColumns.includes('operatingSystem')) {
+                    populateOSTable(activeDevices);
+                } else {
+                    // Hide OS table if no OS data
+                    document.getElementById('osTable').closest('.data-section').style.display = 'none';
+                }
 
-                // Populate device models table
-                populateModelTable(activeDevices);
+                // Populate device models table (only if model data exists)
+                if (foundColumns.includes('model') || foundColumns.includes('manufacturer')) {
+                    populateModelTable(activeDevices);
+                } else {
+                    // Hide model table if no model data
+                    document.getElementById('modelTable').closest('.data-section').style.display = 'none';
+                }
 
                 // Show report container
                 document.getElementById('reportContainer').style.display = 'block';
                 
                 // Update status message
-                document.getElementById('statusMessage').textContent = 'Report generated successfully';
+                document.getElementById('statusMessage').textContent = `Report generated successfully with ${foundColumns.length} data columns`;
                 document.getElementById('statusMessage').className = 'status-message status-success';
                 
                 console.log('Report generated successfully');
