@@ -7,6 +7,7 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,6 +19,7 @@
             --border-color: #dee2e6;
             --tmh-blue: #003366;
             --tmh-gray: #4a4a4a;
+            --accent: #e0e7ef;
         }
 
         * {
@@ -57,6 +59,59 @@
         .header p {
             font-size: 1.2em;
             opacity: 0.9;
+        }
+
+        .auth-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .auth-section h2 {
+            color: var(--tmh-blue);
+            margin-bottom: 20px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .auth-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .auth-status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .auth-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--tmh-blue);
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .upload-section {
@@ -122,17 +177,19 @@
 
         .data-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 24px;
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            font-size: 0.97em;
         }
 
         .data-table th,
         .data-table td {
-            padding: 15px;
+            padding: 8px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
@@ -141,10 +198,28 @@
             background-color: var(--tmh-blue);
             color: white;
             font-weight: 600;
+            border-right: 1px solid #274472;
+        }
+
+        .data-table th:last-child,
+        .data-table td:last-child {
+            border-right: none;
+        }
+
+        .data-table tr {
+            transition: background 0.15s;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: var(--accent);
         }
 
         .data-table tr:hover {
-            background-color: var(--light-bg);
+            background-color: #f1f5fa;
+        }
+
+        .data-table td {
+            vertical-align: middle;
         }
 
         .actions {
@@ -178,18 +253,52 @@
             transform: translateY(-2px);
         }
 
-        .chart-container {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .chart-container, .compliance-section {
+            border-left: 4px solid var(--tmh-blue);
+            margin-bottom: 28px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
 
-        .chart-container h2 {
+        .chart-container h2, .compliance-section h2 {
+            display: flex;
+            align-items: center;
+            font-size: 1.25em;
             color: var(--tmh-blue);
-            margin-bottom: 20px;
-            font-size: 1.5em;
+            margin-bottom: 18px;
+            border-bottom: 1.5px solid var(--accent);
+            padding-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .chart-container h2::before, .compliance-section h2::before {
+            content: "\1F4CA";
+            font-size: 1.1em;
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+
+        .compliance-section h2::before {
+            content: "\2705";
+        }
+
+        .summary-cards {
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .card {
+            padding: 18px 16px;
+            border-radius: 7px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        .card h3 {
+            font-size: 1.08em;
+            margin-bottom: 7px;
+        }
+
+        .card p {
+            font-size: 1.45em;
         }
 
         .footer {
@@ -253,6 +362,26 @@
             margin-left: 15px;
             color: var(--tmh-gray);
         }
+
+        .status-message {
+            margin: 20px 0 0 0;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        .status-waiting {
+            background: #e9ecef;
+            color: #333;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -262,11 +391,19 @@
             <p>IT Asset Management - Device Inventory Report</p>
         </div>
 
+        <div class="auth-section">
+            <h2>Microsoft Intune Connection</h2>
+            <div id="authStatus"></div>
+            <button id="loginButton" class="btn btn-primary">Connect to Intune</button>
+            <div id="connectionStatus"></div>
+        </div>
+
         <div class="upload-section">
             <label for="fileInput" class="file-input-label">Choose Excel File</label>
             <input type="file" id="fileInput" accept=".xlsx,.xls" />
             <span id="fileName" class="file-name"></span>
             <select id="sheetSelect" style="display:none; margin-left:20px; padding:8px 12px; border-radius:6px; border:1px solid var(--border-color); font-size:1em;"></select>
+            <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
             <div class="actions">
                 <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
                 <button class="btn btn-secondary" onclick="exportToHTML()">Export to HTML</button>
@@ -331,6 +468,125 @@
     </div>
 
     <script>
+        // MSAL Configuration
+        const msalConfig = {
+            auth: {
+                clientId: "YOUR_CLIENT_ID", // Replace with your Azure AD app client ID
+                authority: "https://login.microsoftonline.com/YOUR_TENANT_ID", // Replace with your tenant ID
+                redirectUri: window.location.origin,
+            },
+            cache: {
+                cacheLocation: "sessionStorage",
+                storeAuthStateInCookie: false
+            }
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+        const loginRequest = {
+            scopes: ["DeviceManagementManagedDevices.Read.All"]
+        };
+
+        let isAuthenticated = false;
+        let accessToken = null;
+
+        // Initialize MSAL
+        async function initializeMsal() {
+            try {
+                const response = await msalInstance.handleRedirectPromise();
+                if (response) {
+                    accessToken = response.accessToken;
+                    isAuthenticated = true;
+                    updateAuthStatus(true);
+                }
+            } catch (error) {
+                console.error("Error during MSAL initialization:", error);
+                updateAuthStatus(false, error.message);
+            }
+        }
+
+        // Login function
+        async function login() {
+            try {
+                const response = await msalInstance.loginPopup(loginRequest);
+                accessToken = response.accessToken;
+                isAuthenticated = true;
+                updateAuthStatus(true);
+                fetchIntuneData();
+            } catch (error) {
+                console.error("Login error:", error);
+                updateAuthStatus(false, error.message);
+            }
+        }
+
+        // Update authentication status UI
+        function updateAuthStatus(success, message = "") {
+            const authStatus = document.getElementById('authStatus');
+            const loginButton = document.getElementById('loginButton');
+            
+            if (success) {
+                authStatus.className = "auth-status success";
+                authStatus.textContent = "Connected to Intune";
+                loginButton.textContent = "Refresh Data";
+                loginButton.onclick = fetchIntuneData;
+            } else {
+                authStatus.className = "auth-status error";
+                authStatus.textContent = message || "Not connected to Intune";
+                loginButton.textContent = "Connect to Intune";
+                loginButton.onclick = login;
+            }
+        }
+
+        // Fetch data from Intune
+        async function fetchIntuneData() {
+            if (!isAuthenticated || !accessToken) {
+                updateAuthStatus(false, "Not authenticated");
+                return;
+            }
+
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.innerHTML = '<div class="loading"></div> Fetching data from Intune...';
+
+            try {
+                const response = await fetch('https://graph.microsoft.com/v1.0/deviceManagement/managedDevices', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                processIntuneData(data.value);
+                statusDiv.textContent = "Data fetched successfully";
+            } catch (error) {
+                console.error("Error fetching Intune data:", error);
+                statusDiv.textContent = `Error: ${error.message}`;
+                updateAuthStatus(false, "Failed to fetch data");
+            }
+        }
+
+        // Process Intune data
+        function processIntuneData(data) {
+            // Transform Intune data to match our expected format
+            const transformedData = data.map(device => ({
+                operatingSystem: device.operatingSystem,
+                model: device.model,
+                deviceCategoryDisplayName: device.deviceCategoryDisplayName,
+                complianceState: device.complianceState,
+                lastSyncDateTime: device.lastSyncDateTime
+            }));
+
+            // Process the transformed data
+            processData(transformedData);
+        }
+
+        // Initialize the application
+        initializeMsal();
+        document.getElementById('loginButton').onclick = login;
+
         // iOS device lifecycle mapping
         const iosLifecycleMap = {
             'iPhone 6s': { eolYear: 2023, status: 'EOL' },
@@ -355,12 +611,28 @@
             minute: '2-digit'
         });
 
+        // Required columns for validation
+        const REQUIRED_COLUMNS = [
+            'operatingSystem',
+            'model',
+            'deviceCategoryDisplayName',
+            'complianceState',
+            'lastSyncDateTime'
+        ];
+
         let workbookGlobal = null;
         let currentSheetName = null;
+
+        function setStatus(message, type) {
+            const status = document.getElementById('statusMessage');
+            status.textContent = message;
+            status.className = 'status-message ' + type;
+        }
 
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const fileName = e.target.files[0]?.name || '';
             document.getElementById('fileName').textContent = fileName;
+            setStatus('Parsing file…', 'status-waiting');
             handleFileUpload(e);
         });
 
@@ -370,7 +642,7 @@
                 currentSheetName = sheetName;
                 const sheet = workbookGlobal.Sheets[sheetName];
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
-                processData(jsonData);
+                validateAndProcess(jsonData);
             }
         });
 
@@ -379,27 +651,48 @@
             const reader = new FileReader();
 
             reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                workbookGlobal = workbook;
-                const sheetNames = workbook.SheetNames;
-                const sheetSelect = document.getElementById('sheetSelect');
-                sheetSelect.innerHTML = '';
-                sheetNames.forEach((name, idx) => {
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name;
-                    sheetSelect.appendChild(opt);
-                });
-                sheetSelect.style.display = sheetNames.length > 1 ? 'inline-block' : 'none';
-                currentSheetName = sheetNames[0];
-                sheetSelect.value = currentSheetName;
-                const firstSheet = workbook.Sheets[currentSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                processData(jsonData);
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    workbookGlobal = workbook;
+                    const sheetNames = workbook.SheetNames;
+                    const sheetSelect = document.getElementById('sheetSelect');
+                    sheetSelect.innerHTML = '';
+                    sheetNames.forEach((name, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        sheetSelect.appendChild(opt);
+                    });
+                    sheetSelect.style.display = sheetNames.length > 1 ? 'inline-block' : 'none';
+                    currentSheetName = sheetNames[0];
+                    sheetSelect.value = currentSheetName;
+                    const firstSheet = workbook.Sheets[currentSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    validateAndProcess(jsonData);
+                } catch (err) {
+                    setStatus('Failed to parse file. Please ensure it is a valid Excel export.', 'status-error');
+                }
             };
 
             reader.readAsArrayBuffer(file);
+        }
+
+        function validateAndProcess(data) {
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                setStatus('No data found in the selected sheet.', 'status-error');
+                document.getElementById('reportContent').style.display = 'none';
+                return;
+            }
+            const firstRow = data[0];
+            const missing = REQUIRED_COLUMNS.filter(col => !(col in firstRow));
+            if (missing.length > 0) {
+                setStatus('⚠️ Missing columns: ' + missing.join(', '), 'status-error');
+                document.getElementById('reportContent').style.display = 'none';
+                return;
+            }
+            setStatus('Parsed ' + data.length + ' devices successfully.', 'status-success');
+            processData(data);
         }
 
         function processData(data) {
