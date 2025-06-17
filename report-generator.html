@@ -938,15 +938,14 @@
             complianceStateKey: ['complianceStateKey', 'compliancestatekey', 'compliance_state', 'compliance', 'compliancestate', 'Compliance'],
             lastSyncDateTime: ['lastSyncDateTime', 'lastsyncdatetime', 'last_sync', 'lastsync', 'lastSync', 'Last check-in', 'lastcheckin'],
             encryptionState: ['encryptionState', 'encryptionstate', 'encryption_state', 'encryption'],
-            // Additional mappings for future flexibility
-            model: ['model', 'deviceModel', 'devicemodel', 'device_model', 'Model'],
+            // User-specified column names (exact matches prioritized)
+            model: ['Model', 'model', 'deviceModel', 'devicemodel', 'device_model'],
             manufacturer: ['manufacturer', 'make', 'brand'],
-            deviceCategoryKey: ['deviceCategoryKey', 'category', 'devicecategory', 'device_category', 'Category'],
+            deviceCategoryKey: ['Category', 'category', 'deviceCategoryKey', 'devicecategory', 'device_category'],
             isDeleted: ['isDeleted', 'isdeleted', 'deleted', 'is_deleted'],
-            // New mappings for requested fields
-            managedBy: ['managedBy', 'managedby', 'managed_by', 'Managed by'],
-            ownership: ['ownership', 'ownershipType', 'owner', 'Ownership'],
-            osVersion: ['osVersion', 'osversion', 'os_version', 'OS version', 'version']
+            managedBy: ['Managed by', 'managedBy', 'managedby', 'managed_by'],
+            ownership: ['Ownership', 'ownership', 'ownershipType', 'owner'],
+            osVersion: ['OS version', 'osVersion', 'osversion', 'os_version', 'version']
         };
 
         let workbookGlobal = null;
