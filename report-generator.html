@@ -180,6 +180,19 @@
             color: #721c24;
         }
 
+        .data-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .data-section h2 {
+            color: var(--tmh-blue);
+            margin-bottom: 20px;
+        }
+
         #reportContainer {
             display: none;
             margin-top: 30px;
@@ -491,6 +504,10 @@
                 </label>
             </div>
             <span id="fileName" class="file-name"></span>
+            <div id="sheetSelectorContainer" style="display: none; margin-top: 15px;">
+                <label for="sheetSelect">Select Sheet:</label>
+                <select id="sheetSelect" style="margin-left: 10px; padding: 5px;"></select>
+            </div>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
         </div>
 
@@ -503,6 +520,10 @@
                 <div class="card">
                     <h3>Android Devices</h3>
                     <p id="androidTotal">0</p>
+                </div>
+                <div class="card">
+                    <h3>Windows Devices</h3>
+                    <p id="windowsTotal">0</p>
                 </div>
                 <div class="card">
                     <h3>Total Devices</h3>
@@ -520,6 +541,35 @@
                 </div>
             </div>
 
+            <div class="data-section">
+                <h2>Operating System Breakdown</h2>
+                <table class="data-table" id="osTable">
+                    <thead>
+                        <tr>
+                            <th>Operating System</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="data-section">
+                <h2>Device Models</h2>
+                <table class="data-table" id="modelTable">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Manufacturer</th>
+                            <th>Count</th>
+                            <th>Operating System</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
             <div class="urgent-items">
                 <h2>Urgent Items</h2>
                 <div id="urgentItems"></div>
@@ -534,18 +584,24 @@
         const columnMappings = {
             // Core device information
             deviceKey: ['deviceKey', 'devicekey', 'device_key', 'key'],
-            deviceId: ['deviceId', 'deviceid', 'device_id', 'id'],
-            deviceName: ['deviceName', 'devicename', 'device_name', 'name'],
+            deviceId: ['deviceId', 'deviceid', 'device_id', 'id', 'Device ID'],
+            deviceName: ['deviceName', 'devicename', 'device_name', 'name', 'Device name'],
             operatingSystem: ['operatingSystem', 'operatingsystem', 'os', 'operating_system', 'platform'],
-            complianceStateKey: ['complianceStateKey', 'compliancestatekey', 'compliance_state', 'compliance', 'compliancestate'],
-            lastSyncDateTime: ['lastSyncDateTime', 'lastsyncdatetime', 'last_sync', 'lastsync', 'lastSync'],
+            complianceStateKey: ['complianceStateKey', 'compliancestatekey', 'compliance_state', 'compliance', 'compliancestate', 'Compliance'],
+            lastSyncDateTime: ['lastSyncDateTime', 'lastsyncdatetime', 'last_sync', 'lastsync', 'lastSync', 'Last check-in', 'lastcheckin'],
             encryptionState: ['encryptionState', 'encryptionstate', 'encryption_state', 'encryption'],
             // Additional mappings for future flexibility
-            model: ['model', 'deviceModel', 'devicemodel', 'device_model'],
+            model: ['model', 'deviceModel', 'devicemodel', 'device_model', 'Model'],
             manufacturer: ['manufacturer', 'make', 'brand'],
-            deviceCategoryKey: ['deviceCategoryKey', 'category', 'devicecategory', 'device_category'],
-            isDeleted: ['isDeleted', 'isdeleted', 'deleted', 'is_deleted']
+            deviceCategoryKey: ['deviceCategoryKey', 'category', 'devicecategory', 'device_category', 'Category'],
+            isDeleted: ['isDeleted', 'isdeleted', 'deleted', 'is_deleted'],
+            // New mappings for requested fields
+            managedBy: ['managedBy', 'managedby', 'managed_by', 'Managed by'],
+            ownership: ['ownership', 'ownershipType', 'owner', 'Ownership'],
+            osVersion: ['osVersion', 'osversion', 'os_version', 'OS version', 'version']
         };
+
+        let workbookGlobal = null;
 
         function findColumnIndex(headers, possibleNames) {
             for (const name of possibleNames) {
@@ -574,6 +630,59 @@
             return { columnMap, missingColumns };
         }
 
+        function populateSheetSelector(workbook) {
+            const sheetSelect = document.getElementById('sheetSelect');
+            const sheetSelectorContainer = document.getElementById('sheetSelectorContainer');
+            
+            sheetSelect.innerHTML = '';
+            
+            if (workbook.SheetNames.length > 1) {
+                workbook.SheetNames.forEach(sheetName => {
+                    const option = document.createElement('option');
+                    option.value = sheetName;
+                    option.textContent = sheetName;
+                    sheetSelect.appendChild(option);
+                });
+                sheetSelectorContainer.style.display = 'block';
+            } else {
+                sheetSelectorContainer.style.display = 'none';
+            }
+        }
+
+        function processSelectedSheet() {
+            if (!workbookGlobal) return;
+            
+            const sheetSelect = document.getElementById('sheetSelect');
+            const selectedSheet = sheetSelect.value;
+            const sheet = workbookGlobal.Sheets[selectedSheet];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            
+            try {
+                // Get headers and map columns
+                const headers = jsonData[0];
+                const { columnMap, missingColumns } = mapColumns(headers);
+                
+                if (missingColumns.length > 0) {
+                    throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
+                }
+
+                // Transform data using column mapping
+                const mappedData = jsonData.slice(1).map(row => {
+                    const mappedRow = {};
+                    for (const [key, index] of Object.entries(columnMap)) {
+                        mappedRow[key] = row[index];
+                    }
+                    return mappedRow;
+                });
+                
+                processExcelData(mappedData);
+            } catch (error) {
+                console.error('Error processing sheet:', error);
+                document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('statusMessage').className = 'status-message status-error';
+            }
+        }
+
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -588,8 +697,12 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
+                    workbookGlobal = workbook;
                     
-                    // Get the first sheet
+                    // Populate sheet selector
+                    populateSheetSelector(workbook);
+                    
+                    // Process the first sheet by default
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
                     
@@ -620,6 +733,14 @@
             reader.readAsArrayBuffer(file);
         });
 
+        // Add event listener for sheet selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const sheetSelect = document.getElementById('sheetSelect');
+            if (sheetSelect) {
+                sheetSelect.addEventListener('change', processSelectedSheet);
+            }
+        });
+
         async function processExcelData(data) {
             try {
                 console.log('Processing data:', data.length, 'devices');
@@ -631,14 +752,17 @@
                 // Calculate critical metrics
                 const iosDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios'));
                 const androidDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android'));
+                const windowsDevices = activeDevices.filter(d => d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('windows'));
                 const totalDevices = activeDevices.length;
 
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
+                console.log('Windows devices:', windowsDevices.length);
 
                 // Calculate compliance and security metrics
                 const iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
                 const androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const windowsCompliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
                 const nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || d.complianceStateKey.toString().toLowerCase() !== 'compliant');
                 
                 // Calculate encryption status
@@ -656,6 +780,7 @@
                 // Update summary cards with critical metrics
                 document.getElementById('iosTotal').textContent = iosDevices.length;
                 document.getElementById('androidTotal').textContent = androidDevices.length;
+                document.getElementById('windowsTotal').textContent = windowsDevices.length;
                 document.getElementById('totalDevices').textContent = totalDevices;
 
                 // Create urgent items section
@@ -691,9 +816,11 @@
                 // Update compliance bars
                 const iosCompliancePercent = iosDevices.length > 0 ? (iosCompliant / iosDevices.length) * 100 : 0;
                 const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
+                const windowsCompliancePercent = windowsDevices.length > 0 ? (windowsCompliant / windowsDevices.length) * 100 : 0;
                 
                 document.getElementById('iosCompliant').style.width = `${iosCompliancePercent}%`;
                 document.getElementById('androidCompliant').style.width = `${androidCompliancePercent}%`;
+                document.getElementById('windowsCompliant').style.width = `${windowsCompliancePercent}%`;
 
                 // Update urgent items section
                 const urgentItemsContainer = document.getElementById('urgentItems');
@@ -714,6 +841,12 @@
                     });
                 }
 
+                // Populate operating system breakdown table
+                populateOSTable(activeDevices);
+
+                // Populate device models table
+                populateModelTable(activeDevices);
+
                 // Show report container
                 document.getElementById('reportContainer').style.display = 'block';
                 
@@ -727,6 +860,64 @@
                 document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
                 document.getElementById('statusMessage').className = 'status-message status-error';
             }
+        }
+
+        function populateOSTable(devices) {
+            const osTable = document.getElementById('osTable').getElementsByTagName('tbody')[0];
+            osTable.innerHTML = '';
+
+            // Count devices by operating system
+            const osCounts = {};
+            devices.forEach(device => {
+                const os = device.operatingSystem || 'Unknown';
+                osCounts[os] = (osCounts[os] || 0) + 1;
+            });
+
+            // Sort by count (descending)
+            const sortedOS = Object.entries(osCounts).sort((a, b) => b[1] - a[1]);
+
+            sortedOS.forEach(([os, count]) => {
+                const percentage = ((count / devices.length) * 100).toFixed(1);
+                const row = osTable.insertRow();
+                row.insertCell(0).textContent = os;
+                row.insertCell(1).textContent = count;
+                row.insertCell(2).textContent = `${percentage}%`;
+            });
+        }
+
+        function populateModelTable(devices) {
+            const modelTable = document.getElementById('modelTable').getElementsByTagName('tbody')[0];
+            modelTable.innerHTML = '';
+
+            // Count devices by model and group by manufacturer and OS
+            const modelCounts = {};
+            devices.forEach(device => {
+                const model = device.model || 'Unknown';
+                const manufacturer = device.manufacturer || 'Unknown';
+                const os = device.operatingSystem || 'Unknown';
+                const key = `${model}|${manufacturer}|${os}`;
+                
+                if (!modelCounts[key]) {
+                    modelCounts[key] = {
+                        model,
+                        manufacturer,
+                        os,
+                        count: 0
+                    };
+                }
+                modelCounts[key].count++;
+            });
+
+            // Sort by count (descending)
+            const sortedModels = Object.values(modelCounts).sort((a, b) => b.count - a.count);
+
+            sortedModels.forEach(item => {
+                const row = modelTable.insertRow();
+                row.insertCell(0).textContent = item.model;
+                row.insertCell(1).textContent = item.manufacturer;
+                row.insertCell(2).textContent = item.count;
+                row.insertCell(3).textContent = item.os;
+            });
         }
 
         function exportToPDF() {
