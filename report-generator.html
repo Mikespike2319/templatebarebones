@@ -930,6 +930,73 @@
             <div class="section">
                 <div class="section-header">Platform Trend Comparison</div>
                 <div style="padding: 0.8rem;">
+                    <!-- Monthly Count Input Fields -->
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">Monthly Device Counts</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <!-- iOS Monthly Counts -->
+                            <div>
+                                <h5 style="color: #0056b3; margin-bottom: 0.8rem; font-size: 0.8rem;">iOS Device Counts</h5>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.75rem;">
+                                    <div>
+                                        <label for="ios_march2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">March 2024:</label>
+                                        <input type="number" id="ios_march2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div>
+                                        <label for="ios_april2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">April 2024:</label>
+                                        <input type="number" id="ios_april2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div>
+                                        <label for="ios_may2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">May 2024:</label>
+                                        <input type="number" id="ios_may2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div>
+                                        <label for="ios_june2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">June 2024:</label>
+                                        <input type="number" id="ios_june2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div style="grid-column: 1 / -1;">
+                                        <label for="ios_current" style="display: block; margin-bottom: 0.2rem; font-weight: 600; color: #0056b3;">Current Month:</label>
+                                        <input type="number" id="ios_current" placeholder="Current Count" style="width: 100%; padding: 0.4rem; border: 2px solid #0056b3; border-radius: 4px; font-size: 0.7rem; font-weight: bold;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Android Monthly Counts -->
+                            <div>
+                                <h5 style="color: #28a745; margin-bottom: 0.8rem; font-size: 0.8rem;">Android Device Counts</h5>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.75rem;">
+                                    <div>
+                                        <label for="android_march2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">March 2024:</label>
+                                        <input type="number" id="android_march2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div>
+                                        <label for="android_april2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">April 2024:</label>
+                                        <input type="number" id="android_april2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div>
+                                        <label for="android_may2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">May 2024:</label>
+                                        <input type="number" id="android_may2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div>
+                                        <label for="android_june2024" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">June 2024:</label>
+                                        <input type="number" id="android_june2024" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                    <div style="grid-column: 1 / -1;">
+                                        <label for="android_current" style="display: block; margin-bottom: 0.2rem; font-weight: 600; color: #28a745;">Current Month:</label>
+                                        <input type="number" id="android_current" placeholder="Current Count" style="width: 100%; padding: 0.4rem; border: 2px solid #28a745; border-radius: 4px; font-size: 0.7rem; font-weight: bold;" onchange="updateMonthlyComparison()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
+                            <button onclick="autoFillCurrentCounts()" style="padding: 0.5rem 1rem; background: #003d5c; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s ease;">Auto-Fill Current</button>
+                            <button onclick="clearMonthlyCounts()" style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s ease;">Clear All</button>
+                            <button onclick="exportHistoricalData()" style="padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s ease;">Export CSV</button>
+                        </div>
+                    </div>
+                    
                     <div id="monthlyComparison">
                         <!-- Platform comparison table will be populated here -->
                     </div>
@@ -3108,6 +3175,18 @@
                         });
                     }
                 });
+                
+                // Add event listeners for current month fields
+                const currentInput = document.getElementById(`${platform}_current`);
+                if (currentInput) {
+                    currentInput.addEventListener('input', function() {
+                        // Debounce the update to avoid too frequent updates
+                        clearTimeout(currentInput.updateTimeout);
+                        currentInput.updateTimeout = setTimeout(() => {
+                            updateMonthlyComparison();
+                        }, 500);
+                    });
+                }
             });
         });
 
@@ -3180,6 +3259,70 @@
                     console.log(`   • "${cat}": ${count} devices`);
                 });
             }
+        }
+
+        function autoFillCurrentCounts() {
+            // Get current device counts from the summary cards
+            const iosCount = parseInt(document.getElementById('iosTotal').textContent) || 0;
+            const androidCount = parseInt(document.getElementById('androidTotal').textContent) || 0;
+            
+            // Auto-fill the current month fields
+            const iosCurrent = document.getElementById('ios_current');
+            const androidCurrent = document.getElementById('android_current');
+            
+            if (iosCurrent) {
+                iosCurrent.value = iosCount;
+            }
+            if (androidCurrent) {
+                androidCurrent.value = androidCount;
+            }
+            
+            // Update the comparison table
+            updateMonthlyComparison();
+            
+            // Show success message
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Filled!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        }
+
+        function clearMonthlyCounts() {
+            if (!confirm('Are you sure you want to clear all monthly count data? This action cannot be undone.')) {
+                return;
+            }
+            
+            const months = ['march2024', 'april2024', 'may2024', 'june2024'];
+            const platforms = ['ios', 'android'];
+            
+            // Clear all monthly input fields
+            platforms.forEach(platform => {
+                months.forEach(month => {
+                    const input = document.getElementById(`${platform}_${month}`);
+                    if (input) {
+                        input.value = '';
+                    }
+                });
+                
+                // Clear current month field
+                const currentInput = document.getElementById(`${platform}_current`);
+                if (currentInput) {
+                    currentInput.value = '';
+                }
+            });
+            
+            // Update the comparison table
+            updateMonthlyComparison();
+            
+            // Show success message
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Cleared!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
         }
     </script>
 </body>
