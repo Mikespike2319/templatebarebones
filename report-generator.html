@@ -962,7 +962,7 @@
                         </table>
                         <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
                             <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">Windows Compliance</h5>
-                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="windowsCompliantCount">0</span> | <strong>ConfigMgr:</strong> <span id="windowsConfigMgrCount">0</span></p>
+                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="windowsCompliantCount">0</span> | <strong>Unknown (ConfigMgr):</strong> <span id="windowsConfigMgrCount">0</span> | <strong>Non-Compliant:</strong> <span id="windowsNonCompliantCount">0</span></p>
                             <div class="compliance-bar">
                                 <div class="compliance-fill" id="windowsComplianceFill" style="width: 0%;"></div>
                             </div>
@@ -1346,9 +1346,21 @@
                     
                     iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                     androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
-                    windowsCompliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                     
-                    // Count ConfigMgr devices with more flexible detection
+                    // For Windows: separate compliant from ConfigMgr (unknown status)
+                    windowsCompliant = windowsDevices.filter(d => {
+                        if (!d.complianceStateKey) return false;
+                        const complianceStr = d.complianceStateKey.toString().toLowerCase().trim();
+                        // Only count as compliant if it contains "compliant" but NOT ConfigMgr terms
+                        return complianceStr.includes('compliant') && 
+                               !complianceStr.includes('configmgr') && 
+                               !complianceStr.includes('config mgr') &&
+                               !complianceStr.includes('see configmgr') &&
+                               !complianceStr.includes('sccm') &&
+                               !complianceStr.includes('configuration manager');
+                    }).length;
+                    
+                    // Count ConfigMgr devices as "unknown" status
                     configMgrDevices = windowsDevices.filter(d => {
                         if (!d.complianceStateKey) return false;
                         const complianceStr = d.complianceStateKey.toString().toLowerCase().trim();
@@ -1890,14 +1902,33 @@
 
             console.log('Populating Windows categories table with', windowsDevices.length, 'devices');
 
-            // Count devices by Category column
+            // Count devices by Category column with enhanced categorization
             const categoryCounts = {};
             windowsDevices.forEach((device, index) => {
                 let category = '(no category)';
                 
                 // Use the Category column if available
                 if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
-                    category = device.deviceCategoryKey;
+                    let rawCategory = device.deviceCategoryKey.toString().trim();
+                    const lowerCategory = rawCategory.toLowerCase();
+                    
+                    // Handle specific categories
+                    if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null') {
+                        category = '(unassigned)';
+                    } else if (lowerCategory.includes('laptop') || lowerCategory.includes('notebook')) {
+                        category = 'Laptop';
+                    } else if (lowerCategory.includes('desktop') || lowerCategory.includes('workstation')) {
+                        category = 'Desktop/Workstation';
+                    } else if (lowerCategory.includes('tablet')) {
+                        category = 'Windows Tablet';
+                    } else if (lowerCategory.includes('kiosk')) {
+                        category = 'Kiosk';
+                    } else if (lowerCategory.includes('server')) {
+                        category = 'Server';
+                    } else {
+                        // Use the original category name if no specific mapping found
+                        category = rawCategory;
+                    }
                 } else if (foundColumns.includes('deviceCategoryKey')) {
                     category = '(blank)';
                 } else {
@@ -1906,7 +1937,7 @@
                     if (deviceStr.includes('laptop') || deviceStr.includes('notebook')) {
                         category = 'Laptop';
                     } else if (deviceStr.includes('desktop') || deviceStr.includes('workstation')) {
-                        category = 'Desktop';
+                        category = 'Desktop/Workstation';
                     } else if (deviceStr.includes('tablet')) {
                         category = 'Windows Tablet';
                     } else {
@@ -1925,13 +1956,38 @@
 
             sortedCategories.forEach(([category, count]) => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = category;
-                row.insertCell(1).textContent = count;
+                
+                // Category cell with improved formatting
+                const categoryCell = row.insertCell(0);
+                categoryCell.textContent = category;
+                
+                // Add visual indicators for special categories
+                if (category.includes('(unassigned)') || category.includes('(blank)')) {
+                    categoryCell.style.color = '#dc3545';
+                    categoryCell.style.fontStyle = 'italic';
+                }
+                
+                // Count cell
+                const countCell = row.insertCell(1);
+                countCell.textContent = count;
+                countCell.style.fontWeight = 'bold';
             });
 
-            // Update Windows compliance
+            // Update Windows compliance with three-way split: Compliant, Unknown (ConfigMgr), Non-Compliant
             if (foundColumns.includes('complianceStateKey')) {
-                const compliant = windowsDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
+                // Compliant: has "compliant" but NOT ConfigMgr terms
+                const compliant = windowsDevices.filter(d => {
+                    if (!d.complianceStateKey) return false;
+                    const complianceStr = d.complianceStateKey.toString().toLowerCase().trim();
+                    return complianceStr.includes('compliant') && 
+                           !complianceStr.includes('configmgr') && 
+                           !complianceStr.includes('config mgr') &&
+                           !complianceStr.includes('see configmgr') &&
+                           !complianceStr.includes('sccm') &&
+                           !complianceStr.includes('configuration manager');
+                }).length;
+                
+                // Unknown (ConfigMgr): has ConfigMgr terms
                 const configMgr = windowsDevices.filter(d => {
                     if (!d.complianceStateKey) return false;
                     const complianceStr = d.complianceStateKey.toString().toLowerCase().trim();
@@ -1941,12 +1997,20 @@
                            complianceStr.includes('sccm') ||
                            complianceStr.includes('configuration manager');
                 }).length;
+                
+                // Non-Compliant: everything else
+                const nonCompliant = windowsDevices.length - compliant - configMgr;
+                
+                // Compliance percentage is based only on truly compliant devices
                 const compliancePercent = windowsDevices.length > 0 ? (compliant / windowsDevices.length) * 100 : 0;
                 
                 document.getElementById('windowsCompliantCount').textContent = compliant;
                 document.getElementById('windowsConfigMgrCount').textContent = configMgr;
+                document.getElementById('windowsNonCompliantCount').textContent = nonCompliant;
                 document.getElementById('windowsComplianceFill').style.width = `${compliancePercent}%`;
                 document.getElementById('windowsCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
+                
+                console.log(`Windows compliance breakdown - Compliant: ${compliant}, Unknown (ConfigMgr): ${configMgr}, Non-Compliant: ${nonCompliant}`);
             }
         }
 
@@ -2129,7 +2193,7 @@
             const complianceTextElements = [
                 'iosCompliantCount', 'iosNonCompliantCount', 'iosCompliancePercent',
                 'androidCompliantCount', 'androidNonCompliantCount', 'androidCompliancePercent',
-                'windowsCompliantCount', 'windowsConfigMgrCount', 'windowsCompliancePercent'
+                'windowsCompliantCount', 'windowsConfigMgrCount', 'windowsNonCompliantCount', 'windowsCompliancePercent'
             ];
             complianceTextElements.forEach(elementId => {
                 const element = document.getElementById(elementId);
