@@ -1865,14 +1865,68 @@
 
             console.log('Populating iOS categories table with', iosDevices.length, 'devices');
 
-            // Count devices by Category column
+            // Count devices by Category column with enhanced categorization
             const categoryCounts = {};
             iosDevices.forEach((device, index) => {
                 let category = '(no category)';
                 
                 // Use the Category column if available
                 if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
-                    category = device.deviceCategoryKey;
+                    // Clean and normalize the category name
+                    let rawCategory = device.deviceCategoryKey.toString().trim();
+                    
+                    // Handle specific TMH categories (case-insensitive)
+                    const lowerCategory = rawCategory.toLowerCase();
+                    
+                    // Enhanced debugging for category mapping
+                    if (index < 10) {
+                        console.log(`iOS Device ${index} category mapping:`, {
+                            original: rawCategory,
+                            lowercase: lowerCategory,
+                            device: device.deviceName || device.displayName || 'Unknown'
+                        });
+                    }
+                    
+                    if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
+                        category = 'iOS Backstock';
+                    } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome') || lowerCategory.includes('epic_welcome')) {
+                        category = 'Epic Welcome';
+                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode')) {
+                        category = 'Zebra/Scanner';
+                    } else if (lowerCategory.includes('tablet') || lowerCategory.includes('ipad')) {
+                        category = 'iPad';
+                    } else if (lowerCategory.includes('phone') || lowerCategory.includes('mobile phone')) {
+                        category = 'iPhone';
+                    } else if (lowerCategory.includes('kiosk') || lowerCategory.includes('self-service')) {
+                        category = 'Kiosk';
+                    } else if (lowerCategory.includes('rugged') || lowerCategory.includes('industrial')) {
+                        category = 'Rugged Device';
+                    } else if (lowerCategory.includes('mobile') && !lowerCategory.includes('phone')) {
+                        category = 'Mobile Device';
+                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing') || lowerCategory.includes('pilot')) {
+                        category = 'Test Device';
+                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration') || lowerCategory.includes('sample')) {
+                        category = 'Demo Device';
+                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared') || lowerCategory.includes('common')) {
+                        category = 'Shared/Pool Device';
+                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company') || lowerCategory.includes('business')) {
+                        category = 'Corporate Device';
+                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing') || lowerCategory.includes('clinical')) {
+                        category = 'Nursing Device';
+                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider') || lowerCategory.includes('medical')) {
+                        category = 'Provider Device';
+                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration') || lowerCategory.includes('office')) {
+                        category = 'Administrative Device';
+                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma') || lowerCategory.includes('urgent')) {
+                        category = 'Emergency/Trauma Device';
+                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or') || lowerCategory.includes('operating')) {
+                        category = 'Surgical Device';
+                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null' || lowerCategory === 'none') {
+                        category = '(unassigned)';
+                    } else {
+                        // Use the original category name if no specific mapping found
+                        category = rawCategory;
+                    }
                 } else if (foundColumns.includes('deviceCategoryKey')) {
                     category = '(blank)';
                 } else {
@@ -1898,8 +1952,27 @@
 
             sortedCategories.forEach(([category, count]) => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = category;
-                row.insertCell(1).textContent = count;
+                
+                // Category cell with improved formatting
+                const categoryCell = row.insertCell(0);
+                categoryCell.textContent = category;
+                
+                // Add visual indicators for special categories
+                if (category.includes('Backstock')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#fd7e14';
+                } else if (category.includes('Epic Welcome')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#17a2b8';
+                } else if (category.includes('(unassigned)') || category.includes('(blank)')) {
+                    categoryCell.style.color = '#dc3545';
+                    categoryCell.style.fontStyle = 'italic';
+                }
+                
+                // Count cell
+                const countCell = row.insertCell(1);
+                countCell.textContent = count;
+                countCell.style.fontWeight = 'bold';
             });
 
             // Update iOS compliance - using same logic as main calculation
@@ -1967,7 +2040,7 @@
                     }
                     
                     if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
-                        category = 'Backstock';
+                        category = 'Android Backstock';
                     } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome') || lowerCategory.includes('epic_welcome')) {
                         category = 'Epic Welcome';
                     } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode')) {
