@@ -525,13 +525,14 @@
         .actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
             margin-bottom: 25px;
             padding: 20px;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border-left: 4px solid var(--tmh-blue);
+            justify-content: center;
         }
 
         .btn {
@@ -718,48 +719,7 @@
             font-weight: bold;
         }
 
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: none;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 800px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-        }
-
-        .modal h2 {
-            color: var(--tmh-blue);
-            margin-bottom: 20px;
-        }
+        /* Modal styles removed to clean up layout */
 
         .eol-warning {
             background-color: #fff3cd;
@@ -868,8 +828,6 @@
             <div class="actions">
                 <button class="btn btn-primary" onclick="regenerateReport()">Regenerate Report</button>
                 <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
-                <button class="btn btn-secondary" onclick="showIOSModels()">iOS Models</button>
-                <button class="btn btn-secondary" onclick="showAndroidModels()">Android Models</button>
             </div>
             
             <div class="summary-cards">
@@ -1043,44 +1001,7 @@
         </div>
     </div>
 
-    <!-- iOS Models Modal -->
-    <div id="iosModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('iosModal')">&times;</span>
-            <h2>iOS Device Models</h2>
-            <table class="data-table" id="iosModelTable">
-                <thead>
-                    <tr>
-                        <th>Model</th>
-                        <th>Count</th>
-                        <th>Release Year</th>
-                        <th>End of Life</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Android Models Modal -->
-    <div id="androidModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('androidModal')">&times;</span>
-            <h2>Android Device Models</h2>
-            <table class="data-table" id="androidModelTable">
-                <thead>
-                    <tr>
-                        <th>Model</th>
-                        <th>Count</th>
-                        <th>Manufacturer</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+    <!-- Modal components removed to clean up layout - functionality can be re-added if needed -->
 
     <script>
         // Remove all MSAL and Intune live connection code
@@ -2280,98 +2201,7 @@
             }
         }
 
-        function showIOSModels() {
-            const iosDevices = globalDevicesData.filter(d => 
-                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
-            );
-            
-            // Count devices by model
-            const modelCounts = {};
-            iosDevices.forEach(device => {
-                const model = device.model || 'Unknown Model';
-                modelCounts[model] = (modelCounts[model] || 0) + 1;
-            });
-
-            // Populate iOS modal table
-            const tbody = document.querySelector('#iosModelTable tbody');
-            tbody.innerHTML = '';
-
-            // Sort by count (descending)
-            const sortedModels = Object.entries(modelCounts).sort((a, b) => b[1] - a[1]);
-
-            sortedModels.forEach(([model, count]) => {
-                const lifecycle = iosLifecycle[model];
-                const deviceStatus = getDeviceStatus(model);
-                
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = model;
-                row.insertCell(1).textContent = count;
-                row.insertCell(2).textContent = lifecycle ? lifecycle.releaseYear : 'Unknown';
-                row.insertCell(3).textContent = lifecycle ? lifecycle.endOfLife : 'Unknown';
-                
-                const statusCell = row.insertCell(4);
-                statusCell.textContent = deviceStatus.status;
-                statusCell.className = deviceStatus.class;
-            });
-
-            document.getElementById('iosModal').style.display = 'block';
-        }
-
-        function showAndroidModels() {
-            const androidDevices = globalDevicesData.filter(d => 
-                d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
-            );
-            
-            // Count devices by model and manufacturer
-            const modelCounts = {};
-            androidDevices.forEach(device => {
-                const model = device.model || 'Unknown Model';
-                const manufacturer = device.manufacturer || 'Unknown';
-                const key = `${manufacturer}|${model}`;
-                
-                if (!modelCounts[key]) {
-                    modelCounts[key] = {
-                        model,
-                        manufacturer,
-                        count: 0
-                    };
-                }
-                modelCounts[key].count++;
-            });
-
-            // Populate Android modal table
-            const tbody = document.querySelector('#androidModelTable tbody');
-            tbody.innerHTML = '';
-
-            // Sort by count (descending)
-            const sortedModels = Object.values(modelCounts).sort((a, b) => b.count - a.count);
-
-            sortedModels.forEach(item => {
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = item.model;
-                row.insertCell(1).textContent = item.count;
-                row.insertCell(2).textContent = item.manufacturer;
-                row.insertCell(3).textContent = 'Support varies by manufacturer';
-            });
-
-            document.getElementById('androidModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const iosModal = document.getElementById('iosModal');
-            const androidModal = document.getElementById('androidModal');
-            if (event.target === iosModal) {
-                iosModal.style.display = 'none';
-            }
-            if (event.target === androidModal) {
-                androidModal.style.display = 'none';
-            }
-        }
+        /* Modal-related functions removed to clean up layout - functionality can be re-added if needed */
 
         // Update the urgent indicator in the header
         function updateUrgentIndicator(urgentItems) {
