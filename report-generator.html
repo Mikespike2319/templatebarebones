@@ -1522,11 +1522,14 @@
                     }
                 });
                 
+                // Since we're filtering out Windows devices, define as empty array
+                const windowsDevices = [];
                 const totalDevices = iosDevices.length + androidDevices.length;
 
                 console.log('Device counts after processing:');
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
+                console.log('Windows devices (filtered out):', windowsDevices.length);
                 console.log('Total devices:', totalDevices);
 
                 // Calculate compliance metrics using Compliance column
@@ -1536,11 +1539,8 @@
                 if (foundColumns.includes('complianceStateKey')) {
                     console.log('Processing compliance data...');
                     
-                    // Debug: Log first few Windows devices compliance values
-                    console.log('Windows devices compliance values:');
-                    windowsDevices.slice(0, 5).forEach((device, index) => {
-                        console.log(`Windows Device ${index} compliance:`, device.complianceStateKey);
-                    });
+                    // Note: Windows devices are filtered out, so windowsDevices will always be empty
+                    console.log('Windows devices (filtered out):', windowsDevices.length);
                     
                     iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                     androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
@@ -1569,9 +1569,8 @@
                                complianceStr.includes('configuration manager');
                     }).length;
                     
-                    // Debug: Log all unique compliance values for Windows devices
-                    const uniqueComplianceValues = [...new Set(windowsDevices.map(d => d.complianceStateKey).filter(v => v))];
-                    console.log('Unique Windows compliance values:', uniqueComplianceValues);
+                    // Note: No Windows compliance values to log since Windows devices are filtered out
+                    console.log('Windows compliance processing skipped (devices filtered out)');
                     
                     nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || 
                         (!d.complianceStateKey.toString().toLowerCase().includes('compliant') && 
