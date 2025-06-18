@@ -22,10 +22,10 @@
             --warning-color: #fd7e14;
             --danger-color: #dc3545;
             --border-color: #e3e9f0;
-            --light-bg: #f8fafb;
+            --light-bg: #f8f9fa;
             --accent: #e9ecef;
             --card-shadow: rgba(0, 61, 92, 0.08);
-            --text-primary: #2c3e50;
+            --text-primary: #333;
             --text-secondary: #5a6c7d;
         }
 
@@ -252,109 +252,60 @@
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.2rem;
-            margin-bottom: 2rem;
-            padding: 0 0.5rem;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafb 100%);
-            border-radius: 12px;
-            padding: 1.8rem 1.2rem;
-            box-shadow: 0 4px 12px rgba(0, 61, 92, 0.08);
-            border: 1px solid rgba(0, 61, 92, 0.08);
+            background: white;
+            border-radius: 6px;
+            padding: 0.8rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 3px solid #0056b3;
             text-align: center;
-            position: relative;
             transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #003d5c 0%, #0056b3 100%);
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 61, 92, 0.12);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .card h3 {
             color: #003d5c;
-            font-size: 0.85rem;
-            margin-bottom: 0.8rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             font-weight: 600;
-            position: relative;
         }
 
         .card .number {
-            font-size: 2.4rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-weight: bold;
             color: #0056b3;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem;
             line-height: 1;
-            text-shadow: 0 1px 2px rgba(0, 86, 179, 0.1);
         }
 
         .card .description {
-            color: #5a6c7d;
-            font-size: 0.8rem;
+            color: #666;
+            font-size: 0.7rem;
             line-height: 1.4;
-            font-weight: 500;
-        }
-
-        /* Device-specific card styling */
-        .card:nth-child(1) {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
-        }
-
-        .card:nth-child(1) .number {
-            color: #0056b3;
-        }
-
-        .card:nth-child(2) {
-            background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
-        }
-
-        .card:nth-child(2) .number {
-            color: #28a745;
-        }
-
-        .card:nth-child(3) {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f4ff 100%);
-        }
-
-        .card:nth-child(3) .number {
-            color: #6f42c1;
-        }
-
-        .card:nth-child(4) {
-            background: linear-gradient(135deg, #ffffff 0%, #fefbf0 100%);
-        }
-
-        .card:nth-child(4) .number {
-            color: #fd7e14;
         }
 
         @media (max-width: 768px) {
             .summary-cards {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
+                gap: 0.6rem;
             }
             
             .card {
-                padding: 1.4rem 1rem;
+                padding: 0.6rem;
             }
             
             .card .number {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
         }
 
@@ -394,10 +345,10 @@
 
         .compliance-section {
             background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .compliance-item {
@@ -411,19 +362,19 @@
         }
 
         .compliance-bar {
-            height: 12px;
-            background-color: var(--border-color);
-            border-radius: 6px;
-            margin: 8px 0;
+            background-color: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
             overflow: hidden;
+            margin: 1rem 0;
             position: relative;
         }
 
         .compliance-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
             height: 100%;
-            background-color: var(--success-color);
-            transition: width 0.3s ease;
-            border-radius: 6px;
+            transition: width 0.5s ease;
+            border-radius: 10px;
         }
 
         .compliance-text {
@@ -605,12 +556,12 @@
         /* Summary cards styling handled above - removed duplicate */
 
         .footer {
+            background-color: #003d5c;
+            color: white;
             text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            border-top: 1px solid var(--border-color);
-            color: var(--tmh-gray);
-            font-size: 0.9em;
+            padding: 1rem;
+            margin-top: 2rem;
+            border-radius: 10px;
         }
 
         .footer p {
@@ -618,25 +569,133 @@
         }
 
         @media print {
-            .actions, .upload-section {
-                display: none;
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
-
-            .container {
-                max-width: none;
+           
+            body {
+                margin: 0;
                 padding: 0;
+                font-size: 9px;
+                line-height: 1.3;
             }
-
-            .card, .compliance-section, .data-table {
-                box-shadow: none;
-                border: 1px solid var(--border-color);
+           
+            .header {
+                padding: 0.5rem 0;
+                page-break-inside: avoid;
             }
-
+           
+            .header h1 {
+                font-size: 1.4rem;
+                margin-bottom: 0.1rem;
+            }
+           
+            .header p {
+                font-size: 0.8rem;
+            }
+           
+            .container {
+                padding: 0.4rem;
+                max-width: 100%;
+            }
+           
+            .summary-cards {
+                gap: 0.4rem;
+                margin-bottom: 0.6rem;
+            }
+           
+            .card {
+                padding: 0.4rem;
+                border-radius: 4px;
+            }
+           
+            .card h3 {
+                font-size: 0.6rem;
+                margin-bottom: 0.2rem;
+            }
+           
+            .card .number {
+                font-size: 1.2rem;
+                margin-bottom: 0.1rem;
+            }
+           
+            .card .description {
+                font-size: 0.55rem;
+            }
+           
+            .section {
+                margin-bottom: 0.4rem;
+                page-break-inside: avoid;
+            }
+           
+            .section-header {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.7rem;
+            }
+           
+            table {
+                font-size: 0.6rem;
+            }
+           
+            th, td {
+                padding: 0.15rem 0.2rem;
+            }
+           
+            th {
+                font-size: 0.55rem;
+            }
+           
+            h4 {
+                font-size: 0.65rem;
+                margin-bottom: 0.3rem;
+            }
+           
+            h5 {
+                font-size: 0.6rem;
+                margin-bottom: 0.2rem;
+            }
+           
+            .trend-indicator, .status-supported, .status-security, .status-ended {
+                font-size: 0.5rem;
+                padding: 0.05rem 0.2rem;
+            }
+           
+            .compliance-bar {
+                height: 8px;
+                margin: 0.2rem 0;
+            }
+           
             .footer {
                 position: fixed;
                 bottom: 0;
                 width: 100%;
-                border-top: 1px solid var(--border-color);
+                margin-top: 0;
+                padding: 0.3rem;
+                font-size: 0.6rem;
+            }
+           
+            .three-column {
+                gap: 0.6rem;
+            }
+           
+            .two-column {
+                gap: 0.6rem;
+            }
+
+            .actions, .upload-section, .urgent-indicator {
+                display: none !important;
+            }
+           
+            /* Ensure all content fits on one page */
+            @page {
+                size: A4;
+                margin: 0.5in;
+            }
+           
+            /* Prevent page breaks within sections */
+            .section, .card {
+                page-break-inside: avoid;
             }
         }
 
@@ -983,80 +1042,123 @@
                 </div>
             </div>
 
+            <!-- Monthly Trends (CFO Style) -->
+            <div class="section">
+                <div class="section-header">Device Monthly Trends</div>
+                <div class="two-column" style="padding: 0.8rem;">
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">iOS Monthly Trends</h4>
+                        <table id="iosTrendTable">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Count</th>
+                                    <th>Δ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Android Monthly Trends</h4>
+                        <table id="androidTrendTable">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Count</th>
+                                    <th>Δ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Historical Inventory Tracking -->
             <div class="section">
-                <div class="section-header">Historical Inventory Tracking</div>
+                <div class="section-header">Historical Inventory Management</div>
                 <div style="padding: 0.8rem;">
                     <div class="two-column" style="gap: 2rem; margin-bottom: 1.5rem;">
                         <div>
-                            <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📊 Monthly Device Counts</h4>
-                            <div style="background: #f8fafb; padding: 1rem; border-radius: 6px; border-left: 4px solid #003d5c;">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">March 2024</label>
-                                        <input type="number" id="march2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">April 2024</label>
-                                        <input type="number" id="april2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">May 2024</label>
-                                        <input type="number" id="may2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">June 2024</label>
-                                        <input type="number" id="june2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                </div>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">July 2024</label>
-                                        <input type="number" id="july2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">August 2024</label>
-                                        <input type="number" id="august2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">September 2024</label>
-                                        <input type="number" id="september2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">October 2024</label>
-                                        <input type="number" id="october2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-                                    </div>
-                                </div>
+                            <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📊 Platform Trend Data</h4>
+                            
+                            <!-- iOS Trends -->
+                            <div style="background: #f0f7ff; padding: 1rem; border-radius: 6px; border-left: 4px solid #0056b3; margin-bottom: 1rem;">
+                                <h5 style="color: #0056b3; margin-bottom: 0.8rem; font-size: 0.8rem;">🍎 iOS Device Trends</h5>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem;">
                                     <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">November 2024</label>
-                                        <input type="number" id="november2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">March 2024</label>
+                                        <input type="number" id="ios_march2024" value="928" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
                                     </div>
                                     <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">December 2024</label>
-                                        <input type="number" id="december2024" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">April 2024</label>
+                                        <input type="number" id="ios_april2024" value="934" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
                                     </div>
                                     <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">January 2025</label>
-                                        <input type="number" id="january2025" placeholder="0" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">May 2024</label>
+                                        <input type="number" id="ios_may2024" value="929" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
                                     </div>
                                     <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">Current Month</label>
-                                        <input type="number" id="currentMonth" placeholder="Auto" readonly style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center; background: #d4edda; font-weight: bold;">
+                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">June 2024</label>
+                                        <input type="number" id="ios_june2024" value="926" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
                                     </div>
                                 </div>
-                                <div style="text-align: center; margin-top: 1rem;">
-                                    <button onclick="saveHistoricalData()" style="background: #003d5c; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">💾 Save</button>
-                                    <button onclick="loadHistoricalData()" style="background: #28a745; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">📂 Load</button>
-                                    <button onclick="exportHistoricalData()" style="background: #17a2b8; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">📄 Export CSV</button>
-                                    <button onclick="clearHistoricalData()" style="background: #dc3545; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">🗑️ Clear</button>
+                            </div>
+                            
+                            <!-- Android Trends -->
+                            <div style="background: #f0fff4; padding: 1rem; border-radius: 6px; border-left: 4px solid #28a745; margin-bottom: 1rem;">
+                                <h5 style="color: #28a745; margin-bottom: 0.8rem; font-size: 0.8rem;">🤖 Android Device Trends</h5>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem;">
+                                    <div style="text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">March 2024</label>
+                                        <input type="number" id="android_march2024" value="790" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">April 2024</label>
+                                        <input type="number" id="android_april2024" value="790" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">May 2024</label>
+                                        <input type="number" id="android_may2024" value="792" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">June 2024</label>
+                                        <input type="number" id="android_june2024" value="790" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
+                                    </div>
                                 </div>
+                            </div>
+                            
+                            <!-- Current Month Display -->
+                            <div style="background: #f8fafb; padding: 1rem; border-radius: 6px; border-left: 4px solid #003d5c;">
+                                <h5 style="color: #003d5c; margin-bottom: 0.8rem; font-size: 0.8rem;">📅 Current Month (Live Data)</h5>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+                                    <div style="text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">iOS Current</label>
+                                        <input type="number" id="ios_current" placeholder="Auto" readonly style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center; background: #e3f2fd; font-weight: bold;">
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">Android Current</label>
+                                        <input type="number" id="android_current" placeholder="Auto" readonly style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center; background: #e8f5e8; font-weight: bold;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 1rem;">
+                                <button onclick="saveHistoricalData()" style="background: #003d5c; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">💾 Save Trends</button>
+                                <button onclick="loadHistoricalData()" style="background: #28a745; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">📂 Load</button>
+                                <button onclick="exportHistoricalData()" style="background: #17a2b8; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">📄 Export CSV</button>
+                                <button onclick="clearHistoricalData()" style="background: #dc3545; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">🗑️ Clear</button>
                             </div>
                         </div>
                         <div>
-                            <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📈 Inventory Trends</h4>
-                            <div id="inventoryTrends" style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef; min-height: 200px;">
-                                <p style="text-align: center; color: #6c757d; margin-top: 3rem; font-style: italic;">Enter historical data and save to see trends</p>
+                            <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📈 Platform Trends</h4>
+                            <div id="inventoryTrends" style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef; min-height: 250px;">
+                                <p style="text-align: center; color: #6c757d; margin-top: 3rem; font-style: italic;">Platform trend data is pre-loaded. Click "💾 Save Trends" to see charts.</p>
                             </div>
                         </div>
                     </div>
@@ -1072,7 +1174,7 @@
             </div>
         </div>
         
-        <div class="footer" style="background-color: #003d5c; color: white; text-align: center; padding: 1rem; margin-top: 2rem; border-radius: 10px;">
+        <div class="footer">
             <p>&copy; 2025 Tallahassee Memorial Hospital - IT Asset Management Report</p>
             <p>Generated on <span id="reportDate"></span></p>
         </div>
@@ -1498,6 +1600,10 @@
                 // Update summary cards with critical metrics
                 document.getElementById('iosTotal').textContent = iosDevices.length;
                 document.getElementById('androidTotal').textContent = androidDevices.length;
+                
+                // Update current month trend fields
+                document.getElementById('ios_current').value = iosDevices.length;
+                document.getElementById('android_current').value = androidDevices.length;
                 document.getElementById('windowsTotal').textContent = windowsDevices.length;
                 document.getElementById('totalDevices').textContent = totalDevices;
 
@@ -2427,31 +2533,36 @@
 
         // Historical Inventory Tracking Functions
         function saveHistoricalData() {
-            const months = [
-                'march2024', 'april2024', 'may2024', 'june2024',
-                'july2024', 'august2024', 'september2024', 'october2024',
-                'november2024', 'december2024', 'january2025'
-            ];
+            const months = ['march2024', 'april2024', 'may2024', 'june2024'];
+            const platforms = ['ios', 'android'];
             
-            const historicalData = {};
+            const historicalData = {
+                ios: {},
+                android: {}
+            };
             let hasData = false;
             
-            months.forEach(month => {
-                const value = document.getElementById(month).value;
-                if (value && value.trim() !== '') {
-                    historicalData[month] = parseInt(value);
-                    hasData = true;
-                }
+            // Save platform-specific data
+            platforms.forEach(platform => {
+                months.forEach(month => {
+                    const elementId = `${platform}_${month}`;
+                    const element = document.getElementById(elementId);
+                    if (element && element.value && element.value.trim() !== '') {
+                        historicalData[platform][month] = parseInt(element.value);
+                        hasData = true;
+                    }
+                });
             });
             
             if (!hasData) {
-                alert('Please enter at least one month of historical data before saving.');
+                alert('Please enter at least one month of platform trend data before saving.');
                 return;
             }
             
-            localStorage.setItem('tmhHistoricalInventory', JSON.stringify(historicalData));
+            localStorage.setItem('tmhPlatformTrends', JSON.stringify(historicalData));
             updateInventoryTrends();
             updateMonthlyComparison();
+            updateCFOTrendTables();
             
             // Show success message
             const saveButton = event.target;
@@ -2465,28 +2576,33 @@
         }
 
         function loadHistoricalData() {
-            const saved = localStorage.getItem('tmhHistoricalInventory');
+            const saved = localStorage.getItem('tmhPlatformTrends');
             if (!saved) {
-                alert('No historical data found. Please enter and save data first.');
+                alert('No platform trend data found. Data is pre-loaded - try clicking "💾 Save Trends" first.');
                 return;
             }
             
             try {
                 const historicalData = JSON.parse(saved);
-                const months = [
-                    'march2024', 'april2024', 'may2024', 'june2024',
-                    'july2024', 'august2024', 'september2024', 'october2024',
-                    'november2024', 'december2024', 'january2025'
-                ];
+                const months = ['march2024', 'april2024', 'may2024', 'june2024'];
+                const platforms = ['ios', 'android'];
                 
-                months.forEach(month => {
-                    if (historicalData[month] !== undefined) {
-                        document.getElementById(month).value = historicalData[month];
+                // Load platform-specific data
+                platforms.forEach(platform => {
+                    if (historicalData[platform]) {
+                        months.forEach(month => {
+                            const elementId = `${platform}_${month}`;
+                            const element = document.getElementById(elementId);
+                            if (element && historicalData[platform][month] !== undefined) {
+                                element.value = historicalData[platform][month];
+                            }
+                        });
                     }
                 });
                 
                 updateInventoryTrends();
                 updateMonthlyComparison();
+                updateCFOTrendTables();
                 
                 // Show success message
                 const loadButton = event.target;
@@ -2497,7 +2613,7 @@
                 }, 2000);
                 
             } catch (error) {
-                alert('Error loading historical data: ' + error.message);
+                alert('Error loading platform trend data: ' + error.message);
             }
         }
 
@@ -2506,75 +2622,144 @@
                 { id: 'march2024', label: 'Mar 2024' },
                 { id: 'april2024', label: 'Apr 2024' },
                 { id: 'may2024', label: 'May 2024' },
-                { id: 'june2024', label: 'Jun 2024' },
-                { id: 'july2024', label: 'Jul 2024' },
-                { id: 'august2024', label: 'Aug 2024' },
-                { id: 'september2024', label: 'Sep 2024' },
-                { id: 'october2024', label: 'Oct 2024' },
-                { id: 'november2024', label: 'Nov 2024' },
-                { id: 'december2024', label: 'Dec 2024' },
-                { id: 'january2025', label: 'Jan 2025' },
-                { id: 'currentMonth', label: 'Current' }
+                { id: 'june2024', label: 'Jun 2024' }
             ];
+            const platforms = ['ios', 'android'];
             
             const trendsContainer = document.getElementById('inventoryTrends');
-            const data = [];
+            const platformData = {};
             let maxValue = 0;
             
-            months.forEach(month => {
-                const value = document.getElementById(month.id).value;
-                if (value && value.trim() !== '') {
-                    const numValue = parseInt(value);
-                    data.push({ label: month.label, value: numValue });
+            // Collect data for each platform
+            platforms.forEach(platform => {
+                platformData[platform] = [];
+                months.forEach(month => {
+                    const elementId = `${platform}_${month.id}`;
+                    const element = document.getElementById(elementId);
+                    if (element && element.value && element.value.trim() !== '') {
+                        const numValue = parseInt(element.value);
+                        platformData[platform].push({ label: month.label, value: numValue });
+                        maxValue = Math.max(maxValue, numValue);
+                    }
+                });
+                
+                // Add current month data if available
+                const currentElement = document.getElementById(`${platform}_current`);
+                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
+                    const numValue = parseInt(currentElement.value);
+                    platformData[platform].push({ label: 'Current', value: numValue });
                     maxValue = Math.max(maxValue, numValue);
                 }
             });
             
-            if (data.length === 0) {
-                trendsContainer.innerHTML = '<p style="text-align: center; color: #6c757d; margin-top: 3rem; font-style: italic;">Enter historical data and save to see trends</p>';
+            if (Object.values(platformData).every(data => data.length === 0)) {
+                trendsContainer.innerHTML = '<p style="text-align: center; color: #6c757d; margin-top: 3rem; font-style: italic;">Platform trend data is pre-loaded. Click "💾 Save Trends" to see charts.</p>';
                 return;
             }
             
-            // Create simple bar chart
-            let chartHTML = '<h5 style="margin-bottom: 1rem; color: #003d5c;">Device Count Trends</h5>';
-            chartHTML += '<div style="display: flex; align-items: end; height: 120px; gap: 8px; margin-bottom: 1rem;">';
+            let chartHTML = '<h5 style="margin-bottom: 1rem; color: #003d5c;">Platform Trend Analysis</h5>';
             
-            data.forEach((item, index) => {
-                const height = (item.value / maxValue) * 100;
-                const isCurrentMonth = item.label === 'Current';
-                const barColor = isCurrentMonth ? '#28a745' : '#003d5c';
-                const bgColor = isCurrentMonth ? '#d4edda' : '#e9ecef';
+            // Create side-by-side charts for iOS and Android
+            chartHTML += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">';
+            
+            // iOS Chart
+            if (platformData.ios.length > 0) {
+                chartHTML += '<div style="background: #f0f7ff; padding: 0.8rem; border-radius: 6px; border-left: 4px solid #0056b3;">';
+                chartHTML += '<h6 style="color: #0056b3; margin-bottom: 0.8rem; font-size: 0.8rem;">🍎 iOS Devices</h6>';
+                chartHTML += '<div style="display: flex; align-items: end; height: 100px; gap: 4px;">';
                 
-                chartHTML += `
-                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                        <div style="background: ${bgColor}; border: 2px solid ${barColor}; width: 100%; height: ${height}%; min-height: 5px; border-radius: 4px 4px 0 0; margin-bottom: 5px; display: flex; align-items: end; justify-content: center; color: ${barColor}; font-size: 0.7rem; font-weight: bold; padding: 2px;">
-                            ${item.value}
+                platformData.ios.forEach((item, index) => {
+                    const height = (item.value / maxValue) * 100;
+                    const isCurrentMonth = item.label === 'Current';
+                    const barColor = isCurrentMonth ? '#28a745' : '#0056b3';
+                    
+                    chartHTML += `
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                            <div style="background: ${barColor}; width: 100%; height: ${height}%; min-height: 5px; border-radius: 3px 3px 0 0; margin-bottom: 3px; display: flex; align-items: end; justify-content: center; color: white; font-size: 0.6rem; font-weight: bold; padding: 1px;">
+                                ${item.value}
+                            </div>
+                            <div style="font-size: 0.5rem; color: #6c757d; text-align: center; writing-mode: vertical-rl; text-orientation: mixed;">
+                                ${item.label}
+                            </div>
                         </div>
-                        <div style="font-size: 0.6rem; color: #6c757d; text-align: center; transform: rotate(-45deg); margin-top: 10px;">
-                            ${item.label}
+                    `;
+                });
+                
+                chartHTML += '</div>';
+                
+                // iOS trend summary
+                if (platformData.ios.length > 1) {
+                    const firstValue = platformData.ios[0].value;
+                    const lastValue = platformData.ios[platformData.ios.length - 1].value;
+                    const change = lastValue - firstValue;
+                    const changePercent = ((change / firstValue) * 100).toFixed(1);
+                    const changeColor = change > 0 ? '#28a745' : change < 0 ? '#dc3545' : '#6c757d';
+                    const changeIcon = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
+                    
+                    chartHTML += `
+                        <div style="margin-top: 0.5rem; font-size: 0.7rem; color: ${changeColor}; font-weight: bold;">
+                            ${changeIcon} ${change > 0 ? '+' : ''}${change} (${changePercent}%)
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                }
+                
+                chartHTML += '</div>';
+            }
+            
+            // Android Chart
+            if (platformData.android.length > 0) {
+                chartHTML += '<div style="background: #f0fff4; padding: 0.8rem; border-radius: 6px; border-left: 4px solid #28a745;">';
+                chartHTML += '<h6 style="color: #28a745; margin-bottom: 0.8rem; font-size: 0.8rem;">🤖 Android Devices</h6>';
+                chartHTML += '<div style="display: flex; align-items: end; height: 100px; gap: 4px;">';
+                
+                platformData.android.forEach((item, index) => {
+                    const height = (item.value / maxValue) * 100;
+                    const isCurrentMonth = item.label === 'Current';
+                    const barColor = isCurrentMonth ? '#0056b3' : '#28a745';
+                    
+                    chartHTML += `
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                            <div style="background: ${barColor}; width: 100%; height: ${height}%; min-height: 5px; border-radius: 3px 3px 0 0; margin-bottom: 3px; display: flex; align-items: end; justify-content: center; color: white; font-size: 0.6rem; font-weight: bold; padding: 1px;">
+                                ${item.value}
+                            </div>
+                            <div style="font-size: 0.5rem; color: #6c757d; text-align: center; writing-mode: vertical-rl; text-orientation: mixed;">
+                                ${item.label}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                chartHTML += '</div>';
+                
+                // Android trend summary
+                if (platformData.android.length > 1) {
+                    const firstValue = platformData.android[0].value;
+                    const lastValue = platformData.android[platformData.android.length - 1].value;
+                    const change = lastValue - firstValue;
+                    const changePercent = ((change / firstValue) * 100).toFixed(1);
+                    const changeColor = change > 0 ? '#28a745' : change < 0 ? '#dc3545' : '#6c757d';
+                    const changeIcon = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
+                    
+                    chartHTML += `
+                        <div style="margin-top: 0.5rem; font-size: 0.7rem; color: ${changeColor}; font-weight: bold;">
+                            ${changeIcon} ${change > 0 ? '+' : ''}${change} (${changePercent}%)
+                        </div>
+                    `;
+                }
+                
+                chartHTML += '</div>';
+            }
             
             chartHTML += '</div>';
             
-            // Add summary stats
-            if (data.length > 1) {
-                const firstValue = data[0].value;
-                const lastValue = data[data.length - 1].value;
-                const change = lastValue - firstValue;
-                const changePercent = ((change / firstValue) * 100).toFixed(1);
-                const changeColor = change > 0 ? '#28a745' : change < 0 ? '#dc3545' : '#6c757d';
-                const changeIcon = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
-                
+            // Overall comparison
+            if (platformData.ios.length > 0 && platformData.android.length > 0) {
                 chartHTML += `
-                    <div style="padding: 0.8rem; background: #f8fafb; border-radius: 4px; border-left: 4px solid ${changeColor};">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.8rem; color: #003d5c; font-weight: 600;">Total Change:</span>
-                            <span style="color: ${changeColor}; font-weight: bold; font-size: 0.9rem;">
-                                ${changeIcon} ${change > 0 ? '+' : ''}${change} devices (${changePercent}%)
-                            </span>
+                    <div style="padding: 0.8rem; background: #f8fafb; border-radius: 4px; border-left: 4px solid #003d5c;">
+                        <div style="font-size: 0.8rem; color: #003d5c; font-weight: 600; margin-bottom: 0.5rem;">Platform Comparison:</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.7rem;">
+                            <div>iOS: ${platformData.ios[platformData.ios.length - 1]?.value || 'N/A'} devices</div>
+                            <div>Android: ${platformData.android[platformData.android.length - 1]?.value || 'N/A'} devices</div>
                         </div>
                     </div>
                 `;
@@ -2583,96 +2768,215 @@
             trendsContainer.innerHTML = chartHTML;
         }
 
+        function updateCFOTrendTables() {
+            const months = [
+                { id: 'march2024', label: 'Mar' },
+                { id: 'april2024', label: 'Apr' },
+                { id: 'may2024', label: 'May' },
+                { id: 'june2024', label: 'Jun' }
+            ];
+            const platforms = ['ios', 'android'];
+            
+            platforms.forEach(platform => {
+                const tableId = `${platform}TrendTable`;
+                const tbody = document.querySelector(`#${tableId} tbody`);
+                if (!tbody) return;
+                
+                let tableHTML = '';
+                let previousValue = null;
+                
+                months.forEach(month => {
+                    const elementId = `${platform}_${month.id}`;
+                    const element = document.getElementById(elementId);
+                    
+                    if (element && element.value && element.value.trim() !== '') {
+                        const currentValue = parseInt(element.value);
+                        let changeHTML = '<span class="trend-indicator trend-neutral">—</span>';
+                        
+                        if (previousValue !== null) {
+                            const change = currentValue - previousValue;
+                            if (change > 0) {
+                                changeHTML = `<span class="trend-indicator trend-positive">+${change}</span>`;
+                            } else if (change < 0) {
+                                changeHTML = `<span class="trend-indicator trend-negative">${change}</span>`;
+                            } else {
+                                changeHTML = '<span class="trend-indicator trend-neutral">0</span>';
+                            }
+                        }
+                        
+                        tableHTML += `
+                            <tr>
+                                <td>${month.label}</td>
+                                <td>${currentValue.toLocaleString()}</td>
+                                <td>${changeHTML}</td>
+                            </tr>
+                        `;
+                        
+                        previousValue = currentValue;
+                    }
+                });
+                
+                // Add current month if available
+                const currentElement = document.getElementById(`${platform}_current`);
+                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
+                    const currentValue = parseInt(currentElement.value);
+                    let changeHTML = '<span class="trend-indicator trend-neutral">—</span>';
+                    
+                    if (previousValue !== null) {
+                        const change = currentValue - previousValue;
+                        if (change > 0) {
+                            changeHTML = `<span class="trend-indicator trend-positive">+${change}</span>`;
+                        } else if (change < 0) {
+                            changeHTML = `<span class="trend-indicator trend-negative">${change}</span>`;
+                        } else {
+                            changeHTML = '<span class="trend-indicator trend-neutral">0</span>';
+                        }
+                    }
+                    
+                    tableHTML += `
+                        <tr style="background: ${platform === 'ios' ? '#e3f2fd' : '#e8f5e8'}; font-weight: bold;">
+                            <td>Current</td>
+                            <td>${currentValue.toLocaleString()}</td>
+                            <td>${changeHTML}</td>
+                        </tr>
+                    `;
+                }
+                
+                tbody.innerHTML = tableHTML;
+            });
+        }
+
         function updateMonthlyComparison() {
             const months = [
                 { id: 'march2024', label: 'March 2024' },
                 { id: 'april2024', label: 'April 2024' },
                 { id: 'may2024', label: 'May 2024' },
-                { id: 'june2024', label: 'June 2024' },
-                { id: 'july2024', label: 'July 2024' },
-                { id: 'august2024', label: 'August 2024' },
-                { id: 'september2024', label: 'September 2024' },
-                { id: 'october2024', label: 'October 2024' },
-                { id: 'november2024', label: 'November 2024' },
-                { id: 'december2024', label: 'December 2024' },
-                { id: 'january2025', label: 'January 2025' },
-                { id: 'currentMonth', label: 'Current Month' }
+                { id: 'june2024', label: 'June 2024' }
             ];
+            const platforms = ['ios', 'android'];
             
             const comparisonContainer = document.getElementById('monthlyComparison');
-            const data = [];
-            
-            months.forEach(month => {
-                const value = document.getElementById(month.id).value;
-                if (value && value.trim() !== '') {
-                    data.push({ label: month.label, value: parseInt(value), id: month.id });
-                }
-            });
-            
-            if (data.length < 2) {
-                comparisonContainer.innerHTML = '';
-                return;
-            }
             
             let tableHTML = `
-                <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📊 Month-over-Month Comparison</h4>
-                <table class="data-table" style="font-size: 0.8rem;">
-                    <thead>
-                        <tr>
-                            <th>Month</th>
-                            <th>Device Count</th>
-                            <th>Change from Previous</th>
-                            <th>% Change</th>
-                            <th>Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📊 Platform Trend Comparison</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
             `;
             
-            data.forEach((item, index) => {
-                let changeText = '-';
-                let changePercent = '-';
-                let trendIcon = '-';
-                let changeColor = '#6c757d';
+            // Create separate tables for iOS and Android
+            platforms.forEach(platform => {
+                const platformData = [];
+                const platformName = platform.toUpperCase();
+                const platformColor = platform === 'ios' ? '#0056b3' : '#28a745';
+                const platformIcon = platform === 'ios' ? '🍎' : '🤖';
                 
-                if (index > 0) {
-                    const prevValue = data[index - 1].value;
-                    const change = item.value - prevValue;
-                    const percent = ((change / prevValue) * 100).toFixed(1);
-                    
-                    changeText = change > 0 ? `+${change}` : `${change}`;
-                    changePercent = change > 0 ? `+${percent}%` : `${percent}%`;
-                    
-                    if (change > 0) {
-                        changeColor = '#28a745';
-                        trendIcon = '📈 Growth';
-                    } else if (change < 0) {
-                        changeColor = '#dc3545';
-                        trendIcon = '📉 Decline';
-                    } else {
-                        changeColor = '#6c757d';
-                        trendIcon = '➡️ Stable';
+                // Collect platform data
+                months.forEach(month => {
+                    const elementId = `${platform}_${month.id}`;
+                    const element = document.getElementById(elementId);
+                    if (element && element.value && element.value.trim() !== '') {
+                        platformData.push({ 
+                            label: month.label, 
+                            value: parseInt(element.value), 
+                            id: elementId 
+                        });
                     }
+                });
+                
+                // Add current month if available
+                const currentElement = document.getElementById(`${platform}_current`);
+                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
+                    platformData.push({ 
+                        label: 'Current Month', 
+                        value: parseInt(currentElement.value), 
+                        id: `${platform}_current` 
+                    });
                 }
                 
-                const isCurrentMonth = item.id === 'currentMonth';
-                const rowStyle = isCurrentMonth ? 'background: #d4edda; font-weight: bold;' : '';
-                
-                tableHTML += `
-                    <tr style="${rowStyle}">
-                        <td>${item.label}${isCurrentMonth ? ' 🔵' : ''}</td>
-                        <td style="font-weight: bold;">${item.value.toLocaleString()}</td>
-                        <td style="color: ${changeColor}; font-weight: bold;">${changeText}</td>
-                        <td style="color: ${changeColor}; font-weight: bold;">${changePercent}</td>
-                        <td style="color: ${changeColor};">${trendIcon}</td>
-                    </tr>
-                `;
+                if (platformData.length > 0) {
+                    tableHTML += `
+                        <div>
+                            <h5 style="color: ${platformColor}; margin-bottom: 0.8rem; font-size: 0.8rem;">${platformIcon} ${platformName} Trends</h5>
+                            <table class="data-table" style="font-size: 0.7rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Count</th>
+                                        <th>Change</th>
+                                        <th>%</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    platformData.forEach((item, index) => {
+                        let changeText = '-';
+                        let changePercent = '-';
+                        let trendIcon = '-';
+                        let changeColor = '#6c757d';
+                        
+                        if (index > 0) {
+                            const prevValue = platformData[index - 1].value;
+                            const change = item.value - prevValue;
+                            const percent = ((change / prevValue) * 100).toFixed(1);
+                            
+                            changeText = change > 0 ? `+${change}` : `${change}`;
+                            changePercent = change > 0 ? `+${percent}%` : `${percent}%`;
+                            
+                            if (change > 0) {
+                                changeColor = '#28a745';
+                                trendIcon = '📈';
+                            } else if (change < 0) {
+                                changeColor = '#dc3545';
+                                trendIcon = '📉';
+                            } else {
+                                changeColor = '#6c757d';
+                                trendIcon = '➡️';
+                            }
+                        }
+                        
+                        const isCurrentMonth = item.label === 'Current Month';
+                        const rowStyle = isCurrentMonth ? `background: ${platform === 'ios' ? '#e3f2fd' : '#e8f5e8'}; font-weight: bold;` : '';
+                        
+                        tableHTML += `
+                            <tr style="${rowStyle}">
+                                <td>${item.label.replace('2024', '').trim()}${isCurrentMonth ? ' 🔵' : ''}</td>
+                                <td style="font-weight: bold;">${item.value.toLocaleString()}</td>
+                                <td style="color: ${changeColor}; font-weight: bold;">${changeText}</td>
+                                <td style="color: ${changeColor}; font-weight: bold;">${changePercent}</td>
+                                <td style="color: ${changeColor};">${trendIcon}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    // Add platform summary
+                    if (platformData.length > 1) {
+                        const firstValue = platformData[0].value;
+                        const lastValue = platformData[platformData.length - 1].value;
+                        const totalChange = lastValue - firstValue;
+                        const totalChangePercent = ((totalChange / firstValue) * 100).toFixed(1);
+                        const changeColor = totalChange > 0 ? '#28a745' : totalChange < 0 ? '#dc3545' : '#6c757d';
+                        
+                        tableHTML += `
+                            <div style="margin-top: 0.5rem; padding: 0.5rem; background: ${platform === 'ios' ? '#f0f7ff' : '#f0fff4'}; border-radius: 4px; font-size: 0.7rem;">
+                                <strong>Period Change:</strong> 
+                                <span style="color: ${changeColor}; font-weight: bold;">
+                                    ${totalChange > 0 ? '+' : ''}${totalChange} (${totalChangePercent}%)
+                                </span>
+                            </div>
+                        `;
+                    }
+                    
+                    tableHTML += '</div>';
+                }
             });
             
-            tableHTML += `
-                    </tbody>
-                </table>
-            `;
+            tableHTML += '</div>';
             
             comparisonContainer.innerHTML = tableHTML;
         }
@@ -2682,46 +2986,83 @@
                 { id: 'march2024', label: 'March 2024' },
                 { id: 'april2024', label: 'April 2024' },
                 { id: 'may2024', label: 'May 2024' },
-                { id: 'june2024', label: 'June 2024' },
-                { id: 'july2024', label: 'July 2024' },
-                { id: 'august2024', label: 'August 2024' },
-                { id: 'september2024', label: 'September 2024' },
-                { id: 'october2024', label: 'October 2024' },
-                { id: 'november2024', label: 'November 2024' },
-                { id: 'december2024', label: 'December 2024' },
-                { id: 'january2025', label: 'January 2025' },
-                { id: 'currentMonth', label: 'Current Month' }
+                { id: 'june2024', label: 'June 2024' }
             ];
+            const platforms = ['ios', 'android'];
             
-            // Generate CSV content
-            let csvContent = 'Month,Device Count,Change from Previous,Change %\n';
-            let previousValue = null;
+            // Generate CSV content with platform-specific data
+            let csvContent = 'Month,iOS Count,iOS Change,iOS %,Android Count,Android Change,Android %\n';
             
-            months.forEach((month, index) => {
-                const value = document.getElementById(month.id).value;
-                if (value && value.trim() !== '') {
-                    const numValue = parseInt(value);
-                    let change = '';
-                    let changePercent = '';
-                    
-                    if (previousValue !== null) {
-                        const diff = numValue - previousValue;
-                        const percent = ((diff / previousValue) * 100).toFixed(1);
-                        change = diff > 0 ? `+${diff}` : `${diff}`;
-                        changePercent = diff > 0 ? `+${percent}%` : `${percent}%`;
+            const platformData = {};
+            platforms.forEach(platform => {
+                platformData[platform] = [];
+                months.forEach(month => {
+                    const elementId = `${platform}_${month.id}`;
+                    const element = document.getElementById(elementId);
+                    if (element && element.value && element.value.trim() !== '') {
+                        platformData[platform].push({
+                            label: month.label,
+                            value: parseInt(element.value)
+                        });
                     }
-                    
-                    csvContent += `"${month.label}",${numValue},"${change}","${changePercent}"\n`;
-                    previousValue = numValue;
+                });
+                
+                // Add current month
+                const currentElement = document.getElementById(`${platform}_current`);
+                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
+                    platformData[platform].push({
+                        label: 'Current Month',
+                        value: parseInt(currentElement.value)
+                    });
                 }
             });
+            
+            // Create rows based on maximum data length
+            const maxLength = Math.max(platformData.ios.length, platformData.android.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                const iosData = platformData.ios[i];
+                const androidData = platformData.android[i];
+                
+                let row = '';
+                
+                // Month label (use iOS data first, fall back to Android)
+                const monthLabel = iosData?.label || androidData?.label || '';
+                row += `"${monthLabel}",`;
+                
+                // iOS data
+                if (iosData) {
+                    const iosChange = i > 0 && platformData.ios[i-1] ? 
+                        iosData.value - platformData.ios[i-1].value : '';
+                    const iosPercent = i > 0 && platformData.ios[i-1] && platformData.ios[i-1].value > 0 ? 
+                        ((iosChange / platformData.ios[i-1].value) * 100).toFixed(1) + '%' : '';
+                    
+                    row += `${iosData.value},"${iosChange > 0 ? '+' + iosChange : iosChange}","${iosPercent}",`;
+                } else {
+                    row += ',,';
+                }
+                
+                // Android data
+                if (androidData) {
+                    const androidChange = i > 0 && platformData.android[i-1] ? 
+                        androidData.value - platformData.android[i-1].value : '';
+                    const androidPercent = i > 0 && platformData.android[i-1] && platformData.android[i-1].value > 0 ? 
+                        ((androidChange / platformData.android[i-1].value) * 100).toFixed(1) + '%' : '';
+                    
+                    row += `${androidData.value},"${androidChange > 0 ? '+' + androidChange : androidChange}","${androidPercent}"`;
+                } else {
+                    row += ',,';
+                }
+                
+                csvContent += row + '\n';
+            }
             
             // Create and download file
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', 'tmh-historical-inventory.csv');
+            link.setAttribute('download', 'tmh-platform-trends.csv');
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -2737,30 +3078,30 @@
         }
 
         function clearHistoricalData() {
-            if (!confirm('Are you sure you want to clear all historical data? This action cannot be undone.')) {
+            if (!confirm('Are you sure you want to clear all platform trend data? This action cannot be undone.')) {
                 return;
             }
             
-            const months = [
-                'march2024', 'april2024', 'may2024', 'june2024',
-                'july2024', 'august2024', 'september2024', 'october2024',
-                'november2024', 'december2024', 'january2025'
-            ];
+            const months = ['march2024', 'april2024', 'may2024', 'june2024'];
+            const platforms = ['ios', 'android'];
             
-            // Clear all input fields
-            months.forEach(month => {
-                const input = document.getElementById(month);
-                if (input) {
-                    input.value = '';
-                }
+            // Clear all platform input fields
+            platforms.forEach(platform => {
+                months.forEach(month => {
+                    const input = document.getElementById(`${platform}_${month}`);
+                    if (input) {
+                        input.value = '';
+                    }
+                });
             });
             
             // Clear localStorage
-            localStorage.removeItem('tmhHistoricalInventory');
+            localStorage.removeItem('tmhPlatformTrends');
             
             // Update displays
             updateInventoryTrends();
             updateMonthlyComparison();
+            updateCFOTrendTables();
             
             // Show success message
             const clearButton = event.target;
@@ -2771,51 +3112,62 @@
             }, 2000);
         }
 
-        // Auto-load historical data on page load
+        // Auto-load platform trend data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Try to load saved historical data
-            const saved = localStorage.getItem('tmhHistoricalInventory');
+            // Try to load saved platform trend data
+            const saved = localStorage.getItem('tmhPlatformTrends');
             if (saved) {
                 try {
                     const historicalData = JSON.parse(saved);
-                    const months = [
-                        'march2024', 'april2024', 'may2024', 'june2024',
-                        'july2024', 'august2024', 'september2024', 'october2024',
-                        'november2024', 'december2024', 'january2025'
-                    ];
+                    const months = ['march2024', 'april2024', 'may2024', 'june2024'];
+                    const platforms = ['ios', 'android'];
                     
-                    months.forEach(month => {
-                        if (historicalData[month] !== undefined) {
-                            document.getElementById(month).value = historicalData[month];
+                    platforms.forEach(platform => {
+                        if (historicalData[platform]) {
+                            months.forEach(month => {
+                                const elementId = `${platform}_${month}`;
+                                const element = document.getElementById(elementId);
+                                if (element && historicalData[platform][month] !== undefined) {
+                                    element.value = historicalData[platform][month];
+                                }
+                            });
                         }
                     });
                     
                     updateInventoryTrends();
                     updateMonthlyComparison();
+                    updateCFOTrendTables();
                 } catch (error) {
-                    console.log('Could not load historical data:', error);
+                    console.log('Could not load platform trend data:', error);
                 }
             }
             
-            // Add event listeners to historical data inputs for real-time updates
-            const historicalInputs = [
-                'march2024', 'april2024', 'may2024', 'june2024',
-                'july2024', 'august2024', 'september2024', 'october2024',
-                'november2024', 'december2024', 'january2025'
-            ];
+            // Auto-save the pre-loaded data and populate CFO tables
+            setTimeout(() => {
+                saveHistoricalData();
+                updateCFOTrendTables();
+            }, 1000);
             
-            historicalInputs.forEach(inputId => {
-                const input = document.getElementById(inputId);
-                if (input) {
-                    input.addEventListener('input', function() {
-                        // Debounce the update to avoid too frequent updates
-                        clearTimeout(input.updateTimeout);
-                        input.updateTimeout = setTimeout(() => {
-                            updateInventoryTrends();
-                            updateMonthlyComparison();
-                        }, 500);
-                    });
-                }
+            // Add event listeners to platform trend inputs for real-time updates
+            const months = ['march2024', 'april2024', 'may2024', 'june2024'];
+            const platforms = ['ios', 'android'];
+            
+            platforms.forEach(platform => {
+                months.forEach(month => {
+                    const inputId = `${platform}_${month}`;
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.addEventListener('input', function() {
+                            // Debounce the update to avoid too frequent updates
+                            clearTimeout(input.updateTimeout);
+                            input.updateTimeout = setTimeout(() => {
+                                updateInventoryTrends();
+                                updateMonthlyComparison();
+                                updateCFOTrendTables();
+                            }, 500);
+                        });
+                    }
+                });
             });
         });
 
