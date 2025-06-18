@@ -726,16 +726,16 @@
         }
 
         .urgent-items {
-            margin: 20px 0;
-            padding: 20px;
+            margin: 15px 0;
+            padding: 12px;
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .urgent-item {
-            padding: 15px;
-            margin: 10px 0;
+            padding: 10px;
+            margin: 8px 0;
             border-left: 4px solid #ccc;
             background: #f8f9fa;
         }
@@ -761,7 +761,7 @@
         }
 
         .urgent-item .count {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
             color: #dc3545;
         }
@@ -877,7 +877,7 @@
                 <label for="sheetSelect" style="font-weight: 600; color: var(--tmh-blue); margin-right: 10px;">Select Sheet:</label>
                 <select id="sheetSelect" style="padding: 8px 12px; border: 2px solid var(--tmh-blue); border-radius: 4px; font-size: 14px; background-color: white; color: var(--tmh-blue); font-weight: 500;"></select>
                 <small style="display: block; margin-top: 8px; color: var(--tmh-gray); font-style: italic;">
-                    📊 Report will automatically regenerate when you select a different sheet
+                    Report will automatically regenerate when you select a different sheet
                 </small>
             </div>
             <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
@@ -1037,128 +1037,12 @@
                 </div>
             </div>
 
-            <!-- Monthly Trends (CFO Style) -->
+            <!-- Platform Trend Comparison (Simplified) -->
             <div class="section">
-                <div class="section-header">Device Monthly Trends</div>
-                <div class="two-column" style="padding: 0.8rem;">
-                    <div>
-                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">iOS Monthly Trends</h4>
-                        <table id="iosTrendTable">
-                            <thead>
-                                <tr>
-                                    <th>Month</th>
-                                    <th>Count</th>
-                                    <th>Δ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Android Monthly Trends</h4>
-                        <table id="androidTrendTable">
-                            <thead>
-                                <tr>
-                                    <th>Month</th>
-                                    <th>Count</th>
-                                    <th>Δ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Historical Inventory Tracking -->
-            <div class="section">
-                <div class="section-header">Historical Inventory Management</div>
+                <div class="section-header">Platform Trend Comparison</div>
                 <div style="padding: 0.8rem;">
-                    <div class="two-column" style="gap: 2rem; margin-bottom: 1.5rem;">
-                        <div>
-                            <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📊 Platform Trend Data</h4>
-                            
-                            <!-- iOS Trends -->
-                            <div style="background: #f0f7ff; padding: 1rem; border-radius: 6px; border-left: 4px solid #0056b3; margin-bottom: 1rem;">
-                                <h5 style="color: #0056b3; margin-bottom: 0.8rem; font-size: 0.8rem;">🍎 iOS Device Trends</h5>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem;">
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">March 2024</label>
-                                        <input type="number" id="ios_march2024" value="928" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">April 2024</label>
-                                        <input type="number" id="ios_april2024" value="934" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">May 2024</label>
-                                        <input type="number" id="ios_may2024" value="929" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #0056b3; font-weight: 600;">June 2024</label>
-                                        <input type="number" id="ios_june2024" value="926" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center;">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Android Trends -->
-                            <div style="background: #f0fff4; padding: 1rem; border-radius: 6px; border-left: 4px solid #28a745; margin-bottom: 1rem;">
-                                <h5 style="color: #28a745; margin-bottom: 0.8rem; font-size: 0.8rem;">🤖 Android Device Trends</h5>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem;">
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">March 2024</label>
-                                        <input type="number" id="android_march2024" value="790" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">April 2024</label>
-                                        <input type="number" id="android_april2024" value="790" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">May 2024</label>
-                                        <input type="number" id="android_may2024" value="792" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #28a745; font-weight: 600;">June 2024</label>
-                                        <input type="number" id="android_june2024" value="790" style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center;">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Current Month Display -->
-                            <div style="background: #f8fafb; padding: 1rem; border-radius: 6px; border-left: 4px solid #003d5c;">
-                                <h5 style="color: #003d5c; margin-bottom: 0.8rem; font-size: 0.8rem;">📅 Current Month (Live Data)</h5>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">iOS Current</label>
-                                        <input type="number" id="ios_current" placeholder="Auto" readonly style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #0056b3; border-radius: 4px; text-align: center; background: #e3f2fd; font-weight: bold;">
-                                    </div>
-                                    <div style="text-align: center;">
-                                        <label style="font-size: 0.75rem; color: #003d5c; font-weight: 600;">Android Current</label>
-                                        <input type="number" id="android_current" placeholder="Auto" readonly style="width: 100%; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #28a745; border-radius: 4px; text-align: center; background: #e8f5e8; font-weight: bold;">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="text-align: center; margin-top: 1rem;">
-                                <button onclick="saveHistoricalData()" style="background: #003d5c; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">💾 Save Trends</button>
-                                <button onclick="loadHistoricalData()" style="background: #28a745; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">📂 Load</button>
-                                <button onclick="exportHistoricalData()" style="background: #17a2b8; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">📄 Export CSV</button>
-                                <button onclick="clearHistoricalData()" style="background: #dc3545; color: white; border: none; padding: 0.6rem 1rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin: 0.2rem;">🗑️ Clear</button>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📈 Platform Trends</h4>
-                            <div id="inventoryTrends" style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef; min-height: 250px;">
-                                <p style="text-align: center; color: #6c757d; margin-top: 3rem; font-style: italic;">Platform trend data is pre-loaded. Click "💾 Save Trends" to see charts.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="monthlyComparison" style="margin-top: 1.5rem;">
-                        <!-- Monthly comparison table will be populated here -->
+                    <div id="monthlyComparison">
+                        <!-- Platform comparison table will be populated here -->
                     </div>
                 </div>
             </div>
@@ -1478,14 +1362,14 @@
                                      deviceStr.includes('win11');
                     
                     if (isWindows) {
-                        console.log('🚫 Excluding Windows device:', device.displayName || device.deviceName || 'Unknown device');
+                        console.log('Excluding Windows device:', device.displayName || device.deviceName || 'Unknown device');
                     }
                     
                     return !isWindows; // Return true to include, false to exclude
                 });
                 
                 const excludedCount = filteredDevices.length - activeDevices.length;
-                console.log(`🪟 Excluded ${excludedCount} Windows devices from processing`);
+                console.log(`Excluded ${excludedCount} Windows devices from processing`);
                 console.log('Active devices (non-Windows):', activeDevices.length);
                 
                 // Store global devices data for modal windows
@@ -1579,7 +1463,7 @@
                          !d.complianceStateKey.toString().toLowerCase().includes('sccm')));
                     
                     console.log('Compliance counts - iOS:', iosCompliant, 'Android:', androidCompliant, 'Windows:', windowsCompliant);
-                    console.log('📊 All compliance calculations now use consistent .includes("compliant") logic');
+                    console.log('All compliance calculations now use consistent .includes("compliant") logic');
                     console.log('ConfigMgr devices:', configMgrDevices);
                     console.log('Non-compliant devices:', nonCompliantDevices.length);
                 }
@@ -1619,18 +1503,10 @@
                 document.getElementById('iosTotal').textContent = iosDevices.length;
                 document.getElementById('androidTotal').textContent = androidDevices.length;
                 
-                // Update current month trend fields
-                document.getElementById('ios_current').value = iosDevices.length;
-                document.getElementById('android_current').value = androidDevices.length;
+                // Historical tracking elements removed for professional presentation
                 document.getElementById('totalDevices').textContent = totalDevices;
 
-                // Update current month field in historical tracking
-                const currentMonthField = document.getElementById('currentMonth');
-                if (currentMonthField) {
-                    currentMonthField.value = totalDevices;
-                    updateInventoryTrends();
-                    updateMonthlyComparison();
-                }
+                // Historical tracking functions removed for professional presentation
 
                 // Create urgent items section focusing on end-of-life and support issues
                 const urgentItems = [];
@@ -1968,7 +1844,7 @@
             console.log('Populating Android categories table with', androidDevices.length, 'devices');
 
             // Debug: Show all raw Android categories first
-            console.log('🤖 DEBUG: Raw Android device categories:');
+            console.log('DEBUG: Raw Android device categories:');
             const rawAndroidCategories = new Set();
             androidDevices.forEach((device, index) => {
                 if (device.deviceCategoryKey) {
@@ -1983,7 +1859,7 @@
                     }
                 }
             });
-            console.log(`🤖 Found ${rawAndroidCategories.size} unique raw Android categories:`, [...rawAndroidCategories]);
+            console.log(`Found ${rawAndroidCategories.size} unique raw Android categories:`, [...rawAndroidCategories]);
 
             // Enhanced category mapping and normalization
             const categoryCounts = {};
@@ -2294,7 +2170,7 @@
             const element = document.getElementById('reportContainer');
             
             html2canvas(element, {
-                scale: 0.8, // Reduce scale to fit better
+                scale: 0.7, // Reduce scale to fit better with header/footer
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#ffffff'
@@ -2306,18 +2182,48 @@
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
                 
-                // Calculate dimensions to fit on one page with margins
-                const margin = 10;
-                const availableWidth = pdfWidth - (2 * margin);
-                const availableHeight = pdfHeight - (2 * margin);
+                // Professional TMH Header
+                pdf.setFillColor(0, 61, 92); // TMH Blue
+                pdf.rect(0, 0, pdfWidth, 20, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(16);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('TMH DEVICE INVENTORY REPORT', pdfWidth / 2, 12, { align: 'center' });
+                
+                // Calculate dimensions to fit with header/footer margins
+                const topMargin = 25;
+                const bottomMargin = 25;
+                const sideMargin = 10;
+                const availableWidth = pdfWidth - (2 * sideMargin);
+                const availableHeight = pdfHeight - topMargin - bottomMargin;
                 const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
                 
                 const finalWidth = imgWidth * ratio;
                 const finalHeight = imgHeight * ratio;
                 const imgX = (pdfWidth - finalWidth) / 2;
-                const imgY = margin;
+                const imgY = topMargin;
                 
                 pdf.addImage(imgData, 'PNG', imgX, imgY, finalWidth, finalHeight);
+                
+                // Professional Footer with generation timestamp
+                const currentDate = new Date();
+                const dateString = currentDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                pdf.setFillColor(0, 61, 92); // TMH Blue
+                pdf.rect(0, pdfHeight - 15, pdfWidth, 15, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(8);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text('Tallahassee Memorial Hospital', 10, pdfHeight - 8);
+                pdf.text(`Generated: ${dateString}`, pdfWidth - 10, pdfHeight - 8, { align: 'right' });
+                pdf.text('IT Asset Management', pdfWidth / 2, pdfHeight - 8, { align: 'center' });
+                
                 pdf.save('tmh-device-inventory-report.pdf');
                 
                 // Restore action buttons
@@ -2870,7 +2776,7 @@
             const comparisonContainer = document.getElementById('monthlyComparison');
             
             let tableHTML = `
-                <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">📊 Platform Trend Comparison</h4>
+                <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">Platform Trend Comparison</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
             `;
             
@@ -2879,7 +2785,6 @@
                 const platformData = [];
                 const platformName = platform.toUpperCase();
                 const platformColor = platform === 'ios' ? '#0056b3' : '#28a745';
-                const platformIcon = platform === 'ios' ? '🍎' : '🤖';
                 
                 // Collect platform data
                 months.forEach(month => {
@@ -2907,7 +2812,7 @@
                 if (platformData.length > 0) {
                     tableHTML += `
                         <div>
-                            <h5 style="color: ${platformColor}; margin-bottom: 0.8rem; font-size: 0.8rem;">${platformIcon} ${platformName} Trends</h5>
+                            <h5 style="color: ${platformColor}; margin-bottom: 0.8rem; font-size: 0.8rem;">${platformName} Trends</h5>
                             <table class="data-table" style="font-size: 0.7rem;">
                                 <thead>
                                     <tr>
@@ -2937,13 +2842,13 @@
                             
                             if (change > 0) {
                                 changeColor = '#28a745';
-                                trendIcon = '📈';
+                                trendIcon = '↑';
                             } else if (change < 0) {
                                 changeColor = '#dc3545';
-                                trendIcon = '📉';
+                                trendIcon = '↓';
                             } else {
                                 changeColor = '#6c757d';
-                                trendIcon = '➡️';
+                                trendIcon = '→';
                             }
                         }
                         
@@ -2952,7 +2857,7 @@
                         
                         tableHTML += `
                             <tr style="${rowStyle}">
-                                <td>${item.label.replace('2024', '').trim()}${isCurrentMonth ? ' 🔵' : ''}</td>
+                                <td>${item.label.replace('2024', '').trim()}${isCurrentMonth ? ' *' : ''}</td>
                                 <td style="font-weight: bold;">${item.value.toLocaleString()}</td>
                                 <td style="color: ${changeColor}; font-weight: bold;">${changeText}</td>
                                 <td style="color: ${changeColor}; font-weight: bold;">${changePercent}</td>
@@ -3083,7 +2988,7 @@
             // Show success message
             const exportButton = event.target;
             const originalText = exportButton.textContent;
-            exportButton.textContent = '✅ Exported!';
+            exportButton.textContent = 'Exported!';
             setTimeout(() => {
                 exportButton.textContent = originalText;
             }, 2000);
@@ -3118,7 +3023,7 @@
             // Show success message
             const clearButton = event.target;
             const originalText = clearButton.textContent;
-            clearButton.textContent = '✅ Cleared!';
+            clearButton.textContent = 'Cleared!';
             setTimeout(() => {
                 clearButton.textContent = originalText;
             }, 2000);
@@ -3186,11 +3091,11 @@
         // Debug function to log category information for troubleshooting
         function logCategoryDebugInfo(devices, foundColumns) {
             if (!foundColumns.includes('deviceCategoryKey')) {
-                console.log('📋 No deviceCategoryKey column found - using fallback categorization');
+                console.log('No deviceCategoryKey column found - using fallback categorization');
                 return;
             }
             
-            console.log('\n📊 CATEGORY DEBUG INFO:');
+            console.log('\nCATEGORY DEBUG INFO:');
             
             // Get all unique categories
             const allCategories = new Set();
@@ -3214,35 +3119,35 @@
                 }
             });
             
-            console.log(`📱 Total devices: ${devices.length}`);
-            console.log(`📋 Total unique categories found: ${allCategories.size}`);
-            console.log(`🤖 Android devices: ${androidDevices.length}`);
-            console.log(`🍎 iOS devices: ${iosDevices.length}`);
-            console.log(`🪟 Windows devices: ${windowsDevices.length}`);
+            console.log(`Total devices: ${devices.length}`);
+            console.log(`Total unique categories found: ${allCategories.size}`);
+            console.log(`Android devices: ${androidDevices.length}`);
+            console.log(`iOS devices: ${iosDevices.length}`);
+            console.log(`Windows devices: ${windowsDevices.length}`);
             
             // List all unique categories
-            console.log('\n📝 All detected categories:');
+            console.log('\nAll detected categories:');
             [...allCategories].sort().forEach(cat => {
                 console.log(`   • "${cat}"`);
             });
             
             // Check for specific categories the user mentioned
             const targetCategories = ['backstock', 'epic welcome', 'epic-welcome', 'epicwelcome'];
-            console.log('\n🔍 Checking for specific categories:');
+            console.log('\nChecking for specific categories:');
             targetCategories.forEach(target => {
                 const found = [...allCategories].filter(cat => 
                     cat.toLowerCase().includes(target.toLowerCase())
                 );
                 if (found.length > 0) {
-                    console.log(`   ✅ Found "${target}": ${found.join(', ')}`);
+                    console.log(`   Found "${target}": ${found.join(', ')}`);
                 } else {
-                    console.log(`   ❌ Not found: "${target}"`);
+                    console.log(`   Not found: "${target}"`);
                 }
             });
             
             // Android category breakdown
             if (androidDevices.length > 0) {
-                console.log('\n🤖 Android device categories:');
+                console.log('\nAndroid device categories:');
                 const androidCats = {};
                 androidDevices.forEach(device => {
                     const cat = device.deviceCategoryKey ? device.deviceCategoryKey.toString().trim() : '(no category)';
