@@ -2003,25 +2003,31 @@
                 categoryCell.textContent = category;
                 
                 // Add visual indicators for special categories
-                if (category.includes('Backstock')) {
+                if (category.includes('BackStock') || category.includes('backstock')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#fd7e14';
-                } else if (category.includes('Epic Welcome')) {
+                } else if (category.includes('Epic Welcome') || category.includes('epic welcome')) {
                     categoryCell.style.fontWeight = 'bold';
-                    categoryCell.style.color = '#17a2b8';
-                } else if (category.includes('HC50') || category.includes('TC52') || category.includes('TC50')) {
+                    categoryCell.style.color = '#17a745';
+                } else if (category.includes('HC50') || category.includes('hc50')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#28a745';
-                } else if (category.includes('Rover')) {
+                } else if (category.includes('TC52') || category.includes('tc52') || category.includes('TC50') || category.includes('tc50')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#28a745';
+                } else if (category.includes('Rover') || category.includes('rover')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#6f42c1';
-                } else if (category.includes('I-Series')) {
+                } else if (category.includes('I-Series') || category.includes('i-series')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#20c997';
-                } else if (category.includes('Supply')) {
+                } else if (category.includes('Supply') || category.includes('supply')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#fd7e14';
-                } else if (category.includes('(unassigned)') || category.includes('(blank)')) {
+                } else if (category.includes('Test') || category.includes('test')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#ffc107';
+                } else if (category.includes('(unassigned)') || category.includes('(blank)') || category.includes('(no category)')) {
                     categoryCell.style.color = '#dc3545';
                     categoryCell.style.fontStyle = 'italic';
                 }
@@ -2091,7 +2097,7 @@
             console.log(`Found ${rawAndroidCategories.size} unique raw Android categories:`, [...rawAndroidCategories]);
             console.log('Sample of first 10 devices with categories:', categorySample);
 
-            // Enhanced category mapping and normalization
+            // Simple adaptive categorization - use original category names
             const categoryCounts = {};
             const mappingDebug = [];
             androidDevices.forEach((device, index) => {
@@ -2100,113 +2106,14 @@
                 
                 // Use the Category column if available
                 if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
-                    // Clean and normalize the category name
-                    let rawCategory = device.deviceCategoryKey.toString().trim();
+                    // Use the original category name as-is
+                    category = device.deviceCategoryKey.toString().trim();
+                    mappingReason = 'using original category name';
                     
-                    // Handle specific TMH categories (case-insensitive)
-                    const lowerCategory = rawCategory.toLowerCase();
-                    
-                    // Enhanced debugging for category mapping
-                    if (index < 10) {
-                        console.log(`Android Device ${index} category mapping:`, {
-                            original: rawCategory,
-                            lowercase: lowerCategory,
-                            device: device.deviceName || device.displayName || 'Unknown'
-                        });
-                    }
-                    
-                    // Specific TMH category mappings - more precise matching
-                    if (lowerCategory === 'hc50') {
-                        category = 'HC50';
-                        mappingReason = 'exact match: HC50';
-                    } else if (lowerCategory === 'android hc50 zebras - rover') {
-                        category = 'Android HC50 Zebras - Rover';
-                        mappingReason = 'exact match: Android HC50 Zebras - Rover';
-                    } else if (lowerCategory === 'tc52') {
-                        category = 'TC52';
-                        mappingReason = 'exact match: TC52';
-                    } else if (lowerCategory === 'tc 50' || lowerCategory === 'tc50') {
-                        category = 'TC50';
-                        mappingReason = 'exact match: TC50';
-                    } else if (lowerCategory === '22in-i-series-4') {
-                        category = '22in-I-Series-4';
-                        mappingReason = 'exact match: 22in-I-Series-4';
-                    } else if (lowerCategory === 'epic welcome - test') {
-                        category = 'Epic Welcome - Test';
-                        mappingReason = 'exact match: Epic Welcome - Test';
-                    } else if (lowerCategory === 'supply - tc 50 for infor mscm') {
-                        category = 'Supply - TC 50 for Infor MSCM';
-                        mappingReason = 'exact match: Supply - TC 50 for Infor MSCM';
-                    } else if (lowerCategory === 'backstock') {
-                        category = 'BackStock';
-                        mappingReason = 'exact match: BackStock';
-                    } else if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
-                        category = 'Android Backstock';
-                        mappingReason = 'contains backstock';
-                    } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome') || lowerCategory.includes('epic_welcome')) {
-                        category = 'Epic Welcome';
-                        mappingReason = 'contains epic welcome';
-                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode')) {
-                        category = 'Zebra/Scanner';
-                        mappingReason = 'contains zebra/scanner/barcode';
-                    } else if (lowerCategory.includes('tablet') || lowerCategory.includes('ipad')) {
-                        category = 'Android Tablet';
-                        mappingReason = 'contains tablet/ipad';
-                    } else if (lowerCategory.includes('phone') || lowerCategory.includes('mobile phone')) {
-                        category = 'Android Phone';
-                        mappingReason = 'contains phone';
-                    } else if (lowerCategory.includes('kiosk') || lowerCategory.includes('self-service')) {
-                        category = 'Kiosk';
-                        mappingReason = 'contains kiosk';
-                    } else if (lowerCategory.includes('rugged') || lowerCategory.includes('industrial')) {
-                        category = 'Rugged Device';
-                        mappingReason = 'contains rugged/industrial';
-                    } else if (lowerCategory.includes('mobile') && !lowerCategory.includes('phone')) {
-                        category = 'Mobile Device';
-                        mappingReason = 'contains mobile (not phone)';
-                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing') || lowerCategory.includes('pilot')) {
-                        category = 'Test Device';
-                        mappingReason = 'contains test/pilot';
-                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration') || lowerCategory.includes('sample')) {
-                        category = 'Demo Device';
-                        mappingReason = 'contains demo';
-                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared') || lowerCategory.includes('common')) {
-                        category = 'Shared/Pool Device';
-                        mappingReason = 'contains pool/shared';
-                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company') || lowerCategory.includes('business')) {
-                        category = 'Corporate Device';
-                        mappingReason = 'contains corporate/company';
-                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing') || lowerCategory.includes('clinical')) {
-                        category = 'Nursing Device';
-                        mappingReason = 'contains nurse/nursing/clinical';
-                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider') || lowerCategory.includes('medical')) {
-                        category = 'Provider Device';
-                        mappingReason = 'contains physician/doctor/provider/medical';
-                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration') || lowerCategory.includes('office')) {
-                        category = 'Administrative Device';
-                        mappingReason = 'contains admin/administration/office';
-                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma') || lowerCategory.includes('urgent')) {
-                        category = 'Emergency/Trauma Device';
-                        mappingReason = 'contains emergency/er/trauma/urgent';
-                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or') || lowerCategory.includes('operating')) {
-                        category = 'Surgical Device';
-                        mappingReason = 'contains surgery/surgical/or/operating';
-                    } else if (lowerCategory.includes('supply') || lowerCategory.includes('infor') || lowerCategory.includes('mscm')) {
-                        category = 'Supply/Inventory Device';
-                        mappingReason = 'contains supply/infor/mscm';
-                    } else if (lowerCategory.includes('rover') || lowerCategory.includes('roving')) {
-                        category = 'Rover Device';
-                        mappingReason = 'contains rover/roving';
-                    } else if (lowerCategory.includes('i-series') || lowerCategory.includes('iseries')) {
-                        category = 'I-Series Device';
-                        mappingReason = 'contains i-series';
-                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null' || lowerCategory === 'none') {
+                    // Handle empty/null categories
+                    if (category === '' || category === 'null' || category === 'none') {
                         category = '(unassigned)';
-                        mappingReason = 'unassigned/empty/null';
-                    } else {
-                        // Use the original category name if no specific mapping found
-                        category = rawCategory;
-                        mappingReason = 'no specific mapping - using original';
+                        mappingReason = 'empty/null category';
                     }
                 } else if (foundColumns.includes('deviceCategoryKey')) {
                     category = '(blank)';
@@ -2266,25 +2173,31 @@
                 categoryCell.textContent = category;
                 
                 // Add visual indicators for special categories
-                if (category.includes('Backstock')) {
+                if (category.includes('BackStock') || category.includes('backstock')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#fd7e14';
-                } else if (category.includes('Epic Welcome')) {
+                } else if (category.includes('Epic Welcome') || category.includes('epic welcome')) {
                     categoryCell.style.fontWeight = 'bold';
-                    categoryCell.style.color = '#17a2b8';
-                } else if (category.includes('HC50') || category.includes('TC52') || category.includes('TC50')) {
+                    categoryCell.style.color = '#17a745';
+                } else if (category.includes('HC50') || category.includes('hc50')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#28a745';
-                } else if (category.includes('Rover')) {
+                } else if (category.includes('TC52') || category.includes('tc52') || category.includes('TC50') || category.includes('tc50')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#28a745';
+                } else if (category.includes('Rover') || category.includes('rover')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#6f42c1';
-                } else if (category.includes('I-Series')) {
+                } else if (category.includes('I-Series') || category.includes('i-series')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#20c997';
-                } else if (category.includes('Supply')) {
+                } else if (category.includes('Supply') || category.includes('supply')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#fd7e14';
-                } else if (category.includes('(unassigned)') || category.includes('(blank)')) {
+                } else if (category.includes('Test') || category.includes('test')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#ffc107';
+                } else if (category.includes('(unassigned)') || category.includes('(blank)') || category.includes('(no category)')) {
                     categoryCell.style.color = '#dc3545';
                     categoryCell.style.fontStyle = 'italic';
                 }
