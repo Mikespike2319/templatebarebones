@@ -1969,6 +1969,18 @@
                 } else if (category.includes('Epic Welcome')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#17a2b8';
+                } else if (category.includes('HC50') || category.includes('TC52') || category.includes('TC50')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#28a745';
+                } else if (category.includes('Rover')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#6f42c1';
+                } else if (category.includes('I-Series')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#20c997';
+                } else if (category.includes('Supply')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#fd7e14';
                 } else if (category.includes('(unassigned)') || category.includes('(blank)')) {
                     categoryCell.style.color = '#dc3545';
                     categoryCell.style.fontStyle = 'italic';
@@ -2063,15 +2075,37 @@
                         });
                     }
                     
-                    if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
+                    // Specific TMH category mappings
+                    if (lowerCategory === 'hc50' || lowerCategory === 'hc50 zebra') {
+                        category = 'HC50 Zebra';
+                        mappingReason = 'exact match: HC50';
+                    } else if (lowerCategory.includes('android hc50 zebras - rover') || lowerCategory.includes('hc50 zebras - rover')) {
+                        category = 'HC50 Zebra - Rover';
+                        mappingReason = 'exact match: Android HC50 Zebras - Rover';
+                    } else if (lowerCategory === 'tc52' || lowerCategory === 'tc52 zebra') {
+                        category = 'TC52 Zebra';
+                        mappingReason = 'exact match: TC52';
+                    } else if (lowerCategory.includes('tc 50') || lowerCategory.includes('tc50')) {
+                        category = 'TC50 Zebra';
+                        mappingReason = 'exact match: TC50';
+                    } else if (lowerCategory.includes('22in-i-series-4') || lowerCategory.includes('i-series-4')) {
+                        category = 'I-Series Device';
+                        mappingReason = 'exact match: 22in-I-Series-4';
+                    } else if (lowerCategory.includes('epic welcome - test')) {
+                        category = 'Epic Welcome - Test';
+                        mappingReason = 'exact match: Epic Welcome - TEST';
+                    } else if (lowerCategory.includes('supply - tc 50 for infor mscm')) {
+                        category = 'Supply - TC50 Infor MSCM';
+                        mappingReason = 'exact match: Supply - TC 50 for Infor MSCM';
+                    } else if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
                         category = 'Android Backstock';
                         mappingReason = 'contains backstock';
                     } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome') || lowerCategory.includes('epic_welcome')) {
                         category = 'Epic Welcome';
                         mappingReason = 'contains epic welcome';
-                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode')) {
+                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode') || lowerCategory.includes('hc50') || lowerCategory.includes('tc52') || lowerCategory.includes('tc50')) {
                         category = 'Zebra/Scanner';
-                        mappingReason = 'contains zebra/scanner/barcode';
+                        mappingReason = 'contains zebra/scanner/barcode/hc50/tc52';
                     } else if (lowerCategory.includes('tablet') || lowerCategory.includes('ipad')) {
                         category = 'Android Tablet';
                         mappingReason = 'contains tablet/ipad';
@@ -2114,6 +2148,15 @@
                     } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or') || lowerCategory.includes('operating')) {
                         category = 'Surgical Device';
                         mappingReason = 'contains surgery/surgical/or/operating';
+                    } else if (lowerCategory.includes('supply') || lowerCategory.includes('infor') || lowerCategory.includes('mscm')) {
+                        category = 'Supply/Inventory Device';
+                        mappingReason = 'contains supply/infor/mscm';
+                    } else if (lowerCategory.includes('rover') || lowerCategory.includes('roving')) {
+                        category = 'Rover Device';
+                        mappingReason = 'contains rover/roving';
+                    } else if (lowerCategory.includes('i-series') || lowerCategory.includes('iseries')) {
+                        category = 'I-Series Device';
+                        mappingReason = 'contains i-series';
                     } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null' || lowerCategory === 'none') {
                         category = '(unassigned)';
                         mappingReason = 'unassigned/empty/null';
@@ -2128,9 +2171,9 @@
                 } else {
                     // If no Category column found, categorize by device type or model
                     const deviceStr = JSON.stringify(device).toLowerCase();
-                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner') || deviceStr.includes('barcode')) {
+                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner') || deviceStr.includes('barcode') || deviceStr.includes('hc50') || deviceStr.includes('tc52') || deviceStr.includes('tc50')) {
                         category = 'Zebra/Scanner';
-                        mappingReason = 'fallback: device contains zebra/scanner/barcode';
+                        mappingReason = 'fallback: device contains zebra/scanner/barcode/hc50/tc52';
                     } else if (deviceStr.includes('tablet') || deviceStr.includes('ipad')) {
                         category = 'Android Tablet';
                         mappingReason = 'fallback: device contains tablet/ipad';
@@ -2186,6 +2229,18 @@
                 } else if (category.includes('Epic Welcome')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#17a2b8';
+                } else if (category.includes('HC50') || category.includes('TC52') || category.includes('TC50')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#28a745';
+                } else if (category.includes('Rover')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#6f42c1';
+                } else if (category.includes('I-Series')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#20c997';
+                } else if (category.includes('Supply')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#fd7e14';
                 } else if (category.includes('(unassigned)') || category.includes('(blank)')) {
                     categoryCell.style.color = '#dc3545';
                     categoryCell.style.fontStyle = 'italic';
