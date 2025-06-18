@@ -1448,9 +1448,22 @@
                 const nonPersonalDevices = activeDevices.filter(device => {
                     if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
                         const category = device.deviceCategoryKey.toString().toLowerCase();
-                        if (category.includes('personal')) {
-                            console.log('Excluding personal device:', device.deviceName || device.displayName || 'Unknown device');
+                        
+                        // More specific personal device detection to avoid false positives
+                        if (category.includes('personal') && 
+                            !category.includes('backstock') && 
+                            !category.includes('back stock') &&
+                            !category.includes('corporate') &&
+                            !category.includes('company') &&
+                            !category.includes('business')) {
+                            console.log('Excluding personal device:', device.deviceName || device.displayName || 'Unknown device', 'Category:', category);
                             return false;
+                        }
+                        
+                        // Explicitly include BackStock devices (they are NOT personal)
+                        if (category.includes('backstock') || category.includes('back stock')) {
+                            console.log('Including BackStock device:', device.deviceName || device.displayName || 'Unknown device', 'Category:', category);
+                            return true;
                         }
                     }
                     return true;
@@ -1459,6 +1472,29 @@
                 const personalExcludedCount = activeDevices.length - nonPersonalDevices.length;
                 console.log(`Excluded ${personalExcludedCount} personal devices from processing`);
                 console.log('Non-personal devices:', nonPersonalDevices.length);
+                
+                // Debug: Check for BackStock devices specifically
+                const backstockDevices = activeDevices.filter(device => {
+                    if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                        const category = device.deviceCategoryKey.toString().toLowerCase();
+                        return category.includes('backstock') || category.includes('back stock');
+                    }
+                    return false;
+                });
+                console.log(`Found ${backstockDevices.length} BackStock devices in active devices`);
+                
+                const backstockInNonPersonal = nonPersonalDevices.filter(device => {
+                    if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                        const category = device.deviceCategoryKey.toString().toLowerCase();
+                        return category.includes('backstock') || category.includes('back stock');
+                    }
+                    return false;
+                });
+                console.log(`Found ${backstockInNonPersonal.length} BackStock devices in non-personal devices`);
+                
+                if (backstockDevices.length !== backstockInNonPersonal.length) {
+                    console.warn('WARNING: Some BackStock devices may have been incorrectly filtered out!');
+                }
                 
                 // Store global devices data for modal windows
                 globalDevicesData = nonPersonalDevices;
