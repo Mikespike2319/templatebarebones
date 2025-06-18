@@ -251,7 +251,7 @@
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 0.8rem;
             margin-bottom: 1rem;
         }
@@ -901,11 +901,6 @@
                     <div class="description">Scanners, tablets & mobile android devices</div>
                 </div>
                 <div class="card">
-                    <h3>Windows Endpoints</h3>
-                    <div class="number" id="windowsTotal">0</div>
-                    <div class="description">Workstations, laptops & Windows devices</div>
-                </div>
-                <div class="card">
                     <h3>Total Device Fleet</h3>
                     <div class="number" id="totalDevices">0</div>
                     <div class="description">All managed devices across platforms</div>
@@ -1467,7 +1462,7 @@
                 globalDevicesData = activeDevices;
                 
                 // Calculate critical metrics using OS version column
-                let iosDevices = [], androidDevices = [], windowsDevices = [];
+                let iosDevices = [], androidDevices = [];
                 
                 console.log('Detecting OS from available data...');
                 activeDevices.forEach((device, index) => {
@@ -1483,9 +1478,6 @@
                         } else if (osVersion.includes('android')) {
                             androidDevices.push(device);
                             osDetected = true;
-                        } else if (osVersion.includes('windows')) {
-                            windowsDevices.push(device);
-                            osDetected = true;
                         }
                     }
                     
@@ -1496,18 +1488,15 @@
                             iosDevices.push(device);
                         } else if (deviceStr.includes('android')) {
                             androidDevices.push(device);
-                        } else if (deviceStr.includes('windows')) {
-                            windowsDevices.push(device);
                         }
                     }
                 });
                 
-                const totalDevices = activeDevices.length;
+                const totalDevices = iosDevices.length + androidDevices.length;
 
                 console.log('Device counts after processing:');
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
-                console.log('Windows devices:', windowsDevices.length);
                 console.log('Total devices:', totalDevices);
 
                 // Calculate compliance metrics using Compliance column
@@ -1604,7 +1593,6 @@
                 // Update current month trend fields
                 document.getElementById('ios_current').value = iosDevices.length;
                 document.getElementById('android_current').value = androidDevices.length;
-                document.getElementById('windowsTotal').textContent = windowsDevices.length;
                 document.getElementById('totalDevices').textContent = totalDevices;
 
                 // Update current month field in historical tracking
@@ -1735,10 +1723,7 @@
                 // Always populate tables if we have device data
                 if (totalDevices > 0) {
                     populateOSTable(activeDevices);
-                    populateDeviceCategoriesTables(activeDevices, foundColumns, iosDevices, androidDevices, windowsDevices);
-                    
-                    // Update ConfigMgr and unassigned counts
-                    updateSpecialCounts(configMgrDevices, unassignedDevices, windowsDevices, foundColumns);
+                    populateDeviceCategoriesTables(activeDevices, foundColumns, iosDevices, androidDevices);
                 } else {
                     // Hide sections if no device data
                     const osSection = document.getElementById('osTable')?.closest('.section');
@@ -1830,30 +1815,24 @@
             });
         }
 
-        function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = [], windowsDevices = []) {
+        function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = []) {
             // Use provided device arrays if available, otherwise filter from all devices
-            if (iosDevices.length === 0 && androidDevices.length === 0 && windowsDevices.length === 0) {
+            if (iosDevices.length === 0 && androidDevices.length === 0) {
                 iosDevices = devices.filter(d => 
                     d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
                 );
                 androidDevices = devices.filter(d => 
                     d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
                 );
-                windowsDevices = devices.filter(d => 
-                    d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('windows')
-                );
             }
 
-            console.log('Populating category tables - iOS:', iosDevices.length, 'Android:', androidDevices.length, 'Windows:', windowsDevices.length);
+            console.log('Populating category tables - iOS:', iosDevices.length, 'Android:', androidDevices.length);
 
             // Populate iOS categories table
             populateIOSCategoriesTable(iosDevices, foundColumns);
             
             // Populate Android categories table  
             populateAndroidCategoriesTable(androidDevices, foundColumns);
-            
-            // Populate Windows categories table
-            populateWindowsCategoriesTable(windowsDevices, foundColumns);
         }
 
         function updateSpecialCounts(configMgrDevices, unassignedDevices, windowsDevices, foundColumns) {
@@ -2371,7 +2350,6 @@
             // Clear summary cards
             document.getElementById('iosTotal').textContent = '0';
             document.getElementById('androidTotal').textContent = '0';
-            document.getElementById('windowsTotal').textContent = '0';
             document.getElementById('totalDevices').textContent = '0';
             
             // Clear compliance bars
@@ -2388,7 +2366,7 @@
             });
             
             // Clear tables
-            const tables = ['osTable', 'iosTable', 'androidTable', 'windowsTable', 'lifecycleTable'];
+            const tables = ['osTable', 'iosTable', 'androidTable', 'lifecycleTable'];
             tables.forEach(tableId => {
                 const table = document.getElementById(tableId);
                 if (table) {
