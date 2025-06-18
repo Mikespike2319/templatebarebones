@@ -3547,36 +3547,92 @@
             const foundColumns = window.lastFoundColumns;
             
             console.log('=== CATEGORY DEBUG REPORT ===');
-            console.log('Total devices:', data.length);
+            console.log('Total devices (unfiltered):', data.length);
             console.log('Found columns:', foundColumns);
             console.log('deviceCategoryKey column found:', foundColumns.includes('deviceCategoryKey'));
             
-            // Get all unique categories
+            // Apply the same filtering as the main processing
+            // Filter out Windows devices first
+            const activeDevices = data.filter(device => {
+                const deviceStr = JSON.stringify(device).toLowerCase();
+                const osVersion = device.osVersion ? device.osVersion.toString().toLowerCase() : '';
+                const operatingSystem = device.operatingSystem ? device.operatingSystem.toString().toLowerCase() : '';
+                const model = device.model ? device.model.toString().toLowerCase() : '';
+                const manufacturer = device.manufacturer ? device.manufacturer.toString().toLowerCase() : '';
+                
+                const isWindows = osVersion.includes('windows') || 
+                                 operatingSystem.includes('windows') ||
+                                 deviceStr.includes('windows') ||
+                                 deviceStr.includes('microsoft') ||
+                                 manufacturer.includes('microsoft') ||
+                                 model.includes('surface') ||
+                                 deviceStr.includes('win10') ||
+                                 deviceStr.includes('win11');
+                
+                return !isWindows;
+            });
+            
+            console.log('Active devices (non-Windows):', activeDevices.length);
+            
+            // Filter out personal devices
+            const nonPersonalDevices = activeDevices.filter(device => {
+                if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                    const category = device.deviceCategoryKey.toString().toLowerCase();
+                    
+                    if (category.includes('personal') && 
+                        !category.includes('backstock') && 
+                        !category.includes('back stock') &&
+                        !category.includes('corporate') &&
+                        !category.includes('company') &&
+                        !category.includes('business')) {
+                        return false;
+                    }
+                    
+                    if (category.includes('backstock') || category.includes('back stock')) {
+                        return true;
+                    }
+                }
+                return true;
+            });
+            
+            console.log('Non-personal devices:', nonPersonalDevices.length);
+            
+            // Get all unique categories from filtered data
             const allCategories = new Set();
             const androidDevices = [];
             const iosDevices = [];
-            const windowsDevices = [];
             
-            data.forEach(device => {
+            nonPersonalDevices.forEach(device => {
                 if (device.deviceCategoryKey) {
                     allCategories.add(device.deviceCategoryKey.toString().trim());
                 }
                 
-                // Sort by OS for detailed breakdown
-                const deviceStr = JSON.stringify(device).toLowerCase();
-                if (deviceStr.includes('android')) {
-                    androidDevices.push(device);
-                } else if (deviceStr.includes('ios')) {
-                    iosDevices.push(device);
-                } else if (deviceStr.includes('windows')) {
-                    windowsDevices.push(device);
+                // Use the same OS detection logic as main processing
+                let osDetected = false;
+                if (foundColumns.includes('osVersion') && device.osVersion) {
+                    const osVersion = device.osVersion.toString().toLowerCase();
+                    if (osVersion.includes('ios')) {
+                        iosDevices.push(device);
+                        osDetected = true;
+                    } else if (osVersion.includes('android')) {
+                        androidDevices.push(device);
+                        osDetected = true;
+                    }
+                }
+                
+                if (!osDetected) {
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
+                        iosDevices.push(device);
+                    } else if (deviceStr.includes('android')) {
+                        androidDevices.push(device);
+                    }
                 }
             });
             
-            console.log(`\nDevice breakdown:`);
+            console.log(`\nDevice breakdown (filtered):`);
             console.log(`- Android devices: ${androidDevices.length}`);
             console.log(`- iOS devices: ${iosDevices.length}`);
-            console.log(`- Windows devices: ${windowsDevices.length}`);
             
             console.log(`\nTotal unique categories found: ${allCategories.size}`);
             console.log('\nAll detected categories:');
@@ -3633,8 +3689,10 @@
             
             // Show alert with summary
             const summary = `Debug complete! Check console for details.\n\n` +
-                          `Total devices: ${data.length}\n` +
-                          `Android devices: ${androidDevices.length}\n` +
+                          `Total devices (unfiltered): ${data.length}\n` +
+                          `Active devices (non-Windows): ${activeDevices.length}\n` +
+                          `Non-personal devices: ${nonPersonalDevices.length}\n` +
+                          `Android devices (filtered): ${androidDevices.length}\n` +
                           `Unique categories: ${allCategories.size}\n` +
                           `Category column found: ${foundColumns.includes('deviceCategoryKey')}`;
             
