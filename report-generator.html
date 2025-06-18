@@ -1545,6 +1545,9 @@
                 
                 // Update urgent indicator in header
                 updateUrgentIndicator(urgentItems);
+                
+                // Add debugging info for categories (can be removed in production)
+                logCategoryDebugInfo(activeDevices, foundColumns);
 
                 // Update compliance bars (only if compliance data exists)
                 if (foundColumns.includes('complianceStateKey')) {
@@ -1628,10 +1631,38 @@
                     reportContainer.style.display = 'block';
                 }
                 
-                // Update status message
+                // Update status message with category info
                 const statusMessage = document.getElementById('statusMessage');
                 if (statusMessage) {
-                    statusMessage.textContent = `Report generated successfully with ${foundColumns.length} data columns`;
+                    let message = `Report generated successfully with ${foundColumns.length} data columns`;
+                    
+                    // Add category detection info
+                    if (foundColumns.includes('deviceCategoryKey')) {
+                        const androidDevices = activeDevices.filter(d => {
+                            const deviceStr = JSON.stringify(d).toLowerCase();
+                            return deviceStr.includes('android');
+                        });
+                        
+                        const specialCategories = [];
+                        androidDevices.forEach(device => {
+                            if (device.deviceCategoryKey) {
+                                const cat = device.deviceCategoryKey.toString().toLowerCase();
+                                if (cat.includes('backstock') && !specialCategories.includes('Backstock')) {
+                                    specialCategories.push('Backstock');
+                                }
+                                if ((cat.includes('epic welcome') || cat.includes('epic-welcome') || cat.includes('epicwelcome')) 
+                                    && !specialCategories.includes('Epic Welcome')) {
+                                    specialCategories.push('Epic Welcome');
+                                }
+                            }
+                        });
+                        
+                        if (specialCategories.length > 0) {
+                            message += ` • Found: ${specialCategories.join(', ')}`;
+                        }
+                    }
+                    
+                    statusMessage.textContent = message;
                     statusMessage.className = 'status-message status-success';
                 }
                 
@@ -1798,21 +1829,68 @@
 
             console.log('Populating Android categories table with', androidDevices.length, 'devices');
 
-            // Count devices by Category column
+            // Enhanced category mapping and normalization
             const categoryCounts = {};
             androidDevices.forEach((device, index) => {
                 let category = '(no category)';
                 
                 // Use the Category column if available
                 if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
-                    category = device.deviceCategoryKey;
+                    // Clean and normalize the category name
+                    let rawCategory = device.deviceCategoryKey.toString().trim();
+                    
+                    // Handle specific TMH categories (case-insensitive)
+                    const lowerCategory = rawCategory.toLowerCase();
+                    
+                    if (lowerCategory.includes('backstock')) {
+                        category = 'Backstock';
+                    } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome')) {
+                        category = 'Epic Welcome';
+                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner')) {
+                        category = 'Zebra/Scanner';
+                    } else if (lowerCategory.includes('tablet')) {
+                        category = 'Android Tablet';
+                    } else if (lowerCategory.includes('phone')) {
+                        category = 'Android Phone';
+                    } else if (lowerCategory.includes('kiosk')) {
+                        category = 'Kiosk';
+                    } else if (lowerCategory.includes('rugged')) {
+                        category = 'Rugged Device';
+                    } else if (lowerCategory.includes('mobile')) {
+                        category = 'Mobile Device';
+                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing')) {
+                        category = 'Test Device';
+                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration')) {
+                        category = 'Demo Device';
+                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared')) {
+                        category = 'Shared/Pool Device';
+                    } else if (lowerCategory.includes('personal')) {
+                        category = 'Personal Device';
+                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company')) {
+                        category = 'Corporate Device';
+                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing')) {
+                        category = 'Nursing Device';
+                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider')) {
+                        category = 'Provider Device';
+                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration')) {
+                        category = 'Administrative Device';
+                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma')) {
+                        category = 'Emergency/Trauma Device';
+                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or')) {
+                        category = 'Surgical Device';
+                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null') {
+                        category = '(unassigned)';
+                    } else {
+                        // Use the original category name if no specific mapping found
+                        category = rawCategory;
+                    }
                 } else if (foundColumns.includes('deviceCategoryKey')) {
                     category = '(blank)';
                 } else {
                     // If no Category column found, categorize by device type or model
                     const deviceStr = JSON.stringify(device).toLowerCase();
                     if (deviceStr.includes('zebra') || deviceStr.includes('scanner')) {
-                        category = 'Scanner/Zebra';
+                        category = 'Zebra/Scanner';
                     } else if (deviceStr.includes('tablet')) {
                         category = 'Android Tablet';
                     } else if (deviceStr.includes('phone')) {
@@ -1822,19 +1900,48 @@
                     }
                 }
                 
-                if (index < 3) console.log(`Android Device ${index} category:`, category, 'from device:', device);
+                // Enhanced debugging for first few devices
+                if (index < 5) {
+                    console.log(`Android Device ${index}:`, {
+                        originalCategory: device.deviceCategoryKey,
+                        mappedCategory: category,
+                        device: device
+                    });
+                }
+                
                 categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             });
 
             console.log('Android category counts:', categoryCounts);
+            console.log('Total unique Android categories found:', Object.keys(categoryCounts).length);
 
             // Sort by count (descending)
             const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
 
+            // Enhanced table population with better formatting
             sortedCategories.forEach(([category, count]) => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = category;
-                row.insertCell(1).textContent = count;
+                
+                // Category cell with improved formatting
+                const categoryCell = row.insertCell(0);
+                categoryCell.textContent = category;
+                
+                // Add visual indicators for special categories
+                if (category.includes('Backstock')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#fd7e14';
+                } else if (category.includes('Epic Welcome')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#17a2b8';
+                } else if (category.includes('(unassigned)') || category.includes('(blank)')) {
+                    categoryCell.style.color = '#dc3545';
+                    categoryCell.style.fontStyle = 'italic';
+                }
+                
+                // Count cell
+                const countCell = row.insertCell(1);
+                countCell.textContent = count;
+                countCell.style.fontWeight = 'bold';
             });
 
             // Update Android compliance
@@ -2319,6 +2426,77 @@
                 setTimeout(() => {
                     urgentSection.style.background = '#fff';
                 }, 2000);
+            }
+        }
+
+        // Debug function to log category information for troubleshooting
+        function logCategoryDebugInfo(devices, foundColumns) {
+            if (!foundColumns.includes('deviceCategoryKey')) {
+                console.log('📋 No deviceCategoryKey column found - using fallback categorization');
+                return;
+            }
+            
+            console.log('\n📊 CATEGORY DEBUG INFO:');
+            
+            // Get all unique categories
+            const allCategories = new Set();
+            const androidDevices = [];
+            const iosDevices = [];
+            const windowsDevices = [];
+            
+            devices.forEach(device => {
+                if (device.deviceCategoryKey) {
+                    allCategories.add(device.deviceCategoryKey.toString().trim());
+                }
+                
+                // Sort by OS for detailed breakdown
+                const deviceStr = JSON.stringify(device).toLowerCase();
+                if (deviceStr.includes('android')) {
+                    androidDevices.push(device);
+                } else if (deviceStr.includes('ios')) {
+                    iosDevices.push(device);
+                } else if (deviceStr.includes('windows')) {
+                    windowsDevices.push(device);
+                }
+            });
+            
+            console.log(`📱 Total devices: ${devices.length}`);
+            console.log(`📋 Total unique categories found: ${allCategories.size}`);
+            console.log(`🤖 Android devices: ${androidDevices.length}`);
+            console.log(`🍎 iOS devices: ${iosDevices.length}`);
+            console.log(`🪟 Windows devices: ${windowsDevices.length}`);
+            
+            // List all unique categories
+            console.log('\n📝 All detected categories:');
+            [...allCategories].sort().forEach(cat => {
+                console.log(`   • "${cat}"`);
+            });
+            
+            // Check for specific categories the user mentioned
+            const targetCategories = ['backstock', 'epic welcome', 'epic-welcome', 'epicwelcome'];
+            console.log('\n🔍 Checking for specific categories:');
+            targetCategories.forEach(target => {
+                const found = [...allCategories].filter(cat => 
+                    cat.toLowerCase().includes(target.toLowerCase())
+                );
+                if (found.length > 0) {
+                    console.log(`   ✅ Found "${target}": ${found.join(', ')}`);
+                } else {
+                    console.log(`   ❌ Not found: "${target}"`);
+                }
+            });
+            
+            // Android category breakdown
+            if (androidDevices.length > 0) {
+                console.log('\n🤖 Android device categories:');
+                const androidCats = {};
+                androidDevices.forEach(device => {
+                    const cat = device.deviceCategoryKey ? device.deviceCategoryKey.toString().trim() : '(no category)';
+                    androidCats[cat] = (androidCats[cat] || 0) + 1;
+                });
+                Object.entries(androidCats).sort((a, b) => b[1] - a[1]).forEach(([cat, count]) => {
+                    console.log(`   • "${cat}": ${count} devices`);
+                });
             }
         }
     </script>
