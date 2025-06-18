@@ -903,7 +903,7 @@
                 <div class="card">
                     <h3>Total Device Fleet</h3>
                     <div class="number" id="totalDevices">0</div>
-                    <div class="description">All managed devices across platforms</div>
+                    <div class="description">Mobile devices only (Windows excluded)</div>
                 </div>
             </div>
 
@@ -1454,9 +1454,39 @@
                 clearReportData();
                 
                 // Filter out deleted devices (if isDeleted column exists)
-                const activeDevices = foundColumns.includes('isDeleted') ? 
+                let filteredDevices = foundColumns.includes('isDeleted') ? 
                     data.filter(device => !device.isDeleted) : data;
-                console.log('Active devices:', activeDevices.length);
+                console.log('Devices after filtering deleted:', filteredDevices.length);
+                
+                // Filter out Windows devices from Intune exports
+                const activeDevices = filteredDevices.filter(device => {
+                    // Check various fields that might contain OS information
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    const osVersion = device.osVersion ? device.osVersion.toString().toLowerCase() : '';
+                    const operatingSystem = device.operatingSystem ? device.operatingSystem.toString().toLowerCase() : '';
+                    const model = device.model ? device.model.toString().toLowerCase() : '';
+                    const manufacturer = device.manufacturer ? device.manufacturer.toString().toLowerCase() : '';
+                    
+                    // Return false (exclude) if device appears to be Windows
+                    const isWindows = osVersion.includes('windows') || 
+                                     operatingSystem.includes('windows') ||
+                                     deviceStr.includes('windows') ||
+                                     deviceStr.includes('microsoft') ||
+                                     manufacturer.includes('microsoft') ||
+                                     model.includes('surface') ||
+                                     deviceStr.includes('win10') ||
+                                     deviceStr.includes('win11');
+                    
+                    if (isWindows) {
+                        console.log('🚫 Excluding Windows device:', device.displayName || device.deviceName || 'Unknown device');
+                    }
+                    
+                    return !isWindows; // Return true to include, false to exclude
+                });
+                
+                const excludedCount = filteredDevices.length - activeDevices.length;
+                console.log(`🪟 Excluded ${excludedCount} Windows devices from processing`);
+                console.log('Active devices (non-Windows):', activeDevices.length);
                 
                 // Store global devices data for modal windows
                 globalDevicesData = activeDevices;
@@ -1745,6 +1775,11 @@
                 const statusMessage = document.getElementById('statusMessage');
                 if (statusMessage) {
                     let message = `Report generated successfully with ${foundColumns.length} data columns`;
+                    
+                    // Add Windows exclusion info
+                    if (excludedCount > 0) {
+                        message += ` • Excluded ${excludedCount} Windows devices from processing`;
+                    }
                     
                     // Add category detection info
                     if (foundColumns.includes('deviceCategoryKey')) {
