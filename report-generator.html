@@ -926,6 +926,16 @@
 
             </div>
 
+            <!-- Platform Trend Comparison (Simplified) -->
+            <div class="section">
+                <div class="section-header">Platform Trend Comparison</div>
+                <div style="padding: 0.8rem;">
+                    <div id="monthlyComparison">
+                        <!-- Platform comparison table will be populated here -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Device Details & Lifecycle -->
             <div class="section">
                 <div class="section-header">Device Categories & Compliance Status</div>
@@ -1034,16 +1044,6 @@
                         </thead>
                         <tbody></tbody>
                     </table>
-                </div>
-            </div>
-
-            <!-- Platform Trend Comparison (Simplified) -->
-            <div class="section">
-                <div class="section-header">Platform Trend Comparison</div>
-                <div style="padding: 0.8rem;">
-                    <div id="monthlyComparison">
-                        <!-- Platform comparison table will be populated here -->
-                    </div>
                 </div>
             </div>
 
@@ -1372,14 +1372,30 @@
                 console.log(`Excluded ${excludedCount} Windows devices from processing`);
                 console.log('Active devices (non-Windows):', activeDevices.length);
                 
+                // Filter out personal devices from all counts
+                const nonPersonalDevices = activeDevices.filter(device => {
+                    if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                        const category = device.deviceCategoryKey.toString().toLowerCase();
+                        if (category.includes('personal')) {
+                            console.log('Excluding personal device:', device.deviceName || device.displayName || 'Unknown device');
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                
+                const personalExcludedCount = activeDevices.length - nonPersonalDevices.length;
+                console.log(`Excluded ${personalExcludedCount} personal devices from processing`);
+                console.log('Non-personal devices:', nonPersonalDevices.length);
+                
                 // Store global devices data for modal windows
-                globalDevicesData = activeDevices;
+                globalDevicesData = nonPersonalDevices;
                 
                 // Calculate critical metrics using OS version column
                 let iosDevices = [], androidDevices = [];
                 
                 console.log('Detecting OS from available data...');
-                activeDevices.forEach((device, index) => {
+                nonPersonalDevices.forEach((device, index) => {
                     if (index < 3) console.log(`Device ${index}:`, device); // Log first few devices for debugging
                     
                     // Check OS version column first if available
@@ -1456,7 +1472,7 @@
                     // Note: No Windows compliance values to log since Windows devices are filtered out
                     console.log('Windows compliance processing skipped (devices filtered out)');
                     
-                    nonCompliantDevices = activeDevices.filter(d => !d.complianceStateKey || 
+                    nonCompliantDevices = nonPersonalDevices.filter(d => !d.complianceStateKey || 
                         (!d.complianceStateKey.toString().toLowerCase().includes('compliant') && 
                          !d.complianceStateKey.toString().toLowerCase().includes('configmgr') &&
                          !d.complianceStateKey.toString().toLowerCase().includes('config mgr') &&
@@ -1470,7 +1486,7 @@
                 
                 // Count unassigned category devices
                 if (foundColumns.includes('deviceCategoryKey')) {
-                    unassignedDevices = activeDevices.filter(d => !d.deviceCategoryKey || 
+                    unassignedDevices = nonPersonalDevices.filter(d => !d.deviceCategoryKey || 
                         d.deviceCategoryKey.toString().toLowerCase().includes('unassigned') ||
                         d.deviceCategoryKey.toString().trim() === '').length;
                     console.log('Unassigned category devices:', unassignedDevices);
@@ -1482,7 +1498,7 @@
                     console.log('Processing last check-in data for urgent removal...');
                     const ninetyDaysAgo = new Date();
                     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-                    staleDevices = activeDevices.filter(d => {
+                    staleDevices = nonPersonalDevices.filter(d => {
                         // Exclude devices with backstock category
                         if (foundColumns.includes('deviceCategoryKey') && d.deviceCategoryKey) {
                             const category = d.deviceCategoryKey.toString().toLowerCase();
@@ -1874,43 +1890,50 @@
                     // Handle specific TMH categories (case-insensitive)
                     const lowerCategory = rawCategory.toLowerCase();
                     
-                    if (lowerCategory.includes('backstock')) {
+                    // Enhanced debugging for category mapping
+                    if (index < 10) {
+                        console.log(`Android Device ${index} category mapping:`, {
+                            original: rawCategory,
+                            lowercase: lowerCategory,
+                            device: device.deviceName || device.displayName || 'Unknown'
+                        });
+                    }
+                    
+                    if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
                         category = 'Backstock';
-                    } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome')) {
+                    } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome') || lowerCategory.includes('epic_welcome')) {
                         category = 'Epic Welcome';
-                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner')) {
+                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode')) {
                         category = 'Zebra/Scanner';
-                    } else if (lowerCategory.includes('tablet')) {
+                    } else if (lowerCategory.includes('tablet') || lowerCategory.includes('ipad')) {
                         category = 'Android Tablet';
-                    } else if (lowerCategory.includes('phone')) {
+                    } else if (lowerCategory.includes('phone') || lowerCategory.includes('mobile phone')) {
                         category = 'Android Phone';
-                    } else if (lowerCategory.includes('kiosk')) {
+                    } else if (lowerCategory.includes('kiosk') || lowerCategory.includes('self-service')) {
                         category = 'Kiosk';
-                    } else if (lowerCategory.includes('rugged')) {
+                    } else if (lowerCategory.includes('rugged') || lowerCategory.includes('industrial')) {
                         category = 'Rugged Device';
-                    } else if (lowerCategory.includes('mobile')) {
+                    } else if (lowerCategory.includes('mobile') && !lowerCategory.includes('phone')) {
                         category = 'Mobile Device';
-                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing')) {
+                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing') || lowerCategory.includes('pilot')) {
                         category = 'Test Device';
-                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration')) {
+                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration') || lowerCategory.includes('sample')) {
                         category = 'Demo Device';
-                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared')) {
+                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared') || lowerCategory.includes('common')) {
                         category = 'Shared/Pool Device';
-                    } else if (lowerCategory.includes('personal')) {
-                        category = 'Personal Device';
-                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company')) {
+                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company') || lowerCategory.includes('business')) {
                         category = 'Corporate Device';
-                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing')) {
+                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing') || lowerCategory.includes('clinical')) {
                         category = 'Nursing Device';
-                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider')) {
+                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider') || lowerCategory.includes('medical')) {
                         category = 'Provider Device';
-                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration')) {
+                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration') || lowerCategory.includes('office')) {
                         category = 'Administrative Device';
-                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma')) {
+                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma') || lowerCategory.includes('urgent')) {
                         category = 'Emergency/Trauma Device';
-                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or')) {
+                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or') || lowerCategory.includes('operating')) {
                         category = 'Surgical Device';
-                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null') {
+                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null' || lowerCategory === 'none') {
                         category = '(unassigned)';
                     } else {
                         // Use the original category name if no specific mapping found
@@ -1921,11 +1944,11 @@
                 } else {
                     // If no Category column found, categorize by device type or model
                     const deviceStr = JSON.stringify(device).toLowerCase();
-                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner')) {
+                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner') || deviceStr.includes('barcode')) {
                         category = 'Zebra/Scanner';
-                    } else if (deviceStr.includes('tablet')) {
+                    } else if (deviceStr.includes('tablet') || deviceStr.includes('ipad')) {
                         category = 'Android Tablet';
-                    } else if (deviceStr.includes('phone')) {
+                    } else if (deviceStr.includes('phone') || deviceStr.includes('mobile phone')) {
                         category = 'Android Phone';
                     } else {
                         category = 'Android Device';
@@ -1937,7 +1960,7 @@
                     console.log(`Android Device ${index}:`, {
                         originalCategory: device.deviceCategoryKey,
                         mappedCategory: category,
-                        device: device
+                        device: device.deviceName || device.displayName || 'Unknown'
                     });
                 }
                 
