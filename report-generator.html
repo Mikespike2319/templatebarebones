@@ -328,19 +328,19 @@
         }
 
         .card:nth-child(3) {
-            background: linear-gradient(135deg, #ffffff 0%, #fefbf0 100%);
-        }
-
-        .card:nth-child(3) .number {
-            color: #fd7e14;
-        }
-
-        .card:nth-child(4) {
             background: linear-gradient(135deg, #ffffff 0%, #f8f4ff 100%);
         }
 
-        .card:nth-child(4) .number {
+        .card:nth-child(3) .number {
             color: #6f42c1;
+        }
+
+        .card:nth-child(4) {
+            background: linear-gradient(135deg, #ffffff 0%, #fefbf0 100%);
+        }
+
+        .card:nth-child(4) .number {
+            color: #fd7e14;
         }
 
         @media (max-width: 768px) {
@@ -874,7 +874,7 @@
             
             <div class="summary-cards">
                 <div class="card">
-                    <h3>iOS Mobile Devices</h3>
+                    <h3>Apple Devices</h3>
                     <div class="number" id="iosTotal">0</div>
                     <div class="description">iPads, iPhones & iOS medical devices</div>
                 </div>
@@ -884,14 +884,14 @@
                     <div class="description">Scanners, tablets & mobile android devices</div>
                 </div>
                 <div class="card">
-                    <h3>Total Mobile Fleet</h3>
-                    <div class="number" id="totalDevices">0</div>
-                    <div class="description">All managed mobile devices</div>
-                </div>
-                <div class="card">
                     <h3>Windows Endpoints</h3>
                     <div class="number" id="windowsTotal">0</div>
                     <div class="description">Workstations, laptops & Windows devices</div>
+                </div>
+                <div class="card">
+                    <h3>Total Device Fleet</h3>
+                    <div class="number" id="totalDevices">0</div>
+                    <div class="description">All managed devices across platforms</div>
                 </div>
             </div>
 
@@ -1449,6 +1449,7 @@
                          !d.complianceStateKey.toString().toLowerCase().includes('sccm')));
                     
                     console.log('Compliance counts - iOS:', iosCompliant, 'Android:', androidCompliant, 'Windows:', windowsCompliant);
+                    console.log('📊 All compliance calculations now use consistent .includes("compliant") logic');
                     console.log('ConfigMgr devices:', configMgrDevices);
                     console.log('Non-compliant devices:', nonCompliantDevices.length);
                 }
@@ -1805,9 +1806,9 @@
                 row.insertCell(1).textContent = count;
             });
 
-            // Update iOS compliance
+            // Update iOS compliance - using same logic as main calculation
             if (foundColumns.includes('complianceStateKey')) {
-                const compliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const compliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                 const nonCompliant = iosDevices.length - compliant;
                 const compliancePercent = iosDevices.length > 0 ? (compliant / iosDevices.length) * 100 : 0;
                 
@@ -1944,9 +1945,9 @@
                 countCell.style.fontWeight = 'bold';
             });
 
-            // Update Android compliance
+            // Update Android compliance - using same logic as main calculation
             if (foundColumns.includes('complianceStateKey')) {
-                const compliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase() === 'compliant').length;
+                const compliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
                 const nonCompliant = androidDevices.length - compliant;
                 const compliancePercent = androidDevices.length > 0 ? (compliant / androidDevices.length) * 100 : 0;
                 
