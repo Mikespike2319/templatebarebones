@@ -535,31 +535,39 @@
             background-color: var(--neutral-50);
         }
 
-        /* Status badges */
+        /* Enhanced Status badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
-            padding: var(--space-xs) var(--space-sm);
+            padding: 6px 12px;
             border-radius: var(--radius-xl);
             font-size: var(--text-xs);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
 
         .status-supported {
-            background-color: rgba(5, 150, 105, 0.1);
-            color: var(--success-green);
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border-color: #10b981;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
         }
 
         .status-security {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: var(--warning-amber);
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border-color: #f59e0b;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
         }
 
         .status-ended {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--danger-red);
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border-color: #ef4444;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
         }
 
         /* Action buttons redesign */
@@ -1584,7 +1592,27 @@
 
             .status-supported, .status-security, .status-ended {
                 font-size: 0.5rem;
-                padding: 0.05rem 0.2rem;
+                padding: 0.1rem 0.3rem;
+                border: 1px solid currentColor !important;
+                font-weight: bold !important;
+                color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                background: white !important;
+            }
+            
+            .status-supported {
+                color: #065f46 !important;
+                border-color: #10b981 !important;
+            }
+            
+            .status-security {
+                color: #92400e !important;
+                border-color: #f59e0b !important;
+            }
+            
+            .status-ended {
+                color: #991b1b !important;
+                border-color: #ef4444 !important;
             }
 
             .three-column {
@@ -1856,7 +1884,7 @@
                     <div class="three-column">
                         <div class="card">
                             <div class="card-header">
-                                <h3 style="font-size: var(--text-base); font-weight: 600;">iOS Devices</h3>
+                                <h3 style="font-size: var(--text-base); font-weight: 600;">iOS Device Categories</h3>
                             </div>
                             <div class="card-body">
                                 <table class="data-table" id="iosTable">
@@ -1865,49 +1893,40 @@
                             </thead>
                             <tbody></tbody>
                         </table>
-                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                                        <span style="font-size: var(--text-sm); color: var(--neutral-600);">Compliance Rate</span>
-                                        <span style="font-size: var(--text-lg); font-weight: 600; color: var(--success-green);" id="iosCompliancePercent2">0%</span>
-                            </div>
-                                    <div class="compliance-bar-container">
-                                        <div class="compliance-bar-fill" id="iosComplianceFill2"></div>
-                                    </div>
-                                </div>
                         </div>
                     </div>
-                    <div>
-                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Android Device Categories</h4>
-                        <table id="androidTable">
-                            <thead>
-                                <tr><th>Category</th><th>Count</th></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
-                            <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">Android Compliance</h5>
-                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="androidCompliantCount">0</span> | <strong>Non-Compliant:</strong> <span id="androidNonCompliantCount">0</span></p>
-                            <div class="compliance-bar-container">
-                                <div class="compliance-bar-fill" id="androidComplianceFill"></div>
-                            </div>
-                            <p style="text-align: center; font-size: 0.7rem;"><strong><span id="androidCompliancePercent">0%</span> Compliance</strong></p>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 style="font-size: var(--text-base); font-weight: 600;">Android Device Categories</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="androidTable">
+                                <thead>
+                                    <tr><th>Category</th><th>Count</th></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
-                    <div>
-                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">
-                    <span class="tooltip" data-tooltip="End of Life tracking for iOS devices. Critical devices ending support within 1 year.">iOS Device Lifecycle (Key Models)</span>
-                </h4>
-                        <table id="lifecycleTable">
-                            <thead>
-                                <tr>
-                    <th>Device Model</th>
-                    <th>Count</th>
-                    <th><span class="tooltip" data-tooltip="End of Life - Year when Apple stops supporting this model">EOL</span></th>
-                    <th><span class="tooltip" data-tooltip="Support status based on years remaining until End of Life">Status</span></th>
-                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 style="font-size: var(--text-base); font-weight: 600;">
+                    <span class="tooltip" data-tooltip="End of Life tracking for both iOS and Android devices. Shows critical devices ending support within 1 year.">Device Lifecycle Status</span>
+                </h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="lifecycleTable">
+                                <thead>
+                                    <tr>
+                        <th>Device Model</th>
+                        <th>Count</th>
+                        <th><span class="tooltip" data-tooltip="End of Life - Year when manufacturer stops supporting this model">EOL</span></th>
+                        <th><span class="tooltip" data-tooltip="Support status based on years remaining until End of Life">Status</span></th>
+                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4092,21 +4111,21 @@
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 10); // Show top 10 Android models
 
-                sortedAndroidModels.forEach(([model, count]) => {
-                    const androidLifecycle = getAndroidLifecycleInfo(model);
-                    
-                    const row = tbody.insertRow();
-                    row.insertCell(0).textContent = model;
-                    row.insertCell(1).textContent = count;
-                    row.insertCell(2).textContent = androidLifecycle.eol;
-                    
-                    const statusCell = row.insertCell(3);
-                    const statusSpan = document.createElement('span');
-                    statusSpan.textContent = androidLifecycle.status;
-                    statusSpan.style.color = androidLifecycle.color;
-                    
-                    statusCell.appendChild(statusSpan);
-                });
+                                 sortedAndroidModels.forEach(([model, count]) => {
+                     const androidLifecycle = getAndroidLifecycleInfo(model);
+                     
+                     const row = tbody.insertRow();
+                     row.insertCell(0).textContent = model;
+                     row.insertCell(1).textContent = count;
+                     row.insertCell(2).textContent = androidLifecycle.eol;
+                     
+                     const statusCell = row.insertCell(3);
+                     const statusSpan = document.createElement('span');
+                     statusSpan.textContent = androidLifecycle.status;
+                     statusSpan.className = androidLifecycle.className; // Use proper CSS class
+                     
+                     statusCell.appendChild(statusSpan);
+                 });
             }
 
             // Add message if no devices
@@ -4132,7 +4151,7 @@
                 return {
                     eol: 'Est. 2028-2030',
                     status: 'Enterprise Device',
-                    color: '#28a745'
+                    className: 'status-supported'
                 };
             }
             
@@ -4142,13 +4161,13 @@
                     return {
                         eol: 'Est. 2026-2029',
                         status: 'Samsung Support',
-                        color: '#28a745'
+                        className: 'status-supported'
                     };
                 } else {
                     return {
                         eol: 'Variable',
                         status: 'Review Required',
-                        color: '#6c757d'
+                        className: 'status-security'
                     };
                 }
             }
@@ -4158,7 +4177,7 @@
                 return {
                     eol: 'Est. 2027-2030',
                     status: 'Google Support',
-                    color: '#28a745'
+                    className: 'status-supported'
                 };
             }
             
@@ -4166,7 +4185,7 @@
             return {
                 eol: 'Unknown',
                 status: 'Lifecycle data not available',
-                color: '#6c757d'
+                className: 'status-security'
             };
         }
 
