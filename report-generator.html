@@ -484,37 +484,70 @@
             display: inline-flex;
             align-items: center;
             gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-lg);
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: var(--radius-md);
-            font-weight: 500;
+            border-radius: 12px;
+            font-weight: 600;
             font-size: var(--text-sm);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background-color: var(--primary-blue);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.25);
         }
 
         .btn-primary:hover {
-            background-color: var(--secondary-blue);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 86, 179, 0.35);
+            background: linear-gradient(135deg, var(--secondary-blue) 0%, #007bff 100%);
         }
 
         .btn-secondary {
-            background-color: white;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             color: var(--neutral-700);
-            border: 1px solid var(--neutral-300);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .btn-secondary:hover {
-            background-color: var(--neutral-50);
-            border-color: var(--neutral-400);
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         /* Section layouts */
@@ -593,30 +626,527 @@
             display: flex;
             align-items: center;
             gap: var(--space-sm);
-        }
-
+            }
+           
         .status-success {
             background-color: rgba(5, 150, 105, 0.1);
             color: var(--success-green);
             border: 1px solid rgba(5, 150, 105, 0.2);
-        }
-
+            }
+           
         .status-error {
             background-color: rgba(239, 68, 68, 0.1);
             color: var(--danger-red);
             border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
+            }
+           
         .status-waiting {
             background-color: var(--neutral-100);
             color: var(--neutral-600);
             border: 1px solid var(--neutral-200);
-        }
-
+            }
+           
         .status-processing {
             background-color: rgba(245, 158, 11, 0.1);
             color: var(--warning-amber);
             border: 1px solid rgba(245, 158, 11, 0.2);
+            }
+           
+        /* Modern Executive Dashboard Cards */
+        .modern-dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.06),
+                0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.1),
+                0 10px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .card-ios::before { background: linear-gradient(90deg, #0056b3, #007bff); }
+        .card-android::before { background: linear-gradient(90deg, #28a745, #20c997); }
+        .card-total::before { background: linear-gradient(90deg, #003d5c, #0056b3); }
+        .card-backstock::before { background: linear-gradient(90deg, #fd7e14, #ffc107); }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .card-title {
+            color: #1a202c;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .card-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .card-ios .card-value { 
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-android .card-value { 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-total .card-value { 
+            background: linear-gradient(135deg, #003d5c 0%, #0056b3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-backstock .card-value { 
+            background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-description {
+            color: #718096;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-active { 
+            background: linear-gradient(135deg, #28a745, #20c997);
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-monitoring { 
+            background: linear-gradient(135deg, #0056b3, #007bff);
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.3);
+        }
+        
+        .status-available { 
+            background: linear-gradient(135deg, #fd7e14, #ffc107);
+            box-shadow: 0 0 8px rgba(253, 126, 20, 0.3);
+        }
+
+        .status-text {
+            color: #4a5568;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Enhanced Compliance Section */
+        .compliance-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .compliance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .compliance-percentage {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .compliance-bar-container {
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .compliance-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .compliance-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Professional Historical Data Input Styling */
+        .historical-data-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .historical-data-card .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .historical-data-card .card-header h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-blue);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .card-subtitle {
+            margin: 0;
+            color: var(--neutral-600);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .platform-section {
+            background: #fafbfc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid transparent;
+        }
+
+        .ios-platform {
+            border-left-color: var(--primary-blue);
+        }
+
+        .android-platform {
+            border-left-color: var(--success-green);
+        }
+
+        .platform-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .platform-header h4 {
+            margin: 0;
+            color: var(--neutral-800);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .platform-badge {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--neutral-700);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group.current-month {
+            grid-column: 1 / -1;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        .current-month input {
+            border-width: 2px;
+            font-weight: 600;
+        }
+
+        .ios-platform .current-month input {
+            border-color: var(--primary-blue);
+        }
+
+        .android-platform .current-month input {
+            border-color: var(--success-green);
+        }
+
+        .action-controls {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-group + .control-group {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .primary-actions {
+            justify-content: flex-start;
+        }
+
+        .secondary-actions {
+            justify-content: flex-end;
+        }
+
+        .export-btn {
+            background: var(--success-green) !important;
+        }
+
+        .export-btn:hover {
+            background: #218838 !important;
+        }
+
+        .danger-btn {
+            background: var(--danger-red) !important;
+            color: white !important;
+        }
+
+        .danger-btn:hover {
+            background: #c82333 !important;
+        }
+
+        .trend-analysis-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Trend Table Styling */
+        .trend-table-container {
+            margin-top: 1rem;
+        }
+
+        .trend-table-container h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .trend-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .trend-table th {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .trend-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+
+        .trend-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .current-month-row {
+            background-color: rgba(0, 86, 179, 0.05);
+            font-weight: 600;
+        }
+
+        .current-month-row:hover {
+            background-color: rgba(0, 86, 179, 0.1);
+        }
+
+        .month-cell {
+            font-weight: 600;
+            color: var(--neutral-800);
+        }
+
+        .device-count {
+            text-align: center;
+            font-weight: 600;
+            color: var(--neutral-700);
+        }
+
+        .total-count {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .change-cell {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .positive-change {
+            color: var(--success-green);
+        }
+
+        .negative-change {
+            color: var(--danger-red);
+        }
+
+        .no-change {
+            color: var(--neutral-500);
+        }
+
+        .no-trend-data {
+            text-align: center;
+            padding: 2rem;
+            color: var(--neutral-500);
+            font-style: italic;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        /* Historical Read-Only Input Styling */
+        .historical-readonly {
+            background-color: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: var(--neutral-600) !important;
+            cursor: not-allowed !important;
+            opacity: 0.8;
+        }
+
+        .historical-readonly:focus {
+            box-shadow: none !important;
+            border-color: #dee2e6 !important;
+        }
+
+        .input-group:has(.historical-readonly) label::after {
+            content: " (Historical)";
+            font-size: 0.7rem;
+            color: var(--neutral-500);
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: normal;
         }
 
         /* Responsive design */
@@ -627,14 +1157,27 @@
                 text-align: center;
             }
 
+            .modern-dashboard-cards {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .summary-card {
+                padding: 1.5rem;
+            }
+
+            .card-value {
+                font-size: 2.5rem;
+            }
+
             .metrics-grid {
                 grid-template-columns: 1fr;
             }
-
+           
             .compliance-grid {
                 grid-template-columns: 1fr;
             }
-
+           
             .actions-bar {
                 justify-content: stretch;
             }
@@ -643,41 +1186,231 @@
                 flex: 1;
                 justify-content: center;
             }
+
+            /* Historical Data Responsive */
+            .platform-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .secondary-actions {
+                justify-content: stretch;
+            }
+
+            .historical-data-card .card-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .platform-section {
+                padding: 1rem;
+            }
+
+            .action-controls {
+                padding: 1rem;
+            }
         }
 
-        /* Print styles */
+                /* Enhanced Print styles for crisp PDF export */
         @media print {
             * {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
 
             body {
-                font-size: 10pt;
-                line-height: 1.4;
+                margin: 0;
+                padding: 0;
+                font-size: 9px;
+                line-height: 1.3;
+                background-color: white !important;
+                zoom: 1;
+                transform: scale(1);
+                transform-origin: top left;
             }
 
             .header {
-                padding: var(--space-md) 0;
+                padding: 0.5rem 0;
+                page-break-inside: avoid;
+                background: linear-gradient(135deg, #003d5c 0%, #0056b3 100%) !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+                margin-bottom: 0.1rem;
+            }
+
+            .header p {
+                font-size: 0.8rem;
             }
 
             .container {
-                padding: var(--space-md);
+                padding: 0.4rem;
+                max-width: 100%;
             }
 
-            .actions-bar, .upload-section, .urgent-indicator {
-                display: none !important;
+            .metrics-grid {
+                gap: 0.4rem;
+                margin-bottom: 0.6rem;
+                grid-template-columns: repeat(3, 1fr);
             }
 
-            .card, .section {
-                box-shadow: none;
+            .metric-card {
+                padding: 0.4rem;
+                border-radius: 4px;
                 border: 1px solid var(--neutral-300);
-                break-inside: avoid;
+                background: white !important;
             }
 
+            .metric-label {
+                font-size: 0.6rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .metric-value {
+                font-size: 1.2rem;
+                margin-bottom: 0.1rem;
+            }
+
+            .metric-description {
+                font-size: 0.55rem;
+            }
+
+            .section {
+                margin-bottom: 0.4rem;
+                page-break-inside: avoid;
+                border: 1px solid var(--neutral-300);
+                background: white !important;
+            }
+
+            .section-header {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.7rem;
+                background: #003d5c !important;
+                color: white !important;
+            }
+
+            .section-body {
+                padding: 0.5rem;
+            }
+
+            .card {
+                border: 1px solid var(--neutral-300);
+                background: white !important;
+                margin-bottom: 0.3rem;
+            }
+
+            .card-header {
+                background: #f8f9fa !important;
+                padding: 0.3rem 0.5rem;
+                border-bottom: 1px solid var(--neutral-300);
+            }
+
+            .card-body {
+                padding: 0.5rem;
+            }
+
+            .data-table {
+                font-size: 0.6rem;
+            }
+
+            .data-table th {
+                padding: 0.15rem 0.2rem;
+                font-size: 0.55rem;
+                background: #f8f9fa !important;
+            }
+
+            .data-table td {
+                padding: 0.15rem 0.2rem;
+            }
+
+            .compliance-bar-container {
+                height: 8px;
+                margin: 0.2rem 0;
+                background: #e9ecef !important;
+            }
+
+            .compliance-bar-fill {
+                background: linear-gradient(90deg, #28a745, #20c997) !important;
+            }
+
+            .footer {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                margin-top: 0;
+                padding: 0.3rem;
+                font-size: 0.6rem;
+                background: #003d5c !important;
+                color: white !important;
+            }
+
+            .actions-bar, .upload-section, .urgent-indicator, button, input, select, #sheetSelectorContainer {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            .metric-trend, .trend-indicator {
+                font-size: 0.5rem;
+                padding: 0.05rem 0.2rem;
+            }
+
+            .status-supported, .status-security, .status-ended {
+                font-size: 0.5rem;
+                padding: 0.05rem 0.2rem;
+            }
+
+            .three-column {
+                gap: 0.6rem;
+            }
+
+            .two-column {
+                gap: 0.6rem;
+            }
+
+            /* Ensure all content fits properly */
             @page {
                 size: A4;
                 margin: 0.5in;
+            }
+
+            /* Prevent page breaks within sections */
+            .section, .card, .metric-card {
+                page-break-inside: avoid;
+            }
+
+            /* Force specific backgrounds and colors for print */
+            .compliance-section .card {
+                background: white !important;
+            }
+
+            .compliance-card {
+                background: white !important;
+                border: 1px solid var(--neutral-300);
+            }
+
+            .compliance-percentage {
+                color: #28a745 !important;
+            }
+
+            .compliance-title {
+                color: #003d5c !important;
             }
         }
 
@@ -689,12 +1422,12 @@
         <div class="header">
             <div class="header-content">
                 <div class="header-left">
-                    <h1>Device Inventory Report</h1>
-                    <p>Tallahassee Memorial Hospital - IT Asset Management</p>
+            <h1>Device Inventory Report</h1>
+            <p>Tallahassee Memorial Hospital - IT Asset Management</p>
                 </div>
-                <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
-                    <span class="urgent-count">0</span>
-                    <span>Urgent Items</span>
+            <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
+                <span class="urgent-count">0</span>
+                <span>Urgent Items</span>
                 </div>
             </div>
         </div>
@@ -703,25 +1436,25 @@
             <div class="card-body">
                 <div class="upload-area">
                     <input type="file" id="fileInput" accept=".xlsx,.xlsm,.csv" class="file-input" style="display: none;" />
-                    <label for="fileInput" class="file-label">
+                <label for="fileInput" class="file-label">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M12,12L8,16H10.5V19H13.5V16H16L12,12Z"/>
                         </svg>
-                        Choose Excel or CSV File
-                    </label>
+                    Choose Excel or CSV File
+                </label>
                     <p style="margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--neutral-500);">
                         Drop your file here or click to browse
                     </p>
-                </div>
+            </div>
                 <span id="fileName" class="file-name" style="display: block; margin-top: var(--space-md); color: var(--neutral-600); font-weight: 500;"></span>
                 <div id="sheetSelectorContainer" style="display: none; margin-top: var(--space-lg); padding: var(--space-md); background-color: var(--neutral-50); border-radius: var(--radius-md); border: 1px solid var(--neutral-200);">
                     <label for="sheetSelect" style="font-weight: 600; color: var(--primary-blue); margin-right: var(--space-sm);">Select Sheet:</label>
                     <select id="sheetSelect" style="padding: var(--space-sm) var(--space-md); border: 2px solid var(--primary-blue); border-radius: var(--radius-sm); font-size: var(--text-sm); background-color: white; color: var(--primary-blue); font-weight: 500;"></select>
                     <small style="display: block; margin-top: var(--space-sm); color: var(--neutral-500); font-style: italic;">
-                        Report will automatically regenerate when you select a different sheet
-                    </small>
-                </div>
-                <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
+                    Report will automatically regenerate when you select a different sheet
+                </small>
+            </div>
+            <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
             </div>
         </div>
 
@@ -729,49 +1462,51 @@
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="regenerateReport()">Regenerate Report</button>
                 <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
+                <button class="btn btn-secondary" onclick="printReport()">Print Report</button>
                 <button class="btn btn-secondary" onclick="debugCategories()">Debug Categories</button>
             </div>
             
-            <div class="metrics-grid">
-                <div class="metric-card ios">
-                    <div class="metric-icon">
-                        <svg width="24" height="24" fill="#3182ce" viewBox="0 0 24 24">
-                            <path d="M17.05 20.28C16.06 21.42 14.99 22 13.83 22C12.85 22 12.15 21.64 11.74 21.42C11.33 21.21 11.12 21.1 10.75 21.1C10.34 21.1 10.1 21.22 9.69 21.43C9.27 21.65 8.56 22 7.59 22C6.31 22 5.09 21.35 4 19.91C2.74 18.24 2 16.11 2 14.1C2 10.4 4.41 8.5 6.75 8.5C7.69 8.5 8.41 8.82 8.88 9.05C9.18 9.19 9.41 9.31 9.63 9.31C9.89 9.31 10.13 9.19 10.46 9.03C10.95 8.79 11.66 8.45 12.68 8.45C13.93 8.45 15.05 9 15.9 10C14.6 10.72 14 12.13 14 13.65C14 15.26 14.67 16.67 16.18 17.4C15.84 18.5 15.27 19.56 14.5 20.5L17.05 20.28M13.88 5.5C13.88 6.81 13.37 7.94 12.54 8.8C11.57 9.79 10.36 10.24 9.25 10.13C9.23 10 9.22 9.83 9.22 9.64C9.22 8.39 9.8 7.23 10.62 6.42C11.43 5.61 12.59 5.1 13.73 5C13.77 5.04 13.8 5.09 13.83 5.14C13.86 5.26 13.88 5.38 13.88 5.5Z"/>
-                        </svg>
-                    </div>
-                    <div class="metric-label">Apple Devices</div>
-                    <div class="metric-value" id="iosTotal">0</div>
-                    <div class="metric-description">iPads, iPhones & iOS medical devices</div>
-                    <div class="metric-trend trend-up" id="iosTrend" style="display: none;">
-                        <span>↑</span>
-                        <span id="iosTrendValue">0%</span>
+                        <!-- Executive Summary Cards -->
+            <div class="summary-cards modern-dashboard-cards">
+                <div class="summary-card card-ios">
+                    <h3 class="card-title">Total iOS Devices</h3>
+                    <div class="card-value" id="iosTotal">0</div>
+                    <div class="card-description">Active iPad & iPhone inventory</div>
+                    <div class="card-status">
+                        <span class="status-indicator status-active"></span>
+                        <span class="status-text">Active</span>
                     </div>
                 </div>
-                <div class="metric-card android">
-                    <div class="metric-icon">
-                        <svg width="24" height="24" fill="#059669" viewBox="0 0 24 24">
-                            <path d="M15.9,5C15.6,5 15.4,5.2 15.4,5.5V6.5C15.4,6.8 15.6,7 15.9,7C16.2,7 16.4,6.8 16.4,6.5V5.5C16.4,5.2 16.2,5 15.9,5M7.9,5C7.6,5 7.4,5.2 7.4,5.5V6.5C7.4,6.8 7.6,7 7.9,7C8.2,7 8.4,6.8 8.4,6.5V5.5C8.4,5.2 8.2,5 7.9,5M20,12.5C20,12.2 19.8,12 19.5,12H19V8C19,6.6 18.1,5.4 16.9,5.1L18.1,3.5C18.3,3.3 18.2,3 18,2.8C17.8,2.6 17.5,2.7 17.3,2.9L16,4.6C15.3,4.2 14.5,4 13.6,4H10.4C9.5,4 8.7,4.2 8,4.6L6.7,2.9C6.5,2.7 6.2,2.6 6,2.8C5.8,3 5.7,3.3 5.9,3.5L7.1,5.1C5.9,5.4 5,6.6 5,8V12H4.5C4.2,12 4,12.2 4,12.5V19.5C4,19.8 4.2,20 4.5,20H5C5.6,20 6,19.6 6,19V13H18V19C18,19.6 18.4,20 19,20H19.5C19.8,20 20,19.8 20,19.5V12.5M8,11C7.4,11 7,10.6 7,10C7,9.4 7.4,9 8,9C8.6,9 9,9.4 9,10C9,10.6 8.6,11 8,11M16,11C15.4,11 15,10.6 15,10C15,9.4 15.4,9 16,9C16.6,9 17,9.4 17,10C17,10.6 16.6,11 16,11Z"/>
-                    </svg>
-                    </div>
-                    <div class="metric-label">Android Devices</div>
-                    <div class="metric-value" id="androidTotal">0</div>
-                    <div class="metric-description">Scanners, tablets & mobile android devices</div>
-                    <div class="metric-trend trend-up" id="androidTrend" style="display: none;">
-                        <span>↑</span>
-                        <span id="androidTrendValue">0%</span>
+                <div class="summary-card card-android">
+                    <h3 class="card-title">Total Android Devices</h3>
+                    <div class="card-value" id="androidTotal">0</div>
+                    <div class="card-description">HC50 Zebras, TC52, and other Android devices</div>
+                    <div class="card-status">
+                        <span class="status-indicator status-active"></span>
+                        <span class="status-text">Active</span>
                     </div>
                 </div>
-                <div class="metric-card total">
-                    <div class="metric-icon">
-                        <svg width="24" height="24" fill="#1e3a5f" viewBox="0 0 24 24">
-                            <path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"/>
-                    </svg>
+                <div class="summary-card card-total">
+                    <h3 class="card-title">Total Device Count</h3>
+                    <div class="card-value" id="totalDevices">0</div>
+                    <div class="card-description">Combined iOS and Android inventory</div>
+                    <div class="card-status">
+                        <span class="status-indicator status-monitoring"></span>
+                        <span class="status-text">Monitoring</span>
                     </div>
-                    <div class="metric-label">Total Device Fleet</div>
-                    <div class="metric-value" id="totalDevices">0</div>
-                    <div class="metric-description">Mobile devices only (Windows excluded)</div>
+                </div>
+                <div class="summary-card card-backstock">
+                    <h3 class="card-title">BackStock Devices</h3>
+                    <div class="card-value" id="backstockTotal">0</div>
+                    <div class="card-description">Devices in storage (Android + iOS)</div>
+                    <div class="card-status">
+                        <span class="status-indicator status-available"></span>
+                        <span class="status-text">Available</span>
+                    </div>
                 </div>
             </div>
+
+
 
             <div class="compliance-section">
                 <div class="card">
@@ -784,15 +1519,15 @@
                                 <div class="compliance-header">
                                     <div class="compliance-title">iOS Compliance</div>
                                     <div class="compliance-percentage" id="iosCompliancePercent">0%</div>
-                                </div>
+                </div>
                                 <div class="compliance-bar-container">
                                     <div class="compliance-bar-fill" id="iosComplianceFill"></div>
-                                </div>
+                    </div>
                                 <div class="compliance-stats">
                                     <div class="compliance-stat">
                                         <div class="compliance-stat-value" id="iosCompliantCount">0</div>
                                         <div class="compliance-stat-label">Compliant</div>
-                                    </div>
+                </div>
                                     <div class="compliance-stat">
                                         <div class="compliance-stat-value" id="iosNonCompliantCount">0</div>
                                         <div class="compliance-stat-label">Non-Compliant</div>
@@ -831,90 +1566,67 @@
                 </div>
             </div>
 
-            <!-- Platform Trend Comparison -->
+            <!-- Historical Inventory Analysis -->
             <div class="section">
-                <div class="section-header">Platform Trend Comparison</div>
+                <div class="section-header">Historical Inventory Analysis</div>
                 <div class="section-body">
-                    <!-- Monthly Count Input Fields -->
-                    <div class="card" style="margin-bottom: var(--space-lg); background: var(--neutral-50);">
+                    <!-- Professional Historical Data Input -->
+                    <div class="historical-data-card">
+                        <div class="card-header">
+                            <h3>Monthly Device Inventory Tracking</h3>
+                            <p class="card-subtitle">Enter device counts for trend analysis and compliance reporting</p>
+                        </div>
                         <div class="card-body">
-                            <h4 style="color: var(--primary-blue); margin-bottom: var(--space-md); font-size: var(--text-base); font-weight: 600;">Monthly Device Counts</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                            <!-- iOS Monthly Counts -->
-                            <div>
-                                <h5 style="color: var(--accent-blue); margin-bottom: var(--space-sm); font-size: var(--text-sm); font-weight: 600;">iOS Device Counts</h5>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
-                                    <div>
-                                        <label for="ios_march2025" style="display: block; margin-bottom: var(--space-xs); font-weight: 500; font-size: var(--text-sm); color: var(--neutral-700);">March 2025:</label>
-                                        <input type="number" id="ios_march2025" placeholder="Count" style="width: 100%; padding: var(--space-sm); border: 1px solid var(--neutral-300); border-radius: var(--radius-sm); font-size: var(--text-sm);" onchange="updateMonthlyComparison()">
+                            <div class="platform-grid">
+                                <!-- iOS Platform Section -->
+                                <div class="platform-section ios-platform">
+                                    <div class="platform-header">
+                                        <h4>iOS Platform</h4>
+                                        <span class="platform-badge">Mobile Devices</span>
                                     </div>
-                                    <div>
-                                        <label for="ios_april2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">April 2025:</label>
-                                        <input type="number" id="ios_april2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                    <div class="input-grid" id="iosInputGrid">
+                                        <!-- iOS inputs will be populated dynamically -->
                                     </div>
-                                    <div>
-                                        <label for="ios_may2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">May 2025:</label>
-                                        <input type="number" id="ios_may2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                </div>
+                                
+                                <!-- Android Platform Section -->
+                                <div class="platform-section android-platform">
+                                    <div class="platform-header">
+                                        <h4>Android Platform</h4>
+                                        <span class="platform-badge">Mobile Devices</span>
                                     </div>
-                                    <div>
-                                        <label for="ios_june2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">June 2025:</label>
-                                        <input type="number" id="ios_june2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
-                                    </div>
-                                    <div style="grid-column: 1 / -1;">
-                                        <label for="ios_current" style="display: block; margin-bottom: 0.2rem; font-weight: 600; color: #0056b3;">Current Month:</label>
-                                        <input type="number" id="ios_current" placeholder="Current Count" style="width: 100%; padding: 0.4rem; border: 2px solid #0056b3; border-radius: 4px; font-size: 0.7rem; font-weight: bold;" onchange="updateMonthlyComparison()">
+                                    <div class="input-grid" id="androidInputGrid">
+                                        <!-- Android inputs will be populated dynamically -->
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Android Monthly Counts -->
-                            <div>
-                                <h5 style="color: #28a745; margin-bottom: 0.8rem; font-size: 0.8rem;">Android Device Counts</h5>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.75rem;">
-                                    <div>
-                                        <label for="android_march2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">March 2025:</label>
-                                        <input type="number" id="android_march2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
-                                    </div>
-                                    <div>
-                                        <label for="android_april2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">April 2025:</label>
-                                        <input type="number" id="android_april2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
-                                    </div>
-                                    <div>
-                                        <label for="android_may2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">May 2025:</label>
-                                        <input type="number" id="android_may2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
-                                    </div>
-                                    <div>
-                                        <label for="android_june2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">June 2025:</label>
-                                        <input type="number" id="android_june2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
-                                    </div>
-                                    <div style="grid-column: 1 / -1;">
-                                        <label for="android_current" style="display: block; margin-bottom: 0.2rem; font-weight: 600; color: #28a745;">Current Month:</label>
-                                        <input type="number" id="android_current" placeholder="Current Count" style="width: 100%; padding: 0.4rem; border: 2px solid #28a745; border-radius: 4px; font-size: 0.7rem; font-weight: bold;" onchange="updateMonthlyComparison()">
-                                    </div>
+                            <!-- Professional Action Controls -->
+                            <div class="action-controls">
+                                <div class="control-group primary-actions">
+                                    <button onclick="autoFillCurrentCounts()" class="btn btn-primary">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12"/>
+                                        </svg>
+                                        Auto-Fill Current Data
+                                    </button>
+                                    <button onclick="exportHistoricalData()" class="btn btn-primary export-btn">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                                        </svg>
+                                        Export Historical Data
+                                    </button>
+                                </div>
+                                <div class="control-group secondary-actions">
+                                    <button onclick="clearMonthlyCounts()" class="btn btn-secondary">Clear Current Form</button>
+                                    <button onclick="restoreHistoricalData()" class="btn btn-secondary">Restore Historical Data</button>
+                                    <button onclick="clearMonthlyHistory()" class="btn btn-secondary danger-btn">Clear All History</button>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Action Buttons -->
-                        <div style="margin-top: var(--space-lg); display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
-                            <button onclick="autoFillCurrentCounts()" class="btn btn-primary">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12"/>
-                                </svg>
-                                Auto-Fill Current
-                            </button>
-                            <button onclick="clearMonthlyCounts()" class="btn btn-secondary">Clear All</button>
-                            <button onclick="exportHistoricalData()" class="btn btn-primary" style="background-color: var(--success-green);">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
-                                </svg>
-                                Export CSV
-                            </button>
-                        </div>
                     </div>
-                </div>
                     
-                    <div id="monthlyComparison">
+                    <div id="monthlyComparison" class="trend-analysis-section">
                         <!-- Platform comparison table will be populated here -->
                     </div>
                 </div>
@@ -931,22 +1643,22 @@
                             </div>
                             <div class="card-body">
                                 <table class="data-table" id="iosTable">
-                                    <thead>
-                                        <tr><th>Category</th><th>Count</th></tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                            <thead>
+                                <tr><th>Category</th><th>Count</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                                 <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
                                         <span style="font-size: var(--text-sm); color: var(--neutral-600);">Compliance Rate</span>
                                         <span style="font-size: var(--text-lg); font-weight: 600; color: var(--success-green);" id="iosCompliancePercent2">0%</span>
-                                    </div>
+                            </div>
                                     <div class="compliance-bar-container">
                                         <div class="compliance-bar-fill" id="iosComplianceFill2"></div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
+                    </div>
                     <div>
                         <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Android Device Categories</h4>
                         <table id="androidTable">
@@ -1072,6 +1784,147 @@
         };
 
         let workbookGlobal = null;
+        let monthlyDataHistory = JSON.parse(localStorage.getItem('tmh-monthly-data-history')) || {};
+        let monthlyInputs = []; // Store the dynamically generated month inputs
+
+        // Enhanced persistent data storage with automatic monthly progression
+        function saveMonthlyData() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth(); // 0-based
+            const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+            
+            const iosTotal = parseInt(document.getElementById('iosTotal').textContent) || 0;
+            const androidTotal = parseInt(document.getElementById('androidTotal').textContent) || 0;
+            
+            if (iosTotal > 0 || androidTotal > 0) {
+                // Check if this is a new month and we have data from a previous current month
+                const existingCurrentMonthData = findCurrentMonthInHistory();
+                
+                if (existingCurrentMonthData && existingCurrentMonthData.monthKey !== monthKey) {
+                    // We've moved to a new month, so save the previous "current" data as historical
+                    moveCurrentToHistorical(existingCurrentMonthData);
+                }
+                
+                // Save current month data
+                monthlyDataHistory[monthKey] = {
+                    ios: iosTotal,
+                    android: androidTotal,
+                    date: currentDate.toISOString(),
+                    month: currentDate.toLocaleDateString('en-US', { month: 'long' }),
+                    year: currentYear,
+                    isCurrent: true // Mark as current month
+                };
+                
+                localStorage.setItem('tmh-monthly-data-history', JSON.stringify(monthlyDataHistory));
+                console.log('Monthly data saved for', monthKey, monthlyDataHistory[monthKey]);
+                
+                // Regenerate inputs to reflect the new current month
+                regenerateMonthlyInputs();
+            }
+        }
+        
+        function findCurrentMonthInHistory() {
+            for (const [key, data] of Object.entries(monthlyDataHistory)) {
+                if (data.isCurrent) {
+                    return { monthKey: key, data: data };
+                }
+            }
+            return null;
+        }
+        
+        function moveCurrentToHistorical(existingData) {
+            // Remove the "current" flag and make it historical
+            monthlyDataHistory[existingData.monthKey] = {
+                ...existingData.data,
+                isCurrent: false
+            };
+            console.log('Moved to historical:', existingData.monthKey, existingData.data);
+        }
+        
+        function regenerateMonthlyInputs() {
+            // Clear existing inputs
+            const iosGrid = document.getElementById('iosInputGrid');
+            const androidGrid = document.getElementById('androidInputGrid');
+            if (iosGrid) iosGrid.innerHTML = '';
+            if (androidGrid) androidGrid.innerHTML = '';
+            
+            // Regenerate with updated current month
+            generateMonthlyInputs();
+            loadHistoricalData();
+        }
+
+        function loadHistoricalData() {
+            // Wait for monthly inputs to be generated first
+            if (monthlyInputs.length === 0) {
+                setTimeout(loadHistoricalData, 100);
+                return;
+            }
+            
+            const sortedEntries = Object.entries(monthlyDataHistory)
+                .sort(([a], [b]) => a.localeCompare(b));
+                
+            if (sortedEntries.length > 0) {
+                // Match saved data to dynamic inputs by month/year
+                sortedEntries.forEach(([historyKey, data]) => {
+                    // historyKey format: "2025-01" (year-month)
+                    const [year, month] = historyKey.split('-');
+                    const monthIndex = parseInt(month) - 1; // Convert to 0-based
+                    
+                    const monthNames = [
+                        'january', 'february', 'march', 'april', 'may', 'june',
+                        'july', 'august', 'september', 'october', 'november', 'december'
+                    ];
+                    
+                    const monthName = monthNames[monthIndex];
+                    const inputKey = `${monthName}_${year}`;
+                    
+                    // Find matching input in our dynamic inputs
+                    const matchingInput = monthlyInputs.find(input => input.key === inputKey);
+                    if (matchingInput) {
+                        const iosInput = document.getElementById(`ios_${inputKey}`);
+                        const androidInput = document.getElementById(`android_${inputKey}`);
+                        
+                        if (iosInput) {
+                            iosInput.value = data.ios;
+                            // Make historical data read-only, current month editable
+                            if (!data.isCurrent) {
+                                iosInput.readOnly = true;
+                                iosInput.classList.add('historical-readonly');
+                            }
+                        }
+                        if (androidInput) {
+                            androidInput.value = data.android;
+                            // Make historical data read-only, current month editable
+                            if (!data.isCurrent) {
+                                androidInput.readOnly = true;
+                                androidInput.classList.add('historical-readonly');
+                            }
+                        }
+                    }
+                });
+                
+                updateMonthlyComparison();
+            }
+        }
+
+        function clearMonthlyHistory() {
+            if (confirm('Are you sure you want to clear all historical data? This cannot be undone.')) {
+                localStorage.removeItem('tmh-monthly-data-history');
+                monthlyDataHistory = {};
+                
+                // Clear all input fields
+                ['march2025', 'april2025', 'may2025', 'june2025', 'current'].forEach(period => {
+                    const iosInput = document.getElementById(`ios_${period}`);
+                    const androidInput = document.getElementById(`android_${period}`);
+                    if (iosInput) iosInput.value = '';
+                    if (androidInput) androidInput.value = '';
+                });
+                
+                updateMonthlyComparison();
+                alert('Historical data cleared successfully.');
+            }
+        }
 
         function findColumnIndex(headers, possibleNames) {
             for (const name of possibleNames) {
@@ -1296,6 +2149,12 @@
                     });
                     
                     processExcelData(mappedData, foundColumns);
+                    
+                    // Auto-save monthly data after processing
+                    setTimeout(() => {
+                        saveMonthlyData();
+                        loadHistoricalData();
+                    }, 1000);
                 } catch (error) {
                     console.error('Error processing file:', error);
                     document.getElementById('statusMessage').textContent = `Error: ${error.message}`;
@@ -1320,7 +2179,255 @@
                     processSelectedSheet();
                 });
             }
+            
+            // Load historical data on page load
+            loadHistoricalData();
         });
+
+        // Print function with instructions (no popups)
+        function printReport() {
+            alert('To print the report:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Adjust print settings as needed\n3. Click Print\n\nNote: Make sure to enable "Background graphics" for best results.');
+        }
+
+        // PDF export function (popup-free)
+        function exportToPDF() {
+            alert('To save as PDF:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Select "Save as PDF" as the destination\n3. Choose "More settings" and enable "Background graphics"\n4. Click Save\n\nThis method provides the best quality without popups.');
+        }
+
+        // Auto-fill current counts function
+        function autoFillCurrentCounts() {
+            const iosTotal = parseInt(document.getElementById('iosTotal').textContent) || 0;
+            const androidTotal = parseInt(document.getElementById('androidTotal').textContent) || 0;
+            
+            // Find the current month input
+            const currentMonth = monthlyInputs.find(month => month.isCurrent);
+            if (currentMonth) {
+                const iosCurrentInput = document.getElementById(`ios_${currentMonth.key}`);
+                const androidCurrentInput = document.getElementById(`android_${currentMonth.key}`);
+                
+                if (iosCurrentInput && iosTotal > 0) {
+                    iosCurrentInput.value = iosTotal;
+                }
+                if (androidCurrentInput && androidTotal > 0) {
+                    androidCurrentInput.value = androidTotal;
+                }
+            }
+            
+            updateMonthlyComparison();
+            
+            // Save the data
+            saveMonthlyData();
+        }
+
+        // Generate dynamic monthly inputs for trend analysis
+        function generateMonthlyInputs() {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth(); // 0-11
+            const currentYear = currentDate.getFullYear();
+            
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            monthlyInputs = [];
+            
+            // Add historical months from saved data
+            const sortedHistoricalData = Object.entries(monthlyDataHistory)
+                .filter(([key, data]) => !data.isCurrent) // Only non-current months
+                .sort(([a], [b]) => a.localeCompare(b));
+            
+            sortedHistoricalData.forEach(([historyKey, data]) => {
+                // historyKey format: "2025-07" (year-month)
+                const [year, month] = historyKey.split('-');
+                const monthIndex = parseInt(month) - 1; // Convert to 0-based
+                const monthKey = `${monthNames[monthIndex].toLowerCase()}_${year}`;
+                
+                monthlyInputs.push({
+                    key: monthKey,
+                    label: `${monthNames[monthIndex]} ${year}`,
+                    isCurrent: false,
+                    isHistorical: true
+                });
+            });
+            
+            // Add current year months from current month to end of year
+            for (let i = currentMonth; i < 12; i++) {
+                const monthKey = `${monthNames[i].toLowerCase()}_${currentYear}`;
+                monthlyInputs.push({
+                    key: monthKey,
+                    label: `${monthNames[i]} ${currentYear}`,
+                    isCurrent: i === currentMonth
+                });
+            }
+            
+            // If we're near end of year, add a few months from next year
+            if (currentMonth >= 9) { // October, November, December
+                const nextYear = currentYear + 1;
+                for (let i = 0; i < 3; i++) {
+                    const monthKey = `${monthNames[i].toLowerCase()}_${nextYear}`;
+                    monthlyInputs.push({
+                        key: monthKey,
+                        label: `${monthNames[i]} ${nextYear}`,
+                        isCurrent: false
+                    });
+                }
+            }
+            
+            // Populate the input grids
+            populateInputGrid('iosInputGrid', 'ios');
+            populateInputGrid('androidInputGrid', 'android');
+        }
+        
+        function populateInputGrid(gridId, platform) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            monthlyInputs.forEach(month => {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = month.isCurrent ? 'input-group current-month' : 'input-group';
+                
+                const label = document.createElement('label');
+                label.setAttribute('for', `${platform}_${month.key}`);
+                label.textContent = month.label;
+                
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.id = `${platform}_${month.key}`;
+                input.placeholder = month.isCurrent ? 'Current count' : 'Enter count';
+                input.setAttribute('onchange', 'updateMonthlyComparison()');
+                
+                inputGroup.appendChild(label);
+                inputGroup.appendChild(input);
+                grid.appendChild(inputGroup);
+            });
+        }
+
+        // Clear monthly counts (form inputs only)
+        function clearMonthlyCounts() {
+            monthlyInputs.forEach(month => {
+                const iosInput = document.getElementById(`ios_${month.key}`);
+                const androidInput = document.getElementById(`android_${month.key}`);
+                if (iosInput) iosInput.value = '';
+                if (androidInput) androidInput.value = '';
+            });
+            
+            updateMonthlyComparison();
+        }
+
+        // Update monthly comparison table
+        function updateMonthlyComparison() {
+            const comparisonContainer = document.getElementById('monthlyComparison');
+            if (!comparisonContainer) return;
+            
+            // Collect data from all dynamic inputs
+            const trendData = [];
+            
+            monthlyInputs.forEach(month => {
+                const iosInput = document.getElementById(`ios_${month.key}`);
+                const androidInput = document.getElementById(`android_${month.key}`);
+                
+                const iosValue = parseInt(iosInput?.value) || 0;
+                const androidValue = parseInt(androidInput?.value) || 0;
+                const totalValue = iosValue + androidValue;
+                
+                if (iosValue > 0 || androidValue > 0) {
+                    trendData.push({
+                        month: month.label,
+                        ios: iosValue,
+                        android: androidValue,
+                        total: totalValue,
+                        isCurrent: month.isCurrent
+                    });
+                }
+            });
+            
+            if (trendData.length === 0) {
+                comparisonContainer.innerHTML = '<div class="no-trend-data">No trend data available. Enter device counts above to see trend analysis.</div>';
+                return;
+            }
+            
+            // Calculate month-over-month changes
+            const trendWithChanges = trendData.map((item, index) => {
+                if (index === 0) {
+                    return { ...item, iosChange: 0, androidChange: 0, totalChange: 0 };
+                }
+                
+                const previous = trendData[index - 1];
+                return {
+                    ...item,
+                    iosChange: item.ios - previous.ios,
+                    androidChange: item.android - previous.android,
+                    totalChange: item.total - previous.total
+                };
+            });
+            
+            // Generate trend table
+            let tableHTML = `
+                <div class="trend-table-container">
+                    <h3>Monthly Trend Analysis</h3>
+                    <table class="trend-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>iOS Devices</th>
+                                <th>iOS Change</th>
+                                <th>Android Devices</th>
+                                <th>Android Change</th>
+                                <th>Total Devices</th>
+                                <th>Total Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            trendWithChanges.forEach(item => {
+                const rowClass = item.isCurrent ? 'current-month-row' : '';
+                const iosChangeClass = item.iosChange > 0 ? 'positive-change' : item.iosChange < 0 ? 'negative-change' : 'no-change';
+                const androidChangeClass = item.androidChange > 0 ? 'positive-change' : item.androidChange < 0 ? 'negative-change' : 'no-change';
+                const totalChangeClass = item.totalChange > 0 ? 'positive-change' : item.totalChange < 0 ? 'negative-change' : 'no-change';
+                
+                tableHTML += `
+                    <tr class="${rowClass}">
+                        <td class="month-cell">${item.month}${item.isCurrent ? ' (Current)' : ''}</td>
+                        <td class="device-count">${item.ios}</td>
+                        <td class="change-cell ${iosChangeClass}">${item.iosChange > 0 ? '+' : ''}${item.iosChange}</td>
+                        <td class="device-count">${item.android}</td>
+                        <td class="change-cell ${androidChangeClass}">${item.androidChange > 0 ? '+' : ''}${item.androidChange}</td>
+                        <td class="device-count total-count">${item.total}</td>
+                        <td class="change-cell ${totalChangeClass}">${item.totalChange > 0 ? '+' : ''}${item.totalChange}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            comparisonContainer.innerHTML = tableHTML;
+        }
+
+        // Export historical data function
+        function exportHistoricalData() {
+            const csvData = Object.entries(monthlyDataHistory)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([key, data]) => `${data.month} ${data.year},${data.ios},${data.android}`)
+                .join('\n');
+                
+            const fullCsv = 'Month,iOS Devices,Android Devices\n' + csvData;
+            
+            const blob = new Blob([fullCsv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `TMH-Device-History-${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            window.URL.revokeObjectURL(url);
+        }
 
         async function processExcelData(data, foundColumns = []) {
             try {
@@ -2316,82 +3423,8 @@
             });
         }
 
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            
-            // Hide action buttons before capture
-            const actionButtons = document.querySelector('.actions-bar');
-            const originalDisplay = actionButtons.style.display;
-            actionButtons.style.display = 'none';
-            
-            // Get the report container element
-            const element = document.getElementById('reportContainer');
-            
-            html2canvas(element, {
-                scale: 0.7, // Reduce scale to fit better with header/footer
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff'
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                
-                // Professional TMH Header
-                pdf.setFillColor(0, 61, 92); // TMH Blue
-                pdf.rect(0, 0, pdfWidth, 20, 'F');
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(16);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('TMH DEVICE INVENTORY REPORT', pdfWidth / 2, 12, { align: 'center' });
-                
-                // Calculate dimensions to fit with header/footer margins
-                const topMargin = 25;
-                const bottomMargin = 25;
-                const sideMargin = 10;
-                const availableWidth = pdfWidth - (2 * sideMargin);
-                const availableHeight = pdfHeight - topMargin - bottomMargin;
-                const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
-                
-                const finalWidth = imgWidth * ratio;
-                const finalHeight = imgHeight * ratio;
-                const imgX = (pdfWidth - finalWidth) / 2;
-                const imgY = topMargin;
-                
-                pdf.addImage(imgData, 'PNG', imgX, imgY, finalWidth, finalHeight);
-                
-                // Professional Footer with generation timestamp
-                const currentDate = new Date();
-                const dateString = currentDate.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                pdf.setFillColor(0, 61, 92); // TMH Blue
-                pdf.rect(0, pdfHeight - 15, pdfWidth, 15, 'F');
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(8);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text('Tallahassee Memorial Hospital', 10, pdfHeight - 8);
-                pdf.text(`Generated: ${dateString}`, pdfWidth - 10, pdfHeight - 8, { align: 'right' });
-                pdf.text('IT Asset Management', pdfWidth / 2, pdfHeight - 8, { align: 'center' });
-                
-                pdf.save('tmh-device-inventory-report.pdf');
-                
-                // Restore action buttons
-                actionButtons.style.display = originalDisplay;
-            }).catch(error => {
-                console.error('Error generating PDF:', error);
-                // Restore action buttons even if there's an error
-                actionButtons.style.display = originalDisplay;
-            });
-        }
+        /* Duplicate exportToPDF function removed to fix double popup issue */
+        /* Using the enhanced version that provides better PDF quality and experience */
 
         /* exportToHTML function removed as Export to HTML button was removed */
 
@@ -3540,6 +4573,70 @@
             
             alert(summary);
         }
+
+        // Initialize historical data (preserve existing data)
+        function initializeHistoricalData() {
+            const requiredHistoricalData = {
+                '2025-03': { ios: 928, android: 790, month: 'March', year: 2025, isCurrent: false },
+                '2025-04': { ios: 934, android: 790, month: 'April', year: 2025, isCurrent: false },
+                '2025-05': { ios: 929, android: 792, month: 'May', year: 2025, isCurrent: false },
+                '2025-06': { ios: 926, android: 790, month: 'June', year: 2025, isCurrent: false }
+            };
+            
+            let dataUpdated = false;
+            
+            // Only add missing historical months, preserve existing data
+            Object.entries(requiredHistoricalData).forEach(([key, data]) => {
+                if (!monthlyDataHistory[key]) {
+                    monthlyDataHistory[key] = data;
+                    dataUpdated = true;
+                    console.log('Added missing historical data for', key);
+                }
+            });
+            
+            // Save to localStorage if we added any new data
+            if (dataUpdated) {
+                localStorage.setItem('tmh-monthly-data-history', JSON.stringify(monthlyDataHistory));
+                console.log('Updated historical data in localStorage');
+            }
+        }
+
+        // Function to restore historical data if it was lost
+        function restoreHistoricalData() {
+            // Force restore the historical data
+            const historicalData = {
+                '2025-03': { ios: 928, android: 790, month: 'March', year: 2025, isCurrent: false },
+                '2025-04': { ios: 934, android: 790, month: 'April', year: 2025, isCurrent: false },
+                '2025-05': { ios: 929, android: 792, month: 'May', year: 2025, isCurrent: false },
+                '2025-06': { ios: 926, android: 790, month: 'June', year: 2025, isCurrent: false }
+            };
+            
+            Object.assign(monthlyDataHistory, historicalData);
+            localStorage.setItem('tmh-monthly-data-history', JSON.stringify(monthlyDataHistory));
+            
+            // Regenerate the interface
+            regenerateMonthlyInputs();
+            console.log('Historical data restored');
+        }
+
+        // Initialize dynamic monthly inputs when page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded, initializing data...');
+            console.log('Current monthlyDataHistory:', monthlyDataHistory);
+            
+            initializeHistoricalData(); // Set up initial data if needed
+            generateMonthlyInputs();     // Generate input fields
+            loadHistoricalData();        // Load data into inputs
+            
+            // Check if we have the expected historical data
+            const expectedKeys = ['2025-03', '2025-04', '2025-05', '2025-06'];
+            const missingData = expectedKeys.some(key => !monthlyDataHistory[key]);
+            
+            if (missingData) {
+                console.log('Some historical data missing, restoring...');
+                restoreHistoricalData();
+            }
+        });
     </script>
 </body>
 </html> 
