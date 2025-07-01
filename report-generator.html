@@ -844,6 +844,7 @@
             border-bottom: 1px solid var(--neutral-200);
             font-weight: 600;
             font-size: var(--text-base);
+            text-align: center;
         }
 
         .section-body {
@@ -1375,6 +1376,7 @@
             font-size: var(--text-lg);
             font-weight: 600;
             color: var(--primary-blue);
+            text-align: center;
         }
 
         .tracker-actions {
@@ -4886,7 +4888,7 @@
             console.log(`Found ${rawAndroidCategories.size} unique raw Android categories:`, [...rawAndroidCategories]);
             console.log('Sample of first 10 devices with categories:', categorySample);
 
-            // Simple adaptive categorization - use original category names
+            // Enhanced Android categorization with better device type detection
             const categoryCounts = {};
             const mappingDebug = [];
             androidDevices.forEach((device, index) => {
@@ -4895,14 +4897,41 @@
                 
                 // Use the Category column if available
                 if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
-                    // Use the original category name as-is
-                    category = device.deviceCategoryKey.toString().trim();
+                    let rawCategory = device.deviceCategoryKey.toString().trim();
                     mappingReason = 'using original category name';
                     
                     // Handle empty/null categories
-                    if (category === '' || category === 'null' || category === 'none') {
+                    if (rawCategory === '' || rawCategory === 'null' || rawCategory === 'none') {
                         category = '(unassigned)';
                         mappingReason = 'empty/null category';
+                    } else {
+                        // Enhanced category mapping for common Android device types
+                        const lowerCategory = rawCategory.toLowerCase();
+                        
+                        if (lowerCategory.includes('hc50') || lowerCategory.includes('zebra hc50')) {
+                            category = 'HC50 Zebra';
+                        } else if (lowerCategory.includes('tc52') || lowerCategory.includes('tc50') || lowerCategory.includes('zebra tc')) {
+                            category = 'TC52/TC50 Zebra';
+                        } else if (lowerCategory.includes('mc') || lowerCategory.includes('zebra mc')) {
+                            category = 'MC Series Zebra';
+                        } else if (lowerCategory.includes('rover') || lowerCategory.includes('honeywell')) {
+                            category = 'Rover/Honeywell';
+                        } else if (lowerCategory.includes('i-series') || lowerCategory.includes('iseries')) {
+                            category = 'I-Series';
+                        } else if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
+                            category = 'BackStock';
+                        } else if (lowerCategory.includes('epic') && lowerCategory.includes('welcome')) {
+                            category = 'Epic Welcome';
+                        } else if (lowerCategory.includes('supply') || lowerCategory.includes('supplies')) {
+                            category = 'Supply Chain';
+                        } else if (lowerCategory.includes('test') || lowerCategory.includes('testing')) {
+                            category = 'Test Devices';
+                        } else if (lowerCategory.includes('unassigned') || lowerCategory.includes('blank')) {
+                            category = '(unassigned)';
+                        } else {
+                            // Use the original category name if no specific mapping found
+                            category = rawCategory;
+                        }
                     }
                 } else if (foundColumns.includes('deviceCategoryKey')) {
                     category = '(blank)';
@@ -4910,13 +4939,30 @@
                 } else {
                     // If no Category column found, categorize by device type or model
                     const deviceStr = JSON.stringify(device).toLowerCase();
-                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner') || deviceStr.includes('barcode')) {
+                    const deviceName = (device.deviceName || device.displayName || '').toLowerCase();
+                    const model = (device.model || '').toLowerCase();
+                    
+                    if (deviceStr.includes('zebra') || deviceStr.includes('scanner') || deviceStr.includes('barcode') || 
+                        deviceName.includes('zebra') || model.includes('zebra')) {
                         category = 'Zebra/Scanner';
                         mappingReason = 'fallback: device contains zebra/scanner/barcode';
-                    } else if (deviceStr.includes('tablet') || deviceStr.includes('ipad')) {
+                    } else if (deviceStr.includes('hc50') || deviceName.includes('hc50') || model.includes('hc50')) {
+                        category = 'HC50 Zebra';
+                        mappingReason = 'fallback: device contains HC50';
+                    } else if (deviceStr.includes('tc52') || deviceStr.includes('tc50') || 
+                               deviceName.includes('tc52') || deviceName.includes('tc50') ||
+                               model.includes('tc52') || model.includes('tc50')) {
+                        category = 'TC52/TC50 Zebra';
+                        mappingReason = 'fallback: device contains TC52/TC50';
+                    } else if (deviceStr.includes('rover') || deviceName.includes('rover') || model.includes('rover')) {
+                        category = 'Rover/Honeywell';
+                        mappingReason = 'fallback: device contains rover';
+                    } else if (deviceStr.includes('tablet') || deviceStr.includes('ipad') || 
+                               deviceName.includes('tablet') || model.includes('tablet')) {
                         category = 'Android Tablet';
                         mappingReason = 'fallback: device contains tablet/ipad';
-                    } else if (deviceStr.includes('phone') || deviceStr.includes('mobile phone')) {
+                    } else if (deviceStr.includes('phone') || deviceStr.includes('mobile phone') ||
+                               deviceName.includes('phone') || model.includes('phone')) {
                         category = 'Android Phone';
                         mappingReason = 'fallback: device contains phone';
                     } else {
@@ -4968,24 +5014,36 @@
                 } else if (category.includes('Epic Welcome') || category.includes('epic welcome')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#17a745';
-                } else if (category.includes('HC50') || category.includes('hc50')) {
+                } else if (category.includes('HC50 Zebra')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#28a745';
-                } else if (category.includes('TC52') || category.includes('tc52') || category.includes('TC50') || category.includes('tc50')) {
+                } else if (category.includes('TC52/TC50 Zebra')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#28a745';
-                } else if (category.includes('Rover') || category.includes('rover')) {
-                    categoryCell.style.fontWeight = 'bold';
-                    categoryCell.style.color = '#6f42c1';
-                } else if (category.includes('I-Series') || category.includes('i-series')) {
+                } else if (category.includes('MC Series Zebra')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#20c997';
-                } else if (category.includes('Supply') || category.includes('supply')) {
+                } else if (category.includes('Rover/Honeywell')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#6f42c1';
+                } else if (category.includes('I-Series')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#20c997';
+                } else if (category.includes('Supply Chain')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#fd7e14';
-                } else if (category.includes('Test') || category.includes('test')) {
+                } else if (category.includes('Test Devices')) {
                     categoryCell.style.fontWeight = 'bold';
                     categoryCell.style.color = '#ffc107';
+                } else if (category.includes('Zebra/Scanner')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#17a745';
+                } else if (category.includes('Android Tablet')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#007bff';
+                } else if (category.includes('Android Phone')) {
+                    categoryCell.style.fontWeight = 'bold';
+                    categoryCell.style.color = '#6f42c1';
                 } else if (category.includes('(unassigned)') || category.includes('(blank)') || category.includes('(no category)')) {
                     categoryCell.style.color = '#dc3545';
                     categoryCell.style.fontStyle = 'italic';
