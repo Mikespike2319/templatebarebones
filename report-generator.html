@@ -690,6 +690,58 @@
             gap: var(--space-lg);
         }
 
+        /* Compact styling for system information */
+        .compact-info {
+            gap: var(--space-md);
+        }
+
+        .compact-card {
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .compact-card .card-header {
+            padding: var(--space-sm) var(--space-md);
+            background-color: var(--neutral-50);
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .compact-body {
+            padding: var(--space-sm);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .compact-table {
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        .compact-table th {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            background-color: var(--neutral-100);
+            border-bottom: 1px solid var(--neutral-300);
+        }
+
+        .compact-table td {
+            padding: 0.25rem 0.5rem;
+            border-bottom: 1px solid var(--neutral-100);
+            font-size: 0.75rem;
+        }
+
+        .compact-table .status-supported,
+        .compact-table .status-security,
+        .compact-table .status-ended {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.3rem;
+            display: inline-block;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         /* Footer redesign */
         .footer {
             background-color: var(--primary-blue);
@@ -1622,6 +1674,39 @@
             .two-column {
                 gap: 0.6rem;
             }
+            
+            .compact-card {
+                border: 1px solid var(--neutral-300);
+                background: white !important;
+                margin-bottom: 0.2rem;
+            }
+            
+            .compact-card .card-header {
+                background: #f8f9fa !important;
+                padding: 0.2rem 0.4rem;
+                border-bottom: 1px solid var(--neutral-300);
+            }
+            
+            .compact-body {
+                padding: 0.4rem;
+                max-height: none;
+                overflow: visible;
+            }
+            
+            .compact-table {
+                font-size: 0.55rem;
+            }
+            
+            .compact-table th {
+                padding: 0.1rem 0.2rem;
+                font-size: 0.5rem;
+                background: #f8f9fa !important;
+            }
+            
+            .compact-table td {
+                padding: 0.1rem 0.2rem;
+                font-size: 0.5rem;
+            }
 
             /* Ensure all content fits properly */
             @page {
@@ -1879,9 +1964,9 @@
 
             <!-- Device Details & Lifecycle -->
             <div class="section">
-                <div class="section-header">Device Categories & Lifecycle Status</div>
+                <div class="section-header">Device Categories</div>
                 <div class="section-body">
-                    <div class="three-column">
+                    <div class="two-column">
                         <div class="card">
                             <div class="card-header">
                                 <h3 style="font-size: var(--text-base); font-weight: 600;">iOS Device Categories</h3>
@@ -1903,26 +1988,6 @@
                             <table class="data-table" id="androidTable">
                                 <thead>
                                     <tr><th>Category</th><th>Count</th></tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 style="font-size: var(--text-base); font-weight: 600;">
-                    <span class="tooltip" data-tooltip="End of Life tracking for both iOS and Android devices. Shows critical devices ending support within 1 year.">Device Lifecycle Status</span>
-                </h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="data-table" id="lifecycleTable">
-                                <thead>
-                                    <tr>
-                        <th>Device Model</th>
-                        <th>Count</th>
-                        <th><span class="tooltip" data-tooltip="End of Life - Year when manufacturer stops supporting this model">EOL</span></th>
-                        <th><span class="tooltip" data-tooltip="Support status based on years remaining until End of Life">Status</span></th>
-                    </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -1977,22 +2042,49 @@
                 </div>
             </div>
 
-            <!-- Operating System Breakdown -->
+            <!-- Compact System Information -->
             <div class="section">
-                <div class="section-header">
-                    <h2>Operating System Breakdown</h2>
-                </div>
+                <div class="section-header">System Information</div>
                 <div class="section-body">
-                    <table class="data-table" id="osTable">
-                        <thead>
-                            <tr>
-                                <th>Operating System</th>
-                                <th>Count</th>
-                                <th>Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="two-column compact-info">
+                        <div class="card compact-card">
+                            <div class="card-header">
+                                <h3 style="font-size: 0.9rem; font-weight: 600;">Operating System Breakdown</h3>
+                            </div>
+                            <div class="card-body compact-body">
+                                <table class="data-table compact-table" id="osTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Operating System</th>
+                                            <th>Count</th>
+                                            <th>%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card compact-card">
+                            <div class="card-header">
+                                <h3 style="font-size: 0.9rem; font-weight: 600;">
+                                    <span class="tooltip" data-tooltip="End of Life tracking - Critical devices ending support within 1 year">Lifecycle Summary</span>
+                                </h3>
+                            </div>
+                            <div class="card-body compact-body">
+                                <table class="data-table compact-table" id="lifecycleTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Device Model</th>
+                                            <th>Count</th>
+                                            <th>EOL</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -4060,7 +4152,7 @@
                 // Sort by count (descending) and limit to top models
                 const sortedIOSModels = Object.entries(iosModelCounts)
                     .sort((a, b) => b[1] - a[1])
-                    .slice(0, 10); // Show top 10 iOS models
+                    .slice(0, 5); // Show top 5 iOS models for compact view
 
                 sortedIOSModels.forEach(([model, count]) => {
                     const lifecycle = iosLifecycle[model];
@@ -4109,7 +4201,7 @@
                 // Sort by count (descending) and limit to top models
                 const sortedAndroidModels = Object.entries(androidModelCounts)
                     .sort((a, b) => b[1] - a[1])
-                    .slice(0, 10); // Show top 10 Android models
+                    .slice(0, 5); // Show top 5 Android models for compact view
 
                                  sortedAndroidModels.forEach(([model, count]) => {
                      const androidLifecycle = getAndroidLifecycleInfo(model);
