@@ -3826,9 +3826,39 @@
                     // If not detected from OS version, try other fields
                     if (!osDetected) {
                         const deviceStr = JSON.stringify(device).toLowerCase();
-                        if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
+                        const deviceName = (device.deviceName || device.displayName || '').toLowerCase();
+                        const model = (device.model || '').toLowerCase();
+                        const manufacturer = (device.manufacturer || '').toLowerCase();
+                        
+                        // Enhanced iOS detection
+                        if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad') ||
+                            deviceName.includes('iphone') || deviceName.includes('ipad') ||
+                            model.includes('iphone') || model.includes('ipad')) {
                             iosDevices.push(device);
-                        } else if (deviceStr.includes('android')) {
+                        } 
+                        // Enhanced Android detection
+                        else if (deviceStr.includes('android') ||
+                                 deviceName.includes('zebra') || model.includes('zebra') ||
+                                 deviceName.includes('hc50') || model.includes('hc50') ||
+                                 deviceName.includes('tc52') || model.includes('tc52') ||
+                                 deviceName.includes('tc50') || model.includes('tc50') ||
+                                 deviceName.includes('mc') || model.includes('mc') ||
+                                 deviceName.includes('rover') || model.includes('rover') ||
+                                 deviceName.includes('honeywell') || model.includes('honeywell') ||
+                                 deviceName.includes('samsung') || model.includes('samsung') ||
+                                 deviceName.includes('pixel') || model.includes('pixel') ||
+                                 deviceName.includes('lg') || model.includes('lg') ||
+                                 deviceName.includes('motorola') || model.includes('motorola') ||
+                                 deviceName.includes('oneplus') || model.includes('oneplus') ||
+                                 deviceName.includes('huawei') || model.includes('huawei') ||
+                                 deviceName.includes('xiaomi') || model.includes('xiaomi') ||
+                                 deviceName.includes('htc') || model.includes('htc') ||
+                                 deviceName.includes('sony') || model.includes('sony') ||
+                                 deviceName.includes('nokia') || model.includes('nokia') ||
+                                 manufacturer.includes('samsung') || manufacturer.includes('lg') ||
+                                 manufacturer.includes('motorola') || manufacturer.includes('huawei') ||
+                                 manufacturer.includes('xiaomi') || manufacturer.includes('htc') ||
+                                 manufacturer.includes('sony') || manufacturer.includes('nokia')) {
                             androidDevices.push(device);
                         }
                     }
@@ -4645,15 +4675,59 @@
         function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = []) {
             // Use provided device arrays if available, otherwise filter from all devices
             if (iosDevices.length === 0 && androidDevices.length === 0) {
-                iosDevices = devices.filter(d => 
-                    d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')
-                );
-                androidDevices = devices.filter(d => 
-                    d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')
-                );
+                iosDevices = devices.filter(d => {
+                    const deviceStr = JSON.stringify(d).toLowerCase();
+                    return (d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('ios')) ||
+                           (d.osVersion && d.osVersion.toString().toLowerCase().includes('ios')) ||
+                           deviceStr.includes('iphone') || deviceStr.includes('ipad');
+                });
+                
+                androidDevices = devices.filter(d => {
+                    const deviceStr = JSON.stringify(d).toLowerCase();
+                    const deviceName = (d.deviceName || d.displayName || '').toLowerCase();
+                    const model = (d.model || '').toLowerCase();
+                    
+                    return (d.operatingSystem && d.operatingSystem.toString().toLowerCase().includes('android')) ||
+                           (d.osVersion && d.osVersion.toString().toLowerCase().includes('android')) ||
+                           deviceStr.includes('android') ||
+                           deviceName.includes('zebra') || model.includes('zebra') ||
+                           deviceName.includes('hc50') || model.includes('hc50') ||
+                           deviceName.includes('tc52') || model.includes('tc52') ||
+                           deviceName.includes('tc50') || model.includes('tc50') ||
+                           deviceName.includes('mc') || model.includes('mc') ||
+                           deviceName.includes('rover') || model.includes('rover') ||
+                           deviceName.includes('honeywell') || model.includes('honeywell') ||
+                           deviceName.includes('samsung') || model.includes('samsung') ||
+                           deviceName.includes('pixel') || model.includes('pixel') ||
+                           deviceName.includes('lg') || model.includes('lg') ||
+                           deviceName.includes('motorola') || model.includes('motorola') ||
+                           deviceName.includes('oneplus') || model.includes('oneplus') ||
+                           deviceName.includes('huawei') || model.includes('huawei') ||
+                           deviceName.includes('xiaomi') || model.includes('xiaomi') ||
+                           deviceName.includes('htc') || model.includes('htc') ||
+                           deviceName.includes('sony') || model.includes('sony') ||
+                           deviceName.includes('nokia') || model.includes('nokia');
+                });
             }
 
             console.log('Populating category tables - iOS:', iosDevices.length, 'Android:', androidDevices.length);
+            
+            // Debug Android device detection
+            if (androidDevices.length === 0) {
+                console.log('=== ANDROID DETECTION DEBUG ===');
+                console.log('Total devices:', devices.length);
+                console.log('Sample of first 10 devices for Android detection:');
+                devices.slice(0, 10).forEach((device, index) => {
+                    console.log(`Device ${index}:`, {
+                        deviceName: device.deviceName || device.displayName || 'Unknown',
+                        model: device.model || 'Unknown',
+                        operatingSystem: device.operatingSystem || 'Unknown',
+                        osVersion: device.osVersion || 'Unknown',
+                        deviceCategoryKey: device.deviceCategoryKey || 'Unknown'
+                    });
+                });
+                console.log('=== END ANDROID DETECTION DEBUG ===');
+            }
 
             // Populate iOS categories table
             populateIOSCategoriesTable(iosDevices, foundColumns);
