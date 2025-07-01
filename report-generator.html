@@ -30,23 +30,23 @@
             --neutral-800: #27272a;
             --neutral-900: #18181b;
             
-            /* Spacing system */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
+            /* Compact spacing system */
+            --space-xs: 0.125rem;
+            --space-sm: 0.25rem;
+            --space-md: 0.5rem;
+            --space-lg: 0.75rem;
+            --space-xl: 1rem;
+            --space-2xl: 1.5rem;
             
-            /* Typography */
+            /* Compact typography */
             --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --text-xs: 0.75rem;
-            --text-sm: 0.875rem;
-            --text-base: 1rem;
-            --text-lg: 1.125rem;
-            --text-xl: 1.25rem;
-            --text-2xl: 1.5rem;
-            --text-3xl: 1.875rem;
+            --text-xs: 0.625rem;
+            --text-sm: 0.75rem;
+            --text-base: 0.875rem;
+            --text-lg: 0.9375rem;
+            --text-xl: 1rem;
+            --text-2xl: 1.125rem;
+            --text-3xl: 1.25rem;
             
             /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -124,16 +124,16 @@
         /* Enhanced urgent items styling */
         .urgent-items-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-md);
-            margin-top: var(--space-md);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
         }
         
         .urgent-item {
             background: white;
             border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            border-left: 4px solid #dc2626;
+            padding: var(--space-sm);
+            border-left: 3px solid #dc2626;
             box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
         }
@@ -159,8 +159,8 @@
         }
         
         .urgent-item-icon {
-            font-size: 24px;
-            margin-bottom: var(--space-sm);
+            font-size: 18px;
+            margin-bottom: var(--space-xs);
         }
         
         .urgent-item-title {
@@ -183,7 +183,7 @@
         }
 
         .header-content {
-            max-width: 1280px;
+            max-width: 1024px;
             margin: 0 auto;
             padding: 0 var(--space-lg);
             display: flex;
@@ -240,7 +240,7 @@
 
         /* Container and layout */
         .container {
-            max-width: 1280px;
+            max-width: 1024px;
             margin: 0 auto;
             padding: var(--space-xl) var(--space-lg);
         }
@@ -260,7 +260,7 @@
         }
 
         .card-header {
-            padding: var(--space-lg);
+            padding: var(--space-md);
             border-bottom: 1px solid var(--neutral-200);
             background-color: var(--neutral-50);
         }
@@ -275,18 +275,18 @@
         }
 
         .card-body {
-            padding: var(--space-lg);
+            padding: var(--space-md);
         }
 
         /* Upload section redesign */
         .upload-section {
-            margin-bottom: var(--space-xl);
+            margin-bottom: var(--space-lg);
         }
 
         .upload-area {
             border: 2px dashed var(--neutral-300);
             border-radius: var(--radius-lg);
-            padding: var(--space-2xl);
+            padding: var(--space-lg);
             text-align: center;
             background-color: var(--neutral-50);
             transition: all 0.2s ease;
@@ -301,7 +301,7 @@
             display: inline-flex;
             align-items: center;
             gap: var(--space-sm);
-            padding: var(--space-md) var(--space-xl);
+            padding: var(--space-sm) var(--space-lg);
             background-color: var(--primary-blue);
             color: white;
             border-radius: var(--radius-md);
@@ -326,15 +326,15 @@
         /* Enhanced metric cards */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
 
         .metric-card {
             background: white;
             border-radius: var(--radius-lg);
-            padding: var(--space-lg);
+            padding: var(--space-md);
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--neutral-200);
             position: relative;
@@ -370,14 +370,14 @@
         }
 
         .metric-icon {
-            width: 48px;
-            height: 48px;
+            width: 32px;
+            height: 32px;
             background: var(--light-blue);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-sm);
         }
 
         .metric-card.android .metric-icon {
@@ -428,19 +428,19 @@
 
         /* Compliance section redesign */
         .compliance-section {
-            margin-bottom: var(--space-xl);
+            margin-bottom: var(--space-lg);
         }
 
         .compliance-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-md);
         }
 
         .compliance-card {
             background: white;
             border-radius: var(--radius-lg);
-            padding: var(--space-lg);
+            padding: var(--space-md);
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--neutral-200);
         }
@@ -449,7 +449,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-sm);
         }
 
         .compliance-title {
@@ -466,7 +466,7 @@
 
         .compliance-bar-container {
             background-color: var(--neutral-100);
-            height: 12px;
+            height: 8px;
             border-radius: var(--radius-xl);
             overflow: hidden;
             position: relative;
@@ -483,8 +483,8 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: var(--space-sm);
-            margin-top: var(--space-md);
-            padding-top: var(--space-md);
+            margin-top: var(--space-sm);
+            padding-top: var(--space-sm);
             border-top: 1px solid var(--neutral-200);
         }
 
@@ -680,14 +680,14 @@
         /* Responsive grid layouts */
         .two-column {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-md);
         }
 
         .three-column {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
         }
 
         /* Compact styling for system information */
@@ -811,15 +811,15 @@
         /* Modern Executive Dashboard Cards */
         .modern-dashboard-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
 
         .summary-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
             box-shadow: 
                 0 10px 40px rgba(0, 0, 0, 0.06),
                 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -867,18 +867,18 @@
 
         .card-title {
             color: #1a202c;
-            font-size: 0.9rem;
+            font-size: var(--text-sm);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-sm);
             opacity: 0.8;
         }
 
         .card-value {
-            font-size: 3.5rem;
+            font-size: var(--text-3xl);
             font-weight: 800;
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--space-xs);
             background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -912,8 +912,8 @@
 
         .card-description {
             color: #718096;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
+            font-size: var(--text-xs);
+            margin-bottom: var(--space-sm);
             line-height: 1.4;
         }
 
@@ -1179,6 +1179,209 @@
             background: #c82333 !important;
         }
 
+        /* Compact Monthly Tracker Styling */
+        .compact-monthly-tracker {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            background: var(--neutral-50);
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .tracker-header h3 {
+            margin: 0;
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .tracker-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .btn-compact {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-compact.btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-compact.btn-primary:hover {
+            background: var(--secondary-blue);
+        }
+
+        .btn-compact.btn-export {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .btn-compact.btn-export:hover {
+            background: #218838;
+        }
+
+        .btn-compact.btn-danger {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .btn-compact.btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .monthly-table-container {
+            overflow-x: auto;
+        }
+
+        .monthly-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--text-sm);
+        }
+
+        .monthly-table th {
+            background: var(--neutral-100);
+            padding: var(--space-sm);
+            text-align: left;
+            font-weight: 600;
+            font-size: var(--text-xs);
+            color: var(--neutral-700);
+            border-bottom: 1px solid var(--neutral-200);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .monthly-table th.ios-col {
+            background: linear-gradient(135deg, var(--primary-blue), #4a90e2);
+            color: white;
+        }
+
+        .monthly-table th.android-col {
+            background: linear-gradient(135deg, var(--success-green), #22c55e);
+            color: white;
+        }
+
+        .monthly-table th.total-col {
+            background: var(--neutral-700);
+            color: white;
+        }
+
+        .monthly-table th.trend-col {
+            background: var(--neutral-600);
+            color: white;
+        }
+
+        .monthly-table td {
+            padding: var(--space-sm);
+            border-bottom: 1px solid var(--neutral-100);
+            transition: background-color 0.2s ease;
+        }
+
+        .monthly-table tbody tr:hover {
+            background: var(--neutral-50);
+        }
+
+        .monthly-table .month-cell {
+            font-weight: 600;
+            color: var(--neutral-800);
+            min-width: 80px;
+        }
+
+        .monthly-table .month-cell.current {
+            background: linear-gradient(135deg, var(--light-blue), #e0f2fe);
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .monthly-table .editable-cell {
+            position: relative;
+            cursor: pointer;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .monthly-table .editable-cell:hover {
+            background: var(--light-blue);
+        }
+
+        .monthly-table .editable-cell.editing {
+            padding: 0;
+        }
+
+        .monthly-table .cell-input {
+            width: 100%;
+            padding: var(--space-sm);
+            border: 2px solid var(--primary-blue);
+            background: white;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            text-align: center;
+            border-radius: 0;
+        }
+
+        .monthly-table .cell-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .monthly-table .readonly-cell {
+            background: var(--neutral-50);
+            color: var(--neutral-600);
+            cursor: not-allowed;
+        }
+
+        .monthly-table .total-cell {
+            font-weight: 600;
+            color: var(--neutral-800);
+            text-align: center;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+        }
+
+        .trend-up {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success-green);
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+        .trend-neutral {
+            background: var(--neutral-100);
+            color: var(--neutral-600);
+        }
+
         .trend-analysis-section {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -1285,16 +1488,16 @@
         /* Urgent Items Grid Styling */
         .urgent-items-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-sm);
         }
 
         .urgent-item-card {
             background: white;
-            border-radius: 8px;
-            padding: 1rem;
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid transparent;
+            border-left: 3px solid transparent;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -1321,12 +1524,12 @@
         .urgent-item-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
         }
 
         .urgent-icon {
-            font-size: 1.5rem;
+            font-size: var(--text-xl);
             flex-shrink: 0;
         }
 
@@ -1335,8 +1538,8 @@
         }
 
         .urgent-title {
-            margin: 0 0 0.25rem 0;
-            font-size: 1rem;
+            margin: 0 0 var(--space-xs) 0;
+            font-size: var(--text-base);
             font-weight: 600;
             color: var(--neutral-800);
         }
@@ -1369,20 +1572,20 @@
         .urgent-count {
             background: var(--primary-blue);
             color: white;
-            padding: 0.5rem;
+            padding: var(--space-xs);
             border-radius: 50%;
-            min-width: 2.5rem;
-            height: 2.5rem;
+            min-width: 1.75rem;
+            height: 1.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: var(--text-sm);
         }
 
         .urgent-description {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: var(--text-sm);
             color: var(--neutral-600);
             line-height: 1.4;
         }
@@ -1900,59 +2103,46 @@
             <div class="section">
                 <div class="section-header">Historical Inventory Analysis</div>
                 <div class="section-body">
-                    <!-- Professional Historical Data Input -->
-                    <div class="historical-data-card">
-                        <div class="card-header">
-                            <h3>Monthly Device Inventory Tracking</h3>
-                            <p class="card-subtitle">Enter device counts for trend analysis and compliance reporting</p>
+                    <!-- Compact Monthly Tracker Table -->
+                    <div class="compact-monthly-tracker">
+                        <div class="tracker-header">
+                            <h3>Monthly Inventory Tracker</h3>
+                            <div class="tracker-actions">
+                                <button onclick="autoFillCurrentCounts()" class="btn-compact btn-primary">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12"/>
+                                    </svg>
+                                    Auto-Fill
+                                </button>
+                                <button onclick="exportHistoricalData()" class="btn-compact btn-export">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                                    </svg>
+                                    Export
+                                </button>
+                                <button onclick="clearMonthlyHistory()" class="btn-compact btn-danger">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                                    </svg>
+                                    Clear
+                                </button>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="platform-grid">
-                                <!-- iOS Platform Section -->
-                                <div class="platform-section ios-platform">
-                                    <div class="platform-header">
-                                        <h4>iOS Platform</h4>
-                                        <span class="platform-badge">Mobile Devices</span>
-                                    </div>
-                                    <div class="input-grid" id="iosInputGrid">
-                                        <!-- iOS inputs will be populated dynamically -->
-                                    </div>
-                                </div>
-                                
-                                <!-- Android Platform Section -->
-                                <div class="platform-section android-platform">
-                                    <div class="platform-header">
-                                        <h4>Android Platform</h4>
-                                        <span class="platform-badge">Mobile Devices</span>
-                                    </div>
-                                    <div class="input-grid" id="androidInputGrid">
-                                        <!-- Android inputs will be populated dynamically -->
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Professional Action Controls -->
-                            <div class="action-controls">
-                                <div class="control-group primary-actions">
-                                    <button onclick="autoFillCurrentCounts()" class="btn btn-primary">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12"/>
-                                        </svg>
-                                        Auto-Fill Current Data
-                                    </button>
-                                    <button onclick="exportHistoricalData()" class="btn btn-primary export-btn">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
-                                        </svg>
-                                        Export Historical Data
-                                    </button>
-                                </div>
-                                <div class="control-group secondary-actions">
-                                    <button onclick="clearMonthlyCounts()" class="btn btn-secondary">Clear Current Form</button>
-                                    <button onclick="restoreHistoricalData()" class="btn btn-secondary">Restore Historical Data</button>
-                                    <button onclick="clearMonthlyHistory()" class="btn btn-secondary danger-btn">Clear All History</button>
-                                </div>
-                            </div>
+                        <div class="monthly-table-container">
+                            <table class="monthly-table" id="monthlyTrackerTable">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th class="ios-col">iOS</th>
+                                        <th class="android-col">Android</th>
+                                        <th class="total-col">Total</th>
+                                        <th class="trend-col">Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monthlyTableBody">
+                                    <!-- Rows will be populated dynamically -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     
@@ -2220,28 +2410,19 @@
                     // Find matching input in our dynamic inputs
                     const matchingInput = monthlyInputs.find(input => input.key === inputKey);
                     if (matchingInput) {
-                        const iosInput = document.getElementById(`ios_${inputKey}`);
-                        const androidInput = document.getElementById(`android_${inputKey}`);
+                        // Update the monthlyInputs data with saved values
+                        matchingInput.iosValue = data.ios || 0;
+                        matchingInput.androidValue = data.android || 0;
                         
-                        if (iosInput) {
-                            iosInput.value = data.ios;
-                            // Make historical data read-only, current month editable
-                            if (!data.isCurrent) {
-                                iosInput.readOnly = true;
-                                iosInput.classList.add('historical-readonly');
-                            }
-                        }
-                        if (androidInput) {
-                            androidInput.value = data.android;
-                            // Make historical data read-only, current month editable
-                            if (!data.isCurrent) {
-                                androidInput.readOnly = true;
-                                androidInput.classList.add('historical-readonly');
-                            }
+                        // Mark as historical if not current
+                        if (!data.isCurrent) {
+                            matchingInput.isHistorical = true;
                         }
                     }
                 });
                 
+                // Refresh the table to show loaded data
+                populateMonthlyTable();
                 updateMonthlyComparison();
             }
         }
@@ -2540,15 +2721,16 @@
             // Find the current month input
             const currentMonth = monthlyInputs.find(month => month.isCurrent);
             if (currentMonth) {
-                const iosCurrentInput = document.getElementById(`ios_${currentMonth.key}`);
-                const androidCurrentInput = document.getElementById(`android_${currentMonth.key}`);
+                // Update the monthlyInputs data
+                if (iosTotal > 0) {
+                    currentMonth.iosValue = iosTotal;
+                }
+                if (androidTotal > 0) {
+                    currentMonth.androidValue = androidTotal;
+                }
                 
-                if (iosCurrentInput && iosTotal > 0) {
-                    iosCurrentInput.value = iosTotal;
-                }
-                if (androidCurrentInput && androidTotal > 0) {
-                    androidCurrentInput.value = androidTotal;
-                }
+                // Refresh the table to show updated values
+                populateMonthlyTable();
             }
             
             updateMonthlyComparison();
@@ -2557,7 +2739,7 @@
             saveMonthlyData();
         }
 
-        // Generate dynamic monthly inputs for trend analysis
+        // Generate dynamic monthly inputs for trend analysis (new table format)
         function generateMonthlyInputs() {
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth(); // 0-11
@@ -2584,8 +2766,11 @@
                 monthlyInputs.push({
                     key: monthKey,
                     label: `${monthNames[monthIndex]} ${year}`,
+                    shortLabel: `${monthNames[monthIndex].substring(0, 3)} ${year}`,
                     isCurrent: false,
-                    isHistorical: true
+                    isHistorical: true,
+                    iosValue: data.ios || 0,
+                    androidValue: data.android || 0
                 });
             });
             
@@ -2595,7 +2780,10 @@
                 monthlyInputs.push({
                     key: monthKey,
                     label: `${monthNames[i]} ${currentYear}`,
-                    isCurrent: i === currentMonth
+                    shortLabel: `${monthNames[i].substring(0, 3)} ${currentYear}`,
+                    isCurrent: i === currentMonth,
+                    iosValue: 0,
+                    androidValue: 0
                 });
             }
             
@@ -2607,51 +2795,122 @@
                     monthlyInputs.push({
                         key: monthKey,
                         label: `${monthNames[i]} ${nextYear}`,
-                        isCurrent: false
+                        shortLabel: `${monthNames[i].substring(0, 3)} ${nextYear}`,
+                        isCurrent: false,
+                        iosValue: 0,
+                        androidValue: 0
                     });
                 }
             }
             
-            // Populate the input grids
-            populateInputGrid('iosInputGrid', 'ios');
-            populateInputGrid('androidInputGrid', 'android');
+            // Populate the monthly table
+            populateMonthlyTable();
         }
         
-        function populateInputGrid(gridId, platform) {
-            const grid = document.getElementById(gridId);
-            if (!grid) return;
+        function populateMonthlyTable() {
+            const tableBody = document.getElementById('monthlyTableBody');
+            if (!tableBody) return;
             
-            grid.innerHTML = '';
+            tableBody.innerHTML = '';
             
-            monthlyInputs.forEach(month => {
-                const inputGroup = document.createElement('div');
-                inputGroup.className = month.isCurrent ? 'input-group current-month' : 'input-group';
+            monthlyInputs.forEach((month, index) => {
+                const row = document.createElement('tr');
+                const total = month.iosValue + month.androidValue;
                 
-                const label = document.createElement('label');
-                label.setAttribute('for', `${platform}_${month.key}`);
-                label.textContent = month.label;
+                // Calculate trend from previous month
+                let trend = '';
+                if (index > 0) {
+                    const prevTotal = monthlyInputs[index - 1].iosValue + monthlyInputs[index - 1].androidValue;
+                    const change = total - prevTotal;
+                    if (change > 0) {
+                        trend = `<span class="trend-indicator trend-up">↑ +${change}</span>`;
+                    } else if (change < 0) {
+                        trend = `<span class="trend-indicator trend-down">↓ ${change}</span>`;
+                    } else if (total > 0 || prevTotal > 0) {
+                        trend = `<span class="trend-indicator trend-neutral">→ 0</span>`;
+                    }
+                }
                 
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.id = `${platform}_${month.key}`;
-                input.placeholder = month.isCurrent ? 'Current count' : 'Enter count';
-                input.setAttribute('onchange', 'updateMonthlyComparison()');
+                row.innerHTML = `
+                    <td class="month-cell ${month.isCurrent ? 'current' : ''}">${month.shortLabel}</td>
+                    <td class="editable-cell ${month.isHistorical ? 'readonly-cell' : ''}" 
+                        data-month="${month.key}" data-platform="ios" 
+                        ${!month.isHistorical ? 'onclick="editCell(this)"' : ''}>${month.iosValue || ''}</td>
+                    <td class="editable-cell ${month.isHistorical ? 'readonly-cell' : ''}" 
+                        data-month="${month.key}" data-platform="android" 
+                        ${!month.isHistorical ? 'onclick="editCell(this)"' : ''}>${month.androidValue || ''}</td>
+                    <td class="total-cell">${total || ''}</td>
+                    <td class="trend-col">${trend}</td>
+                `;
                 
-                inputGroup.appendChild(label);
-                inputGroup.appendChild(input);
-                grid.appendChild(inputGroup);
+                tableBody.appendChild(row);
             });
         }
-
-        // Clear monthly counts (form inputs only)
-        function clearMonthlyCounts() {
-            monthlyInputs.forEach(month => {
-                const iosInput = document.getElementById(`ios_${month.key}`);
-                const androidInput = document.getElementById(`android_${month.key}`);
-                if (iosInput) iosInput.value = '';
-                if (androidInput) androidInput.value = '';
+        
+        // Inline cell editing for the compact table
+        function editCell(cell) {
+            if (cell.classList.contains('editing') || cell.classList.contains('readonly-cell')) return;
+            
+            const originalValue = cell.textContent.trim();
+            cell.classList.add('editing');
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'cell-input';
+            input.value = originalValue;
+            input.min = '0';
+            
+            // Save on Enter or blur
+            const saveValue = () => {
+                const newValue = parseInt(input.value) || 0;
+                cell.textContent = newValue || '';
+                cell.classList.remove('editing');
+                
+                // Update the monthlyInputs data
+                const monthKey = cell.dataset.month;
+                const platform = cell.dataset.platform;
+                const monthData = monthlyInputs.find(m => m.key === monthKey);
+                if (monthData) {
+                    if (platform === 'ios') {
+                        monthData.iosValue = newValue;
+                    } else {
+                        monthData.androidValue = newValue;
+                    }
+                }
+                
+                // Refresh the table to update totals and trends
+                populateMonthlyTable();
+                updateMonthlyComparison();
+            };
+            
+            input.addEventListener('blur', saveValue);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveValue();
+                }
+                if (e.key === 'Escape') {
+                    cell.textContent = originalValue;
+                    cell.classList.remove('editing');
+                }
             });
             
+            cell.innerHTML = '';
+            cell.appendChild(input);
+            input.focus();
+            input.select();
+        }
+
+        // Clear monthly counts (current data only)
+        function clearMonthlyCounts() {
+            monthlyInputs.forEach(month => {
+                if (!month.isHistorical) {
+                    month.iosValue = 0;
+                    month.androidValue = 0;
+                }
+            });
+            
+            // Refresh the table
+            populateMonthlyTable();
             updateMonthlyComparison();
         }
 
