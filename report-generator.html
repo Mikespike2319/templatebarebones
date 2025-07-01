@@ -4309,20 +4309,8 @@
                         detectedOS = `iOS ${device.osVersion}`;
                     } else if (osVersion.includes('android')) {
                         platform = 'Android';
-                        // Format Android version properly - try multiple patterns
-                        let versionMatch = device.osVersion.match(/(\d+(?:\.\d+)*)/);
-                        if (!versionMatch) {
-                            // Try alternative patterns
-                            versionMatch = device.osVersion.match(/android\s*(\d+(?:\.\d+)*)/i);
-                        }
-                        if (!versionMatch) {
-                            // Try just finding any number
-                            versionMatch = device.osVersion.match(/(\d+)/);
-                        }
-                        if (!versionMatch) {
-                            // Try extracting from the full string
-                            versionMatch = device.osVersion.match(/.*?(\d+)/);
-                        }
+                        // For Android, just extract the version number and format as "Android OS X"
+                        const versionMatch = device.osVersion.match(/(\d+)/);
                         detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${device.osVersion}`;
                     } else if (osVersion.includes('windows')) {
                         platform = 'Windows';
@@ -4361,39 +4349,8 @@
                         detectedOS = detectedOS === 'Unknown' ? 'Windows (inferred from model)' : `Windows ${detectedOS}`;
                     }
                 }
-                // Priority 4: Fallback detection from other device fields
-                if (platform === 'Unknown') {
-                    const deviceStr = JSON.stringify(device).toLowerCase();
-                    if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
-                        platform = 'iOS';
-                        // Try to extract iOS version from device data
-                        const iosMatch = deviceStr.match(/ios\s*(\d+(?:\.\d+)*)/i);
-                        detectedOS = iosMatch ? `iOS ${iosMatch[1]}` : 'iOS (detected from device data)';
-                    } else if (deviceStr.includes('android')) {
-                        platform = 'Android';
-                        // Try to extract Android version from device data with multiple patterns
-                        let androidMatch = deviceStr.match(/android\s*(\d+(?:\.\d+)*)/i);
-                        if (!androidMatch) {
-                            // Try alternative patterns
-                            androidMatch = deviceStr.match(/android.*?(\d+)/i);
-                        }
-                        if (!androidMatch) {
-                            // Try just finding any number after "android"
-                            androidMatch = deviceStr.match(/android[^0-9]*(\d+)/i);
-                        }
-                        if (androidMatch) {
-                            detectedOS = `Android OS ${androidMatch[1]}`;
-                        } else {
-                            // If we can't extract a version, still keep as Android but generic
-                            detectedOS = 'Android (version unknown)';
-                        }
-                    } else if (deviceStr.includes('windows')) {
-                        platform = 'Windows';
-                        // Try to extract Windows version from device data
-                        const windowsMatch = deviceStr.match(/windows\s*(\d+(?:\.\d+)*)/i);
-                        detectedOS = windowsMatch ? `Windows ${windowsMatch[1]}` : 'Windows (detected from device data)';
-                    }
-                }
+                // Priority 4: No fallback - if we can't determine OS from the main fields, leave as Unknown
+                // This prevents incorrect assumptions and keeps the data clean
                 
                 // Store the platform for this OS string
                 osPlatformMap[detectedOS] = platform;
@@ -4423,13 +4380,8 @@
                 if (platform === 'iOS') {
                     platformGroups.iOS[os] = count;
                 } else if (platform === 'Android') {
-                    // Only include Android entries that have proper version formatting
-                    if (os.startsWith('Android OS ') && !os.includes('version unknown')) {
-                        platformGroups.Android[os] = count;
-                    } else {
-                        // Skip generic Android detection messages
-                        console.log('Skipping generic Android entry:', os);
-                    }
+                    // Include all Android entries
+                    platformGroups.Android[os] = count;
                 } else if (platform === 'Windows') {
                     platformGroups.Windows[os] = count;
                 } else {
