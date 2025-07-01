@@ -1,178 +1,232 @@
 # TMH Device Inventory Report Generator
 
-A self-contained, offline HTML tool for generating comprehensive device inventory reports from Microsoft Intune exports. Designed for monthly executive reporting with professional formatting and critical insights.
+A comprehensive, self-contained HTML tool for generating professional device inventory reports from Microsoft Intune exports. Designed for executive presentations with flexible layouts, enhanced device categorization, and critical lifecycle insights.
 
-## Features
+## ✨ Key Features
 
+### **Professional Reporting**
+- **Flexible Layout Modes**: Toggle between Portrait and Landscape layouts for different presentation needs
+- **HTML Export**: Clean HTML export for screenshots and presentations (removes interactive elements)
+- **Print Optimization**: A4 format with exact color printing and page break controls
+- **Executive Styling**: Professional compact card design with clean typography
+
+### **Enhanced Device Management**
+- **Comprehensive iOS Lifecycle**: Complete EOL database including iPad 6th/7th gen, iPad Air 2, and iPad Pro models
+- **Smart Android Categorization**: Enhanced detection for HC50 Zebra, TC52/TC50 Zebra, MC Series, Rover/Honeywell devices
+- **Windows Device Filtering**: Automatic exclusion of Windows devices for mobile-focused reporting
+- **ConfigMgr Integration**: Proper handling of "See ConfigMgr" devices in compliance calculations
+
+### **Advanced Analytics**
+- **Platform-Separated OS Breakdown**: Clean separation of iOS, Android, and Windows with smart iOS summarization
+- **Monthly Trend Tracking**: CFO-style monthly tables with device counts, deltas, and color-coded indicators
+- **Adjustable Lifecycle Summary**: Configurable display with sorting, highlighting, and compact modes
+- **Urgent Items Management**: Critical device identification with severity levels
+
+### **Data Processing**
 - **Fully Offline**: Works without internet connection after initial load
-- **File Processing**: Parses Intune OData feed exports (.xlsx, .xlsm, .csv)
-- **Multi-Sheet Support**: Choose from multiple Excel sheets when available
-- **Flexible Column Recognition**: Automatically detects and works with available data columns
-- **Comprehensive Analytics**:
-  - Total device counts by operating system (iOS, Android, Windows)
-  - Operating system breakdown with percentages
-  - Device model inventory with manufacturer details
-  - Compliance status analysis by OS
-  - Security status monitoring (encryption)
-  - Device activity tracking (last check-in)
-- **iOS Lifecycle Management**:
-  - End-of-life (EOL) tracking for iOS devices
-  - Device lifecycle status indicators (Good, Warning, Critical)
-  - Hardcoded iOS device EOL database for accurate reporting
-- **Executive-Focused Reporting**:
-  - Critical issues highlighted as "Urgent Items"
-  - Professional summary cards
-  - Visual compliance indicators
-  - Detailed data tables for analysis
-- **Device Model Windows**: Separate detailed views for iOS and Android device inventories
-- **Export Capabilities**: 
-  - PDF export for professional reporting
-  - Print-optimized layouts
-- **Adaptive Interface**: Shows only relevant sections based on available data
-- **Print-Ready**: Optimized for A4 paper size and professional presentation
+- **Multi-Format Support**: Excel (.xlsx, .xlsm) and CSV files
+- **Flexible Column Recognition**: Adapts to available data columns
+- **Historical Data**: Persistent monthly tracking with localStorage
 
-## Usage Instructions
+## 🚀 Quick Start
 
-1. **Open the Report Generator**
-   - Open `report-generator.html` in any modern web browser (Chrome, Edge, Firefox recommended)
+1. **Open** `report-generator.html` in any modern web browser
+2. **Upload** your Intune export file (.xlsx, .xlsm, or .csv)
+3. **Toggle Layout** between Portrait and Landscape modes as needed
+4. **Export** as HTML for screenshots or presentations
+5. **Track Trends** using the monthly inventory analysis
 
-2. **Upload File**
-   - Click "Choose Excel or CSV File"
-   - Select your Intune export (.xlsx, .xlsm, or .csv file)
-   - If uploading Excel with multiple sheets, choose the desired sheet from the dropdown
-   - The report will generate automatically
+## 📊 Report Sections
 
-3. **View Report**
-   - **Summary Cards**: Key device counts and totals
-   - **Compliance Status**: Visual bars showing compliance by OS
-   - **Operating System Breakdown**: Detailed count and percentage by OS
-   - **Device Models**: Comprehensive model inventory with manufacturer info
-   - **iOS Lifecycle**: End-of-life tracking and status for iOS devices
-   - **Urgent Items**: Critical issues requiring immediate attention
+### **Executive Summary Cards**
+- iOS, Android, and Total device counts
+- Professional gradient styling with hover effects
+- Real-time updates based on data
 
-4. **Export Options**
-   - **PDF Export**: Click "Export to PDF" for professional single-page reports
-   - **iOS Models**: Click "iOS Models" to view detailed iOS device inventory in separate window
-   - **Android Models**: Click "Android Models" to view detailed Android device inventory in separate window
+### **Compliance Analysis**
+- Visual compliance bars by platform
+- Three-category compliance: Compliant, Unknown (ConfigMgr), Non-Compliant
+- Percentage calculations excluding ConfigMgr devices
 
-## Supported Data Columns
+### **Operating System Breakdown**
+- **iOS**: Top 3 versions + summary of remaining
+- **Android**: All versions displayed individually
+- **Windows**: All versions displayed individually
+- Platform-separated for clean organization
 
-The tool automatically recognizes and works with any combination of the following data columns. **All columns are optional** - the tool adapts based on what's available:
+### **Device Lifecycle Management**
+- **iOS Lifecycle**: Complete EOL tracking with status indicators
+- **Android Lifecycle**: HC50 Zebra (2029), TC52/TC50 (2028-2030), MC Series (2026-2029)
+- **Status Categories**: Good (supported), Warning (approaching EOL), Critical (past EOL)
 
-### Core Device Information
-- **Device ID**: `deviceId`, `device_id`, `Device ID`
-- **Device Name**: `deviceName`, `device_name`, `Device name`
-- **Operating System**: `operatingSystem`, `os`, `operating_system`, `platform`
-- **Model**: `model`, `deviceModel`, `Model`
-- **Manufacturer**: `manufacturer`, `make`, `brand`
+### **Monthly Trend Analysis**
+- CFO-style monthly tables with device counts and deltas
+- Color-coded trend indicators (↑ green, ↓ red, → neutral)
+- Historical data persistence with automatic monthly progression
 
-### Management & Compliance
-- **Managed By**: `managedBy`, `managed_by`, `Managed by`
-- **Ownership**: `ownership`, `ownershipType`, `Ownership`
-- **Compliance**: `complianceStateKey`, `compliance`, `Compliance`
-- **Category**: `deviceCategoryKey`, `category`, `Category`
+### **Urgent Items Dashboard**
+- Critical devices requiring immediate attention
+- Severity levels: High, Medium, Low
+- Smooth scrolling with visual indicators
 
-### Status & Activity
-- **Last Check-in**: `lastSyncDateTime`, `Last check-in`, `lastcheckin`
-- **OS Version**: `osVersion`, `OS version`, `version`
-- **Encryption State**: `encryptionState`, `encryption_state`, `encryption`
+## 🎛️ Layout Modes
 
-### Additional Fields
-- **Device Key**: `deviceKey`, `device_key`, `key`
-- **Deleted Status**: `isDeleted`, `deleted`, `is_deleted`
+### **Portrait Mode** (Default)
+- Optimized for standard screens and presentations
+- Single-column layout for focused viewing
+- Professional spacing and typography
 
-## Flexible Design
+### **Landscape Mode**
+- Wide-screen optimization for executive dashboards
+- Multi-column layouts for comprehensive overview
+- Enhanced data density for detailed analysis
 
-- **No Required Columns**: Works with any Excel file containing device data
-- **Automatic Adaptation**: Report sections appear/hide based on available data
-- **Column Name Variations**: Recognizes multiple naming conventions (camelCase, snake_case, Title Case)
-- **Partial Data Support**: Provides useful insights even with incomplete data sets
-- **Multi-Format Support**: Handles Excel (.xlsx, .xlsm) and CSV (.csv) export formats from different systems
+## 📱 Device Categorization
 
-## Report Sections
-
-The tool generates the following sections (when relevant data is available):
-
-1. **Summary Cards**: Device counts by OS and totals
-2. **Compliance Status**: Visual compliance indicators by operating system
-3. **Operating System Breakdown**: Detailed OS distribution with percentages
-4. **Device Models**: Comprehensive model inventory sorted by count
-5. **iOS Device Lifecycle**: End-of-life tracking with status indicators:
-   - **Good**: Device supported with current iOS versions
-   - **Warning**: Device approaching end-of-life
-   - **Critical**: Device past end-of-life, security risk
-6. **Urgent Items**: Critical issues requiring immediate attention:
-   - Non-compliant devices
-   - Unencrypted devices
-   - Inactive devices (not synced in 30+ days)
-
-## Export Features
-
-### PDF Export
-- Single-page professional reports optimized for A4 paper
-- Maintains TMH branding and formatting
-- Suitable for executive presentations and archival
-
-### Device Model Windows
-- **iOS Models Window**: Dedicated view showing all iOS devices with:
-  - Device names and models
-  - Compliance status
-  - End-of-life information
-  - Manufacturer details
-- **Android Models Window**: Dedicated view showing all Android devices with detailed specifications
-
-## iOS Lifecycle Database
-
-The tool includes a comprehensive hardcoded database of iOS device end-of-life dates for accurate lifecycle tracking:
-- iPhone models from iPhone 5s through iPhone 15 series
-- iPad models including Air, mini, and Pro variants
+### **iOS Devices**
+- Complete lifecycle database with EOL dates
+- iPhone models: iPhone 5s through iPhone 15 series
+- iPad models: iPad 6th/7th gen, iPad Air 2, iPad Pro variants
 - iPod touch models
-- Automatic status calculation based on current date vs. EOL date
 
-## Browser Compatibility
+### **Android Devices**
+- **HC50 Zebra**: Healthcare-focused devices (EOL: 2029)
+- **TC52/TC50 Zebra**: Terminal devices (EOL: 2028-2030)
+- **MC Series Zebra**: Mobile computers (EOL: 2026-2029)
+- **Rover/Honeywell**: Rugged devices (EOL: Variable)
+- **Samsung/Google**: Consumer devices (EOL: 2027-2030)
+- **Other Android**: Various manufacturers (EOL: Unknown)
 
-- Chrome 60+
-- Edge 79+
-- Firefox 60+
-- Safari 12+
+### **Windows Devices**
+- Automatically filtered out for mobile-focused reporting
+- Can be included for comprehensive analysis
+- Surface, Dell, HP, Lenovo device detection
 
-## Version History
+## 📈 Monthly Trend Tracking
 
-- **v2.1 (Current)**
-  - PDF export functionality with single-page optimization
-  - iOS lifecycle management with EOL tracking
-  - Separate iOS and Android device model windows
-  - Enhanced device status indicators
-  - Improved executive reporting format
+### **Features**
+- Automatic monthly progression
+- Historical data persistence
+- Trend indicators with color coding
+- CFO-style presentation format
 
-- **v2.0**
-  - Multi-sheet Excel support with sheet selection
-  - Operating system breakdown table with percentages
-  - Device models inventory with manufacturer details
-  - Expanded column mapping for maximum compatibility
-  - All columns now optional - adaptive report generation
-  - Enhanced executive reporting format
-  - Windows device support added
-  - Improved error handling and user feedback
+### **Data Management**
+- Auto-fill current month data
+- Export historical data to CSV
+- Clear historical data option
+- Local storage for data persistence
 
-- **v1.1**
-  - Added flexible column mapping
-  - Improved error handling
-  - Enhanced UI/UX
-  - Added urgent items section
+## 🎨 Export Options
 
-- **v1.0**
-  - Initial release
-  - Core features implemented
+### **HTML Export**
+- Clean, presentation-ready HTML
+- Removes interactive elements for screenshots
+- Maintains professional styling
+- Perfect for executive presentations
 
-## Technical Notes
+### **Print Optimization**
+- A4 paper size formatting
+- Exact color reproduction
+- Page break controls
+- Professional typography
 
-- **Self-Contained**: All dependencies included, no external API calls
-- **Client-Side Processing**: All data processing happens in the browser
-- **Privacy-Focused**: No data leaves your device
-- **Lightweight**: Single HTML file with embedded CSS and JavaScript
-- **Cross-Platform**: Works on Windows, macOS, and Linux
+## 🔧 Configuration Options
 
-## Support
+### **Lifecycle Summary Settings**
+```javascript
+const lifecycleConfig = {
+    maxModels: 'all',        // 'all' or number
+    sortBy: 'count',         // 'count' or 'eol'
+    highlightCritical: true, // Highlight critical devices
+    compactMode: true        // Compact display
+};
+```
 
-For issues or questions, please contact the TMH IT Asset Management team. 
+### **Monthly Analysis Settings**
+- Automatic current month detection
+- Historical data retention
+- Trend calculation algorithms
+- Export formatting options
+
+## 📋 Supported Data Columns
+
+The tool automatically recognizes these column variations:
+
+### **Core Device Information**
+- Device Name: `deviceName`, `Device name`
+- Model: `model`, `Model`
+- Operating System: `operatingSystem`, `OS version`
+- Manufacturer: `manufacturer`
+
+### **Management & Compliance**
+- Managed By: `managedBy`, `Managed by`
+- Ownership: `ownership`, `Ownership`
+- Compliance: `complianceStateKey`, `Compliance`
+- Category: `deviceCategoryKey`, `Category`
+
+### **Status & Activity**
+- Last Check-in: `lastSyncDateTime`, `Last check-in`
+- OS Version: `osVersion`, `OS version`
+
+## 🏥 Healthcare-Specific Features
+
+### **Device Filtering**
+- Automatic Windows device exclusion for mobile focus
+- Healthcare device categorization (HC50, TC52/TC50)
+- ConfigMgr integration for compliance reporting
+
+### **Compliance Standards**
+- Three-tier compliance system
+- ConfigMgr device handling
+- Unassigned device identification
+
+## 🔄 Version History
+
+### **v3.0 (Current)**
+- **Layout Flexibility**: Portrait/Landscape mode toggling
+- **HTML Export**: Clean export for presentations
+- **Enhanced Device Categorization**: Improved Android detection
+- **iPad EOL Database**: Complete iPad lifecycle tracking
+- **OS Breakdown Improvements**: Platform separation and iOS summarization
+- **Monthly Trend Analysis**: CFO-style tables with persistence
+- **ConfigMgr Integration**: Proper compliance calculation
+- **Windows Device Filtering**: Mobile-focused reporting
+
+### **v2.1**
+- PDF export functionality
+- iOS lifecycle management
+- Separate device model windows
+- Enhanced status indicators
+
+### **v2.0**
+- Multi-sheet Excel support
+- Operating system breakdown
+- Device models inventory
+- Expanded column mapping
+
+### **v1.0**
+- Initial release with core features
+
+## 🌐 Browser Compatibility
+
+- **Chrome**: 60+
+- **Edge**: 79+
+- **Firefox**: 60+
+- **Safari**: 12+
+
+## 💻 Technical Specifications
+
+- **Self-Contained**: Single HTML file with embedded dependencies
+- **Client-Side Processing**: All data processing in browser
+- **Privacy-Focused**: No data transmission
+- **Cross-Platform**: Windows, macOS, Linux support
+- **Lightweight**: Optimized for performance
+
+## 📞 Support
+
+For technical support or feature requests, contact the TMH IT Asset Management team.
+
+---
+
+**Tallahassee Memorial Hospital** - IT Asset Management Report Generator  
+*Professional device inventory reporting for healthcare environments* 
