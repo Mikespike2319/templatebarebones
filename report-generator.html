@@ -5273,6 +5273,56 @@
             }
         }
 
+        // Lifecycle table configuration
+        const lifecycleConfig = {
+            maxModelsPerPlatform: 10, // Adjustable: show more or fewer models
+            showAllModels: false, // Set to true to show all models
+            sortBy: 'count', // 'count' or 'eol' - sort by device count or end-of-life date
+            includeUnknownModels: true, // Include devices with unknown lifecycle data
+            highlightCritical: true, // Highlight devices with critical EOL status
+            compactMode: false // Compact mode for smaller displays
+        };
+
+        // Function to adjust lifecycle table configuration
+        function adjustLifecycleConfig(newConfig) {
+            Object.assign(lifecycleConfig, newConfig);
+            
+            // Re-populate the lifecycle table with new settings
+            if (globalDevicesData && globalDevicesData.length > 0) {
+                const iosDevices = globalDevicesData.filter(d => {
+                    const deviceStr = JSON.stringify(d).toLowerCase();
+                    return deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad');
+                });
+                
+                const androidDevices = globalDevicesData.filter(d => {
+                    const deviceStr = JSON.stringify(d).toLowerCase();
+                    const deviceName = (d.deviceName || d.displayName || '').toLowerCase();
+                    const model = (d.model || '').toLowerCase();
+                    
+                    return deviceStr.includes('android') ||
+                           deviceName.includes('zebra') || model.includes('zebra') ||
+                           deviceName.includes('hc50') || model.includes('hc50') ||
+                           deviceName.includes('tc52') || model.includes('tc52') ||
+                           deviceName.includes('tc50') || model.includes('tc50') ||
+                           deviceName.includes('mc') || model.includes('mc') ||
+                           deviceName.includes('rover') || model.includes('rover') ||
+                           deviceName.includes('honeywell') || model.includes('honeywell') ||
+                           deviceName.includes('samsung') || model.includes('samsung') ||
+                           deviceName.includes('pixel') || model.includes('pixel') ||
+                           deviceName.includes('lg') || model.includes('lg') ||
+                           deviceName.includes('motorola') || model.includes('motorola') ||
+                           deviceName.includes('oneplus') || model.includes('oneplus') ||
+                           deviceName.includes('huawei') || model.includes('huawei') ||
+                           deviceName.includes('xiaomi') || model.includes('xiaomi') ||
+                           deviceName.includes('htc') || model.includes('htc') ||
+                           deviceName.includes('sony') || model.includes('sony') ||
+                           deviceName.includes('nokia') || model.includes('nokia');
+                });
+                
+                populateLifecycleTable(iosDevices, androidDevices);
+            }
+        }
+
         function populateLifecycleTable(iosDevices, androidDevices = []) {
             const lifecycleTable = document.getElementById('lifecycleTable');
             if (!lifecycleTable) return;
@@ -5304,20 +5354,31 @@
                 iosHeaderRow.style.fontWeight = 'bold';
                 const iosHeaderCell = iosHeaderRow.insertCell(0);
                 iosHeaderCell.colSpan = 4;
-                iosHeaderCell.innerHTML = 'iOS Devices';
+                iosHeaderCell.innerHTML = `iOS Devices (${Object.keys(iosModelCounts).length} models)`;
                 iosHeaderCell.style.padding = '8px';
                 iosHeaderCell.style.color = '#1565c0';
 
                 // Sort by count (descending) and limit to top models
                 const sortedIOSModels = Object.entries(iosModelCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5); // Show top 5 iOS models for compact view
+                    .sort((a, b) => b[1] - a[1]);
+                
+                // Apply limit based on configuration
+                const limitedIOSModels = lifecycleConfig.showAllModels ? 
+                    sortedIOSModels : 
+                    sortedIOSModels.slice(0, lifecycleConfig.maxModelsPerPlatform);
 
-                sortedIOSModels.forEach(([model, count]) => {
+                limitedIOSModels.forEach(([model, count]) => {
                     const lifecycle = iosLifecycle[model];
                     const deviceStatus = getDeviceStatus(model);
                     
                     const row = tbody.insertRow();
+                    
+                    // Highlight critical devices if enabled
+                    if (lifecycleConfig.highlightCritical && deviceStatus.class === 'eol-critical') {
+                        row.style.backgroundColor = '#fff3cd';
+                        row.style.borderLeft = '4px solid #dc3545';
+                    }
+                    
                     row.insertCell(0).textContent = model;
                     row.insertCell(1).textContent = count;
                     row.insertCell(2).textContent = lifecycle ? lifecycle.endOfLife : 'Unknown';
@@ -5336,6 +5397,18 @@
                     
                     statusCell.appendChild(statusSpan);
                 });
+                
+                // Show "more models" indicator if there are additional models
+                if (!lifecycleConfig.showAllModels && sortedIOSModels.length > lifecycleConfig.maxModelsPerPlatform) {
+                    const moreRow = tbody.insertRow();
+                    const moreCell = moreRow.insertCell(0);
+                    moreCell.colSpan = 4;
+                    moreCell.innerHTML = `<em>... and ${sortedIOSModels.length - lifecycleConfig.maxModelsPerPlatform} more iOS models</em>`;
+                    moreCell.style.textAlign = 'center';
+                    moreCell.style.color = '#6c757d';
+                    moreCell.style.fontSize = '0.8rem';
+                    moreCell.style.padding = '4px';
+                }
             }
 
             // Add Android devices section
@@ -5353,19 +5426,30 @@
                 androidHeaderRow.style.fontWeight = 'bold';
                 const androidHeaderCell = androidHeaderRow.insertCell(0);
                 androidHeaderCell.colSpan = 4;
-                androidHeaderCell.innerHTML = 'Android Devices';
+                androidHeaderCell.innerHTML = `Android Devices (${Object.keys(androidModelCounts).length} models)`;
                 androidHeaderCell.style.padding = '8px';
                 androidHeaderCell.style.color = '#2e7d32';
 
                 // Sort by count (descending) and limit to top models
                 const sortedAndroidModels = Object.entries(androidModelCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5); // Show top 5 Android models for compact view
+                    .sort((a, b) => b[1] - a[1]);
+                
+                // Apply limit based on configuration
+                const limitedAndroidModels = lifecycleConfig.showAllModels ? 
+                    sortedAndroidModels : 
+                    sortedAndroidModels.slice(0, lifecycleConfig.maxModelsPerPlatform);
 
-                                 sortedAndroidModels.forEach(([model, count]) => {
+                limitedAndroidModels.forEach(([model, count]) => {
                      const androidLifecycle = getAndroidLifecycleInfo(model);
                      
                      const row = tbody.insertRow();
+                     
+                     // Highlight critical devices if enabled
+                     if (lifecycleConfig.highlightCritical && androidLifecycle.className === 'status-ended') {
+                         row.style.backgroundColor = '#fff3cd';
+                         row.style.borderLeft = '4px solid #dc3545';
+                     }
+                     
                      row.insertCell(0).textContent = model;
                      row.insertCell(1).textContent = count;
                      row.insertCell(2).textContent = androidLifecycle.eol;
@@ -5377,6 +5461,18 @@
                      
                      statusCell.appendChild(statusSpan);
                  });
+                 
+                 // Show "more models" indicator if there are additional models
+                 if (!lifecycleConfig.showAllModels && sortedAndroidModels.length > lifecycleConfig.maxModelsPerPlatform) {
+                     const moreRow = tbody.insertRow();
+                     const moreCell = moreRow.insertCell(0);
+                     moreCell.colSpan = 4;
+                     moreCell.innerHTML = `<em>... and ${sortedAndroidModels.length - lifecycleConfig.maxModelsPerPlatform} more Android models</em>`;
+                     moreCell.style.textAlign = 'center';
+                     moreCell.style.color = '#6c757d';
+                     moreCell.style.fontSize = '0.8rem';
+                     moreCell.style.padding = '4px';
+                 }
             }
 
             // Add message if no devices
