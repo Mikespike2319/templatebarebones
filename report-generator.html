@@ -3317,28 +3317,7 @@
             }
         }
 
-        // Toggle function for collapsible OS version groups
-        function toggleOSGroup(groupId) {
-            const content = document.getElementById(`${groupId}-content`);
-            const toggle = document.getElementById(`${groupId}-toggle`);
-            
-            if (content && toggle) {
-                const isExpanded = content.classList.contains('expanded');
-                
-                if (isExpanded) {
-                    content.classList.remove('expanded');
-                    toggle.classList.remove('expanded');
-                    toggle.textContent = '▶';
-                } else {
-                    content.classList.add('expanded');
-                    toggle.classList.add('expanded');
-                    toggle.textContent = '▼';
-                }
-            }
-        }
 
-        // Make toggleOSGroup available globally
-        window.toggleOSGroup = toggleOSGroup;
 
         // Auto-fill current counts function
         function autoFillCurrentCounts() {
@@ -4265,7 +4244,7 @@
             }
         }
 
-        // Enhanced OS detection
+        // Enhanced OS detection with flat display (no collapsible groups)
         function populateOSTable(devices) {
             const osTable = document.getElementById('osTable');
             if (!osTable) return;
@@ -4346,114 +4325,22 @@
             console.log('Enhanced OS counts:', osCounts);
             console.log('=== END ENHANCED OS DETECTION DEBUG ===');
 
-            // Group OS versions for collapsible display
-            const osGroups = {};
-            Object.entries(osCounts).forEach(([os, count]) => {
-                // Extract base OS and version
-                let baseOS = 'Unknown';
-                let version = '';
-                
-                if (os.toLowerCase().includes('ios')) {
-                    baseOS = 'iOS';
-                    // Extract version number (e.g., "iOS 18.3.1" -> "18.3.1")
-                    const versionMatch = os.match(/(\d+(?:\.\d+)*)/);
-                    if (versionMatch) {
-                        version = versionMatch[1];
-                        // Group minor versions under major (e.g., 18.3.1 under 18.3)
-                        const majorMinor = version.split('.').slice(0, 2).join('.');
-                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
-                        if (!osGroups[baseOS][majorMinor]) osGroups[baseOS][majorMinor] = {};
-                        osGroups[baseOS][majorMinor][version] = count;
-                    } else {
-                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
-                        if (!osGroups[baseOS]['Other']) osGroups[baseOS]['Other'] = {};
-                        osGroups[baseOS]['Other'][os] = count;
-                    }
-                } else if (os.toLowerCase().includes('android')) {
-                    baseOS = 'Android';
-                    const versionMatch = os.match(/(\d+(?:\.\d+)*)/);
-                    if (versionMatch) {
-                        version = versionMatch[1];
-                        const majorMinor = version.split('.').slice(0, 2).join('.');
-                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
-                        if (!osGroups[baseOS][majorMinor]) osGroups[baseOS][majorMinor] = {};
-                        osGroups[baseOS][majorMinor][version] = count;
-                    } else {
-                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
-                        if (!osGroups[baseOS]['Other']) osGroups[baseOS]['Other'] = {};
-                        osGroups[baseOS]['Other'][os] = count;
-                    }
-                } else {
-                    // Handle other OS types or unknown
-                    if (!osGroups['Other']) osGroups['Other'] = {};
-                    if (!osGroups['Other']['Other']) osGroups['Other']['Other'] = {};
-                    osGroups['Other']['Other'][os] = count;
-                }
-            });
+            // Sort OS entries by count (descending) and then by name
+            const sortedOSEntries = Object.entries(osCounts)
+                .sort(([a, countA], [b, countB]) => {
+                    if (countB !== countA) return countB - countA;
+                    return a.localeCompare(b);
+                });
 
             // Clear existing table content
             tbody.innerHTML = '';
-
-            // Create collapsible groups
-            Object.entries(osGroups).forEach(([baseOS, versionGroups]) => {
-                const baseOSClass = baseOS.toLowerCase();
-                const groupId = `os-group-${baseOSClass}`;
-                
-                // Calculate total for base OS
-                const totalCount = Object.values(versionGroups).reduce((sum, versions) => 
-                    sum + Object.values(versions).reduce((vSum, count) => vSum + count, 0), 0);
-                const totalPercentage = ((totalCount / devices.length) * 100).toFixed(1);
-                
-                // Create container for this OS group
-                const groupContainer = document.createElement('div');
-                groupContainer.className = 'os-version-group';
-                groupContainer.innerHTML = `
-                    <div class="os-version-header ${baseOSClass}" onclick="toggleOSGroup('${groupId}')">
-                        <div>
-                            <span style="font-weight: 600;">${baseOS}</span>
-                            <span style="margin-left: 8px; font-size: var(--text-sm); color: var(--neutral-600);">${totalCount} devices (${totalPercentage}%)</span>
-                        </div>
-                        <span class="os-version-toggle" id="${groupId}-toggle">▶</span>
-                    </div>
-                    <div class="os-version-content" id="${groupId}-content">
-                        <div class="os-version-items" id="${groupId}-items"></div>
-                    </div>
-                `;
-                
-                // Insert the group container into a table row
-                const groupRow = tbody.insertRow();
-                const groupCell = groupRow.insertCell(0);
-                groupCell.colSpan = 3;
-                groupCell.style.padding = '0';
-                groupCell.style.border = 'none';
-                groupCell.appendChild(groupContainer);
-                
-                // Populate the items container
-                const itemsContainer = groupContainer.querySelector(`#${groupId}-items`);
-                Object.entries(versionGroups).forEach(([majorMinor, versions]) => {
-                    Object.entries(versions).forEach(([fullVersion, count]) => {
-                        const percentage = ((count / devices.length) * 100).toFixed(1);
-                        const versionItem = document.createElement('div');
-                        versionItem.className = 'os-version-item';
-                        versionItem.innerHTML = `
-                            <span class="os-version-name">${fullVersion}</span>
-                            <div>
-                                <span class="os-version-count">${count}</span>
-                                <span class="os-version-percentage">${percentage}%</span>
-                            </div>
-                        `;
-                        itemsContainer.appendChild(versionItem);
-                    });
-                });
-            });
 
             // Add warning if too many unknowns
             const unknownCount = osCounts['Unknown'] || 0;
             const unknownPercentage = (unknownCount / devices.length) * 100;
             
-            // Add warning message if high unknown percentage
             if (unknownPercentage > 50) {
-                const warningRow = tbody.insertRow(0);
+                const warningRow = tbody.insertRow();
                 const warningCell = warningRow.insertCell(0);
                 warningCell.colSpan = 3;
                 warningCell.innerHTML = `
@@ -4464,6 +4351,30 @@
                 `;
                 warningCell.style.textAlign = 'center';
             }
+
+            // Create flat table rows for each OS version
+            sortedOSEntries.forEach(([os, count]) => {
+                const percentage = ((count / devices.length) * 100).toFixed(1);
+                const row = tbody.insertRow();
+                
+                // OS name cell
+                const osCell = row.insertCell(0);
+                osCell.textContent = os;
+                osCell.style.fontWeight = '500';
+                
+                // Count cell
+                const countCell = row.insertCell(1);
+                countCell.textContent = count;
+                countCell.style.textAlign = 'center';
+                countCell.style.fontWeight = '600';
+                
+                // Percentage cell
+                const percentCell = row.insertCell(2);
+                percentCell.textContent = `${percentage}%`;
+                percentCell.style.textAlign = 'center';
+                percentCell.style.color = 'var(--neutral-600)';
+                percentCell.style.fontSize = '0.8rem';
+            });
         }
 
         // Enhanced urgent indicator with smooth scrolling
@@ -5606,7 +5517,12 @@
             'iPad Pro 11-inch (3rd generation)': { releaseYear: 2021, endOfLife: 2028 },
             'iPad Air (4th generation)': { releaseYear: 2020, endOfLife: 2027 },
             'iPad (9th generation)': { releaseYear: 2021, endOfLife: 2028 },
-            'iPad (8th generation)': { releaseYear: 2020, endOfLife: 2027 }
+            'iPad (8th generation)': { releaseYear: 2020, endOfLife: 2027 },
+            'iPad (7th generation)': { releaseYear: 2019, endOfLife: 2026 },
+            'iPad (6th generation)': { releaseYear: 2018, endOfLife: 2025 },
+            'iPad Air 2': { releaseYear: 2014, endOfLife: 2021 },
+            'iPad Pro 12.9-inch (1st generation)': { releaseYear: 2015, endOfLife: 2022 },
+            'iPad Pro 9.7-inch (1st generation)': { releaseYear: 2016, endOfLife: 2023 }
         };
 
         let globalDevicesData = [];
