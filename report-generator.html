@@ -4283,7 +4283,9 @@
                         detectedOS = `iOS ${device.operatingSystem}`;
                     } else if (operatingSystem.includes('android')) {
                         platform = 'Android';
-                        detectedOS = `Android ${device.operatingSystem}`;
+                        // Format Android version properly
+                        const versionMatch = device.operatingSystem.match(/(\d+(?:\.\d+)*)/);
+                        detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${device.operatingSystem}`;
                     } else if (operatingSystem.includes('windows')) {
                         platform = 'Windows';
                         detectedOS = `Windows ${device.operatingSystem}`;
@@ -4299,7 +4301,9 @@
                         detectedOS = `iOS ${device.osVersion}`;
                     } else if (osVersion.includes('android')) {
                         platform = 'Android';
-                        detectedOS = `Android ${device.osVersion}`;
+                        // Format Android version properly
+                        const versionMatch = device.osVersion.match(/(\d+(?:\.\d+)*)/);
+                        detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${device.osVersion}`;
                     } else if (osVersion.includes('windows')) {
                         platform = 'Windows';
                         detectedOS = `Windows ${device.osVersion}`;
@@ -4320,7 +4324,13 @@
                                model.includes('nokia') || model.includes('tc5') || model.includes('tc7') ||
                                model.includes('zebra') || model.includes('mc9') || model.includes('mc3')) {
                         platform = 'Android';
-                        detectedOS = detectedOS === 'Unknown' ? 'Android (inferred from model)' : `Android ${detectedOS}`;
+                        if (detectedOS === 'Unknown') {
+                            detectedOS = 'Android (inferred from model)';
+                        } else {
+                            // Format Android version properly
+                            const versionMatch = detectedOS.match(/(\d+(?:\.\d+)*)/);
+                            detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${detectedOS}`;
+                        }
                     } else if (model.includes('surface') || model.includes('dell') || model.includes('hp') ||
                                model.includes('lenovo') || model.includes('thinkpad') || model.includes('latitude')) {
                         platform = 'Windows';
@@ -4332,13 +4342,19 @@
                     const deviceStr = JSON.stringify(device).toLowerCase();
                     if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
                         platform = 'iOS';
-                        detectedOS = 'iOS (detected from device data)';
+                        // Try to extract iOS version from device data
+                        const iosMatch = deviceStr.match(/ios\s*(\d+(?:\.\d+)*)/i);
+                        detectedOS = iosMatch ? `iOS ${iosMatch[1]}` : 'iOS (detected from device data)';
                     } else if (deviceStr.includes('android')) {
                         platform = 'Android';
-                        detectedOS = 'Android (detected from device data)';
+                        // Try to extract Android version from device data
+                        const androidMatch = deviceStr.match(/android\s*(\d+(?:\.\d+)*)/i);
+                        detectedOS = androidMatch ? `Android OS ${androidMatch[1]}` : 'Android (detected from device data)';
                     } else if (deviceStr.includes('windows')) {
                         platform = 'Windows';
-                        detectedOS = 'Windows (detected from device data)';
+                        // Try to extract Windows version from device data
+                        const windowsMatch = deviceStr.match(/windows\s*(\d+(?:\.\d+)*)/i);
+                        detectedOS = windowsMatch ? `Windows ${windowsMatch[1]}` : 'Windows (detected from device data)';
                     }
                 }
                 
