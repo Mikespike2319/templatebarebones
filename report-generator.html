@@ -85,6 +85,102 @@
             position: relative;
             box-shadow: var(--shadow-md);
         }
+        
+        /* Enhanced tooltips for professional context */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 1px dotted currentColor;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .tooltip:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            z-index: 1000;
+        }
+        
+        /* Enhanced urgent items styling */
+        .urgent-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .urgent-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            border-left: 4px solid #dc2626;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .urgent-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .urgent-item.severity-high {
+            border-left-color: #dc2626;
+            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+        }
+        
+        .urgent-item.severity-medium {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+        }
+        
+        .urgent-item.severity-low {
+            border-left-color: #6366f1;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+        }
+        
+        .urgent-item-icon {
+            font-size: 24px;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .urgent-item-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .urgent-item-count {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .urgent-item-description {
+            font-size: var(--text-sm);
+            color: var(--neutral-600);
+            line-height: 1.4;
+        }
 
         .header-content {
             max-width: 1280px;
@@ -1126,6 +1222,121 @@
             border: 2px dashed #dee2e6;
         }
 
+        /* Urgent Items Grid Styling */
+        .urgent-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .urgent-item-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .urgent-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .urgent-item-card.high {
+            border-left-color: var(--danger-red);
+            background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+        }
+
+        .urgent-item-card.medium {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fff 0%, #fffbf0 100%);
+        }
+
+        .urgent-item-card.low {
+            border-left-color: #17a2b8;
+            background: linear-gradient(135deg, #fff 0%, #f0fbff 100%);
+        }
+
+        .urgent-item-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .urgent-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .urgent-details {
+            flex: 1;
+        }
+
+        .urgent-title {
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--neutral-800);
+        }
+
+        .urgent-severity {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .high .urgent-severity {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-red);
+        }
+
+        .medium .urgent-severity {
+            background: rgba(255, 193, 7, 0.1);
+            color: #d39e00;
+        }
+
+        .low .urgent-severity {
+            background: rgba(23, 162, 184, 0.1);
+            color: #138496;
+        }
+
+        .urgent-count {
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            min-width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .urgent-description {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--neutral-600);
+            line-height: 1.4;
+        }
+
+        .no-urgent-items {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            color: var(--success-green);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
         /* Historical Read-Only Input Styling */
         .historical-readonly {
             background-color: #f8f9fa !important;
@@ -1496,7 +1707,9 @@
                     </div>
                 </div>
                 <div class="summary-card card-backstock">
-                    <h3 class="card-title">BackStock Devices</h3>
+                    <h3 class="card-title">
+                    <span class="tooltip" data-tooltip="Devices available in inventory but not currently assigned to users">BackStock Devices</span>
+                </h3>
                     <div class="card-value" id="backstockTotal">0</div>
                     <div class="card-description">Devices in storage (Android + iOS)</div>
                     <div class="card-status">
@@ -1517,7 +1730,9 @@
                         <div class="compliance-grid">
                             <div class="compliance-card">
                                 <div class="compliance-header">
-                                    <div class="compliance-title">iOS Compliance</div>
+                                    <div class="compliance-title">
+                            <span class="tooltip" data-tooltip="Percentage of iOS devices meeting security and policy requirements">iOS Compliance</span>
+                        </div>
                                     <div class="compliance-percentage" id="iosCompliancePercent">0%</div>
                 </div>
                                 <div class="compliance-bar-container">
@@ -1540,7 +1755,9 @@
                             </div>
                             <div class="compliance-card">
                                 <div class="compliance-header">
-                                    <div class="compliance-title">Android Compliance</div>
+                                    <div class="compliance-title">
+                            <span class="tooltip" data-tooltip="Percentage of Android devices meeting security and policy requirements">Android Compliance</span>
+                        </div>
                                     <div class="compliance-percentage" id="androidCompliancePercent">0%</div>
                                 </div>
                                 <div class="compliance-bar-container">
@@ -1677,10 +1894,17 @@
                         </div>
                     </div>
                     <div>
-                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">iOS Device Lifecycle (Key Models)</h4>
+                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                    <span class="tooltip" data-tooltip="End of Life tracking for iOS devices. Critical devices ending support within 1 year.">iOS Device Lifecycle (Key Models)</span>
+                </h4>
                         <table id="lifecycleTable">
                             <thead>
-                                <tr><th>Device Model</th><th>Count</th><th>EOL</th><th>Status</th></tr>
+                                <tr>
+                    <th>Device Model</th>
+                    <th>Count</th>
+                    <th><span class="tooltip" data-tooltip="End of Life - Year when Apple stops supporting this model">EOL</span></th>
+                    <th><span class="tooltip" data-tooltip="Support status based on years remaining until End of Life">Status</span></th>
+                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -1753,9 +1977,12 @@
                 </div>
             </div>
 
-            <div class="urgent-items">
-                <h2>Urgent Items</h2>
-                <div id="urgentItems"></div>
+            <!-- Urgent Items -->
+            <div class="section">
+                <div class="section-header">Urgent Items</div>
+                <div class="section-body">
+                    <div id="urgentItems" class="urgent-items-grid"></div>
+                </div>
             </div>
         </div>
         
@@ -2567,24 +2794,72 @@
                 const windowsDevices = [];
                 const totalDevices = iosDevices.length + androidDevices.length;
 
-                console.log('Device counts after processing:');
+                console.log('=== DEVICE COUNT ANALYSIS ===');
+                console.log('Original data length:', data.length);
+                console.log('After filtering deleted devices:', filteredDevices.length);
+                console.log('After filtering Windows devices:', activeDevices.length);
+                console.log('After filtering personal devices:', nonPersonalDevices.length);
                 console.log('iOS devices:', iosDevices.length);
                 console.log('Android devices:', androidDevices.length);
                 console.log('Windows devices (filtered out):', windowsDevices.length);
-                console.log('Total devices:', totalDevices);
+                console.log('Total devices (iOS + Android):', totalDevices);
+                console.log('Total devices that will be shown in OS table:', activeDevices.length);
+                console.log('Discrepancy (if any):', activeDevices.length - totalDevices);
+                console.log('=== END DEVICE COUNT ANALYSIS ===');
 
                 // Calculate compliance metrics using Compliance column
                 let iosCompliant = 0, androidCompliant = 0, windowsCompliant = 0, nonCompliantDevices = [];
                 let configMgrDevices = 0, unassignedDevices = 0;
                 
                 if (foundColumns.includes('complianceStateKey')) {
-                    console.log('Processing compliance data...');
+                    console.log('=== COMPLIANCE CALCULATION DEBUG ===');
+                    console.log('iOS devices for compliance:', iosDevices.length);
+                    console.log('Android devices for compliance:', androidDevices.length);
+                    
+                    // Debug compliance states
+                    const iosComplianceStates = new Set();
+                    const androidComplianceStates = new Set();
+                    
+                    iosDevices.forEach((device, index) => {
+                        if (device.complianceStateKey) {
+                            const state = device.complianceStateKey.toString().toLowerCase().trim();
+                            iosComplianceStates.add(state);
+                            if (index < 3) {
+                                console.log(`iOS Device ${index} compliance:`, state);
+                            }
+                        }
+                    });
+                    
+                    androidDevices.forEach((device, index) => {
+                        if (device.complianceStateKey) {
+                            const state = device.complianceStateKey.toString().toLowerCase().trim();
+                            androidComplianceStates.add(state);
+                            if (index < 3) {
+                                console.log(`Android Device ${index} compliance:`, state);
+                            }
+                        }
+                    });
+                    
+                    console.log('Unique iOS compliance states:', [...iosComplianceStates]);
+                    console.log('Unique Android compliance states:', [...androidComplianceStates]);
                     
                     // Note: Windows devices are filtered out, so windowsDevices will always be empty
                     console.log('Windows devices (filtered out):', windowsDevices.length);
                     
-                    iosCompliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
-                    androidCompliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
+                    iosCompliant = iosDevices.filter(d => {
+                        if (!d.complianceStateKey) return false;
+                        const state = d.complianceStateKey.toString().toLowerCase().trim();
+                        return state.includes('compliant') && !state.includes('non-compliant') && !state.includes('noncompliant');
+                    }).length;
+                    
+                    androidCompliant = androidDevices.filter(d => {
+                        if (!d.complianceStateKey) return false;
+                        const state = d.complianceStateKey.toString().toLowerCase().trim();
+                        return state.includes('compliant') && !state.includes('non-compliant') && !state.includes('noncompliant');
+                    }).length;
+                    
+                    console.log('Calculated compliance - iOS:', iosCompliant, 'Android:', androidCompliant);
+                    console.log('=== END COMPLIANCE CALCULATION DEBUG ===');
                     
                     // For Windows: separate compliant from ConfigMgr (unknown status)
                     windowsCompliant = windowsDevices.filter(d => {
@@ -2660,12 +2935,27 @@
                     console.log('Devices for urgent removal (90+ days, mobile only, excluding backstock):', staleDevices.length);
                 }
 
+                // Calculate BackStock devices from both iOS and Android
+                const allBackstockDevices = nonPersonalDevices.filter(device => {
+                    if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                        const category = device.deviceCategoryKey.toString().toLowerCase();
+                        return category.includes('backstock') || category.includes('back stock');
+                    }
+                    return false;
+                });
+                
+                console.log('BackStock device calculation:', {
+                    totalBackstock: allBackstockDevices.length,
+                    backstockDevices: allBackstockDevices.slice(0, 3) // Show first 3 for debugging
+                });
+
                 // Update summary cards with critical metrics
                 document.getElementById('iosTotal').textContent = iosDevices.length;
                 document.getElementById('androidTotal').textContent = androidDevices.length;
-                
-                // Historical tracking elements removed for professional presentation
                 document.getElementById('totalDevices').textContent = totalDevices;
+                
+                // Enhanced backstock calculation and display
+                const calculatedBackstockDevices = calculateAndDisplayBackstock(nonPersonalDevices, foundColumns);
 
                 // Historical tracking functions removed for professional presentation
 
@@ -2765,22 +3055,51 @@
                     }
                 }
 
-                // Update urgent items section
+                // Update urgent items section with enhanced visual design
                 const urgentItemsContainer = document.getElementById('urgentItems');
                 if (urgentItemsContainer) {
                     urgentItemsContainer.innerHTML = '';
+                    urgentItemsContainer.className = 'urgent-items-grid';
                     
                     if (urgentItems.length === 0) {
-                        urgentItemsContainer.innerHTML = '<div class="no-urgent-items">No urgent items requiring attention</div>';
+                        urgentItemsContainer.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border-radius: 12px; border: 1px solid #bbf7d0;">
+                                <div style="font-size: 48px; margin-bottom: 1rem;">✅</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #059669; margin-bottom: 0.5rem;">All Clear!</div>
+                                <div style="color: #6b7280;">No urgent items requiring attention</div>
+                            </div>
+                        `;
                     } else {
                         urgentItems.forEach(item => {
                             const itemElement = document.createElement('div');
-                            itemElement.className = `urgent-item ${item.severity}`;
+                            itemElement.className = `urgent-item severity-${item.severity}`;
+                            
+                            let severityIcon = '';
+                            let severityColor = '';
+                            let priorityText = '';
+                            
+                            if (item.severity === 'high') {
+                                severityIcon = '🚨';
+                                severityColor = '#dc2626';
+                                priorityText = 'Critical Priority';
+                            } else if (item.severity === 'medium') {
+                                severityIcon = '⚠️';
+                                severityColor = '#f59e0b';
+                                priorityText = 'Medium Priority';
+                            } else {
+                                severityIcon = 'ℹ️';
+                                severityColor = '#6366f1';
+                                priorityText = 'Low Priority';
+                            }
+                            
                             itemElement.innerHTML = `
-                                <h3>${item.title}</h3>
-                                <div class="count">${item.count}</div>
-                                <p>${item.description}</p>
+                                <div class="urgent-item-icon">${severityIcon}</div>
+                                <div class="urgent-item-title">${item.title}</div>
+                                <div class="urgent-item-count" style="color: ${severityColor};">${item.count}</div>
+                                <div class="urgent-item-description">${item.description}</div>
+                                <div style="margin-top: 8px; font-size: 12px; color: ${severityColor}; font-weight: 600;">${priorityText}</div>
                             `;
+                            
                             urgentItemsContainer.appendChild(itemElement);
                         });
                     }
@@ -2796,10 +3115,8 @@
                     if (osSection) osSection.style.display = 'none';
                 }
 
-                // Populate lifecycle table with iOS devices if we have any
-                if (iosDevices.length > 0) {
-                    populateLifecycleTable(iosDevices);
-                }
+                // Populate lifecycle table with both iOS and Android devices
+                populateLifecycleTable(iosDevices, androidDevices);
 
                 // Show report container
                 const reportContainer = document.getElementById('reportContainer');
@@ -2858,6 +3175,7 @@
             }
         }
 
+        // Enhanced OS detection
         function populateOSTable(devices) {
             const osTable = document.getElementById('osTable');
             if (!osTable) return;
@@ -2867,23 +3185,327 @@
             
             tbody.innerHTML = '';
 
-            // Count devices by operating system
+            console.log('=== ENHANCED OS DETECTION DEBUG ===');
+            console.log('Total devices for OS table:', devices.length);
+
+            // Enhanced OS detection with model-based inference
             const osCounts = {};
-            devices.forEach(device => {
-                const os = device.operatingSystem || 'Unknown';
-                osCounts[os] = (osCounts[os] || 0) + 1;
+            devices.forEach((device, index) => {
+                let detectedOS = 'Unknown';
+                
+                // Priority 1: Try osVersion field
+                if (device.osVersion) {
+                    const osVersion = device.osVersion.toString().toLowerCase();
+                    if (osVersion.includes('ios')) {
+                        detectedOS = `iOS ${device.osVersion}`;
+                    } else if (osVersion.includes('android')) {
+                        detectedOS = `Android ${device.osVersion}`;
+                    } else if (osVersion.includes('windows')) {
+                        detectedOS = `Windows ${device.osVersion}`;
+                    } else {
+                        // If osVersion doesn't contain the OS name, use the value as-is
+                        detectedOS = device.osVersion.toString();
+                    }
+                } 
+                // Priority 2: Try operatingSystem field  
+                else if (device.operatingSystem) {
+                    detectedOS = device.operatingSystem.toString();
+                } 
+                // Priority 3: Infer from model data (common for Intune exports)
+                else if (device.model) {
+                    const model = device.model.toString().toLowerCase();
+                    if (model.includes('iphone') || model.includes('ipad') || model.includes('ipod')) {
+                        detectedOS = 'iOS (inferred from model)';
+                    } else if (model.includes('samsung') || model.includes('pixel') || model.includes('lg') || 
+                               model.includes('motorola') || model.includes('oneplus') || model.includes('huawei') ||
+                               model.includes('xiaomi') || model.includes('htc') || model.includes('sony') ||
+                               model.includes('nokia') || model.includes('tc5') || model.includes('tc7') ||
+                               model.includes('zebra') || model.includes('mc9') || model.includes('mc3')) {
+                        detectedOS = 'Android (inferred from model)';
+                    } else if (model.includes('surface') || model.includes('dell') || model.includes('hp') ||
+                               model.includes('lenovo') || model.includes('thinkpad') || model.includes('latitude')) {
+                        detectedOS = 'Windows (inferred from model)';
+                    }
+                }
+                // Priority 4: Fallback detection from other device fields
+                else {
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
+                        detectedOS = 'iOS (detected from device data)';
+                    } else if (deviceStr.includes('android')) {
+                        detectedOS = 'Android (detected from device data)';
+                    } else if (deviceStr.includes('windows')) {
+                        detectedOS = 'Windows (detected from device data)';
+                    }
+                }
+                
+                // Debug first few devices
+                if (index < 5) {
+                    console.log(`Device ${index} enhanced OS detection:`, {
+                        osVersion: device.osVersion,
+                        operatingSystem: device.operatingSystem,
+                        model: device.model,
+                        detectedOS: detectedOS,
+                        deviceName: device.deviceName || device.displayName || 'Unknown'
+                    });
+                }
+                
+                osCounts[detectedOS] = (osCounts[detectedOS] || 0) + 1;
             });
+
+            console.log('Enhanced OS counts:', osCounts);
+            console.log('=== END ENHANCED OS DETECTION DEBUG ===');
 
             // Sort by count (descending)
             const sortedOS = Object.entries(osCounts).sort((a, b) => b[1] - a[1]);
 
+            // Add warning if too many unknowns
+            const unknownCount = osCounts['Unknown'] || 0;
+            const unknownPercentage = (unknownCount / devices.length) * 100;
+            
             sortedOS.forEach(([os, count]) => {
                 const percentage = ((count / devices.length) * 100).toFixed(1);
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = os;
+                
+                const osCell = row.insertCell(0);
+                osCell.textContent = os;
+                
+                // Add visual indicator for unknown OS
+                if (os === 'Unknown' && unknownPercentage > 50) {
+                    osCell.style.color = '#dc3545';
+                    osCell.style.fontWeight = 'bold';
+                    osCell.title = 'High percentage of unknown OS detected. This may indicate incomplete data export.';
+                }
+                
                 row.insertCell(1).textContent = count;
                 row.insertCell(2).textContent = `${percentage}%`;
             });
+            
+            // Add warning message if high unknown percentage
+            if (unknownPercentage > 50) {
+                const warningRow = tbody.insertRow(0);
+                const warningCell = warningRow.insertCell(0);
+                warningCell.colSpan = 3;
+                warningCell.innerHTML = `
+                    <div style="background: #fff3cd; color: #856404; padding: 8px; border-radius: 4px; font-size: 0.9em;">
+                        ⚠️ Warning: ${unknownPercentage.toFixed(1)}% of devices have unknown OS. 
+                        This may indicate incomplete export data or require additional OS detection logic.
+                    </div>
+                `;
+                warningCell.style.textAlign = 'center';
+            }
+        }
+
+        // Enhanced urgent indicator with smooth scrolling
+        function updateUrgentIndicator(urgentItems) {
+            const urgentIndicator = document.getElementById('urgentIndicator');
+            if (!urgentIndicator) return;
+            
+            const highPriorityItems = urgentItems.filter(item => item.severity === 'high');
+            const mediumPriorityItems = urgentItems.filter(item => item.severity === 'medium');
+            const lowPriorityItems = urgentItems.filter(item => item.severity === 'low');
+            
+            const totalCount = urgentItems.reduce((sum, item) => sum + item.count, 0);
+            
+            if (totalCount > 0) {
+                urgentIndicator.style.display = 'flex';
+                urgentIndicator.classList.remove('no-urgent');
+                
+                // Set severity level styling
+                if (highPriorityItems.length > 0) {
+                    urgentIndicator.style.background = 'rgba(239, 68, 68, 0.9)';
+                } else if (mediumPriorityItems.length > 0) {
+                    urgentIndicator.style.background = 'rgba(245, 158, 11, 0.9)';
+                } else {
+                    urgentIndicator.style.background = 'rgba(99, 102, 241, 0.9)';
+                }
+                
+                // Enhanced content with tooltip
+                urgentIndicator.innerHTML = `
+                    <div class="urgent-count">${totalCount}</div>
+                    <div>Urgent Items</div>
+                `;
+                urgentIndicator.title = `Click to view details: ${highPriorityItems.length} high priority, ${mediumPriorityItems.length} medium priority, ${lowPriorityItems.length} low priority`;
+                urgentIndicator.style.cursor = 'pointer';
+            } else {
+                urgentIndicator.style.display = 'flex';
+                urgentIndicator.classList.add('no-urgent');
+                urgentIndicator.style.background = 'rgba(5, 150, 105, 0.9)';
+                urgentIndicator.innerHTML = `
+                    <div class="urgent-count">0</div>
+                    <div>No Urgent Items</div>
+                `;
+                urgentIndicator.title = 'No urgent items requiring attention';
+                urgentIndicator.style.cursor = 'default';
+            }
+        }
+
+        // Enhanced smooth scrolling function
+        function scrollToUrgentItems() {
+            const urgentSection = document.getElementById('urgentItems');
+            if (urgentSection) {
+                urgentSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start',
+                    inline: 'nearest'
+                });
+                
+                // Add brief highlight effect
+                urgentSection.style.transition = 'background-color 0.3s ease';
+                urgentSection.style.backgroundColor = '#fff3cd';
+                setTimeout(() => {
+                    urgentSection.style.backgroundColor = '';
+                }, 1000);
+            }
+        }
+
+        // Enhanced compliance display with data availability indicators
+        function updateComplianceDisplay(platform, compliantCount, totalCount, unknownCount = 0) {
+            const isDataAvailable = totalCount > 0;
+            const compliancePercent = isDataAvailable ? (compliantCount / totalCount) * 100 : 0;
+            const nonCompliantCount = totalCount - compliantCount - unknownCount;
+            
+            // Update percentage display
+            const percentElement = document.getElementById(`${platform}CompliancePercent`);
+            if (percentElement) {
+                if (!isDataAvailable) {
+                    percentElement.textContent = 'Data N/A';
+                    percentElement.style.color = '#6c757d';
+                    percentElement.title = 'Compliance data not available for this platform';
+                } else {
+                    percentElement.textContent = `${compliancePercent.toFixed(1)}%`;
+                    percentElement.style.color = compliancePercent >= 80 ? '#059669' : compliancePercent >= 60 ? '#f59e0b' : '#dc2626';
+                    percentElement.title = `${compliantCount} compliant out of ${totalCount} total devices`;
+                }
+            }
+            
+            // Update progress bar
+            const fillElement = document.getElementById(`${platform}ComplianceFill`);
+            if (fillElement) {
+                if (!isDataAvailable) {
+                    fillElement.style.width = '0%';
+                    fillElement.style.background = '#e5e7eb';
+                } else {
+                    fillElement.style.width = `${compliancePercent}%`;
+                    fillElement.style.background = compliancePercent >= 80 ? 
+                        'linear-gradient(90deg, #059669, #10b981)' : 
+                        compliancePercent >= 60 ? 
+                        'linear-gradient(90deg, #f59e0b, #fbbf24)' : 
+                        'linear-gradient(90deg, #dc2626, #ef4444)';
+                }
+            }
+            
+            // Update individual counts
+            const compliantElement = document.getElementById(`${platform}CompliantCount`);
+            if (compliantElement) {
+                compliantElement.textContent = isDataAvailable ? compliantCount : 'N/A';
+            }
+            
+            const nonCompliantElement = document.getElementById(`${platform}NonCompliantCount`);
+            if (nonCompliantElement) {
+                nonCompliantElement.textContent = isDataAvailable ? nonCompliantCount : 'N/A';
+            }
+            
+            const unknownElement = document.getElementById(`${platform}UnknownCount`);
+            if (unknownElement) {
+                unknownElement.textContent = isDataAvailable ? unknownCount : 'N/A';
+            }
+        }
+
+        // Enhanced export functions with user feedback
+        function printReport() {
+            // Show loading indicator
+            showExportFeedback('Preparing report for printing...', 'loading');
+            
+            setTimeout(() => {
+                window.print();
+                showExportFeedback('Print dialog opened successfully', 'success');
+            }, 500);
+        }
+
+        function exportToPDF() {
+            showExportFeedback('Preparing PDF export...', 'loading');
+            
+            setTimeout(() => {
+                window.print();
+                showExportFeedback('PDF export dialog opened. Select "Save as PDF" for best results.', 'success');
+            }, 500);
+        }
+
+        // Export feedback system
+        function showExportFeedback(message, type = 'info') {
+            // Remove existing feedback
+            const existingFeedback = document.querySelector('.export-feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            // Create feedback element
+            const feedback = document.createElement('div');
+            feedback.className = `export-feedback export-feedback-${type}`;
+            feedback.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#d1edff' : type === 'loading' ? '#fff3cd' : '#f8d7da'};
+                    color: ${type === 'success' ? '#0c5460' : type === 'loading' ? '#856404' : '#721c24'};
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    max-width: 300px;
+                    font-size: 14px;
+                    border: 1px solid ${type === 'success' ? '#bee5eb' : type === 'loading' ? '#ffeaa7' : '#f5c6cb'};
+                ">
+                    ${type === 'loading' ? '⏳' : type === 'success' ? '✅' : '❌'} ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(feedback);
+            
+            // Auto-remove after delay
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.remove();
+                }
+            }, type === 'loading' ? 3000 : 4000);
+        }
+
+        // Enhanced backstock calculation and display
+        function calculateAndDisplayBackstock(devices, foundColumns) {
+            let backstockDevices = [];
+            
+            if (foundColumns.includes('deviceCategoryKey')) {
+                backstockDevices = devices.filter(device => {
+                    if (device.deviceCategoryKey) {
+                        const category = device.deviceCategoryKey.toString().toLowerCase();
+                        return category.includes('backstock') || category.includes('back stock');
+                    }
+                    return false;
+                });
+            }
+            
+            // Update the backstock total with proper count
+            const backstockElement = document.getElementById('backstockTotal');
+            if (backstockElement) {
+                backstockElement.textContent = backstockDevices.length;
+                
+                // Add tooltip for clarity
+                backstockElement.title = backstockDevices.length > 0 ? 
+                    `${backstockDevices.length} devices in backstock inventory` : 
+                    'No devices currently in backstock';
+            }
+            
+            console.log('Backstock calculation result:', {
+                total: backstockDevices.length,
+                sampleDevices: backstockDevices.slice(0, 3).map(d => ({
+                    name: d.deviceName,
+                    category: d.deviceCategoryKey
+                }))
+            });
+            
+            return backstockDevices;
         }
 
         function populateDeviceCategoriesTables(devices, foundColumns, iosDevices = [], androidDevices = []) {
@@ -3071,16 +3693,18 @@
                 countCell.style.fontWeight = 'bold';
             });
 
-            // Update iOS compliance - using same logic as main calculation
+            // Update iOS compliance using enhanced display function
             if (foundColumns.includes('complianceStateKey')) {
-                const compliant = iosDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
-                const nonCompliant = iosDevices.length - compliant;
-                const compliancePercent = iosDevices.length > 0 ? (compliant / iosDevices.length) * 100 : 0;
+                const compliant = iosDevices.filter(d => d.complianceStateKey && 
+                    d.complianceStateKey.toString().toLowerCase().includes('compliant') &&
+                    !d.complianceStateKey.toString().toLowerCase().includes('non-compliant') &&
+                    !d.complianceStateKey.toString().toLowerCase().includes('noncompliant')).length;
+                const unknown = iosDevices.filter(d => !d.complianceStateKey || 
+                    d.complianceStateKey.toString().trim() === '').length;
                 
-                document.getElementById('iosCompliantCount').textContent = compliant;
-                document.getElementById('iosNonCompliantCount').textContent = nonCompliant;
-                document.getElementById('iosComplianceFill').style.width = `${compliancePercent}%`;
-                document.getElementById('iosCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
+                updateComplianceDisplay('ios', compliant, iosDevices.length, unknown);
+            } else {
+                updateComplianceDisplay('ios', 0, 0, 0);
             }
         }
 
@@ -3241,16 +3865,18 @@
                 countCell.style.fontWeight = 'bold';
             });
 
-            // Update Android compliance - using same logic as main calculation
+            // Update Android compliance using enhanced display function
             if (foundColumns.includes('complianceStateKey')) {
-                const compliant = androidDevices.filter(d => d.complianceStateKey && d.complianceStateKey.toString().toLowerCase().includes('compliant')).length;
-                const nonCompliant = androidDevices.length - compliant;
-                const compliancePercent = androidDevices.length > 0 ? (compliant / androidDevices.length) * 100 : 0;
+                const compliant = androidDevices.filter(d => d.complianceStateKey && 
+                    d.complianceStateKey.toString().toLowerCase().includes('compliant') &&
+                    !d.complianceStateKey.toString().toLowerCase().includes('non-compliant') &&
+                    !d.complianceStateKey.toString().toLowerCase().includes('noncompliant')).length;
+                const unknown = androidDevices.filter(d => !d.complianceStateKey || 
+                    d.complianceStateKey.toString().trim() === '').length;
                 
-                document.getElementById('androidCompliantCount').textContent = compliant;
-                document.getElementById('androidNonCompliantCount').textContent = nonCompliant;
-                document.getElementById('androidComplianceFill').style.width = `${compliancePercent}%`;
-                document.getElementById('androidCompliancePercent').textContent = `${compliancePercent.toFixed(1)}%`;
+                updateComplianceDisplay('android', compliant, androidDevices.length, unknown);
+            } else {
+                updateComplianceDisplay('android', 0, 0, 0);
             }
         }
 
@@ -3377,7 +4003,7 @@
             }
         }
 
-        function populateLifecycleTable(iosDevices) {
+        function populateLifecycleTable(iosDevices, androidDevices = []) {
             const lifecycleTable = document.getElementById('lifecycleTable');
             if (!lifecycleTable) return;
             
@@ -3386,41 +4012,162 @@
             
             tbody.innerHTML = '';
 
-            // Count devices by model
-            const modelCounts = {};
+            // Count iOS devices by model
+            const iosModelCounts = {};
             iosDevices.forEach(device => {
                 const model = device.model || 'Unknown Model';
-                modelCounts[model] = (modelCounts[model] || 0) + 1;
+                iosModelCounts[model] = (iosModelCounts[model] || 0) + 1;
             });
 
-            // Sort by count (descending) and limit to top models
-            const sortedModels = Object.entries(modelCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10); // Show top 10 models
+            // Count Android devices by model
+            const androidModelCounts = {};
+            androidDevices.forEach(device => {
+                const model = device.model || 'Unknown Model';
+                androidModelCounts[model] = (androidModelCounts[model] || 0) + 1;
+            });
 
-            sortedModels.forEach(([model, count]) => {
-                const lifecycle = iosLifecycle[model];
-                const deviceStatus = getDeviceStatus(model);
-                
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = model;
-                row.insertCell(1).textContent = count;
-                row.insertCell(2).textContent = lifecycle ? lifecycle.endOfLife : 'Unknown';
-                
-                const statusCell = row.insertCell(3);
-                const statusSpan = document.createElement('span');
-                statusSpan.textContent = deviceStatus.status;
-                
-                if (deviceStatus.class === 'eol-good') {
-                    statusSpan.className = 'status-supported';
-                } else if (deviceStatus.class === 'eol-warning') {
-                    statusSpan.className = 'status-security';
-                } else {
-                    statusSpan.className = 'status-ended';
+            // Add iOS devices section
+            if (Object.keys(iosModelCounts).length > 0) {
+                // Add iOS section header
+                const iosHeaderRow = tbody.insertRow();
+                iosHeaderRow.style.backgroundColor = '#e3f2fd';
+                iosHeaderRow.style.fontWeight = 'bold';
+                const iosHeaderCell = iosHeaderRow.insertCell(0);
+                iosHeaderCell.colSpan = 4;
+                iosHeaderCell.innerHTML = '📱 iOS Devices';
+                iosHeaderCell.style.padding = '8px';
+                iosHeaderCell.style.color = '#1565c0';
+
+                // Sort by count (descending) and limit to top models
+                const sortedIOSModels = Object.entries(iosModelCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10); // Show top 10 iOS models
+
+                sortedIOSModels.forEach(([model, count]) => {
+                    const lifecycle = iosLifecycle[model];
+                    const deviceStatus = getDeviceStatus(model);
+                    
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = model;
+                    row.insertCell(1).textContent = count;
+                    row.insertCell(2).textContent = lifecycle ? lifecycle.endOfLife : 'Unknown';
+                    
+                    const statusCell = row.insertCell(3);
+                    const statusSpan = document.createElement('span');
+                    statusSpan.textContent = deviceStatus.status;
+                    
+                    if (deviceStatus.class === 'eol-good') {
+                        statusSpan.className = 'status-supported';
+                    } else if (deviceStatus.class === 'eol-warning') {
+                        statusSpan.className = 'status-security';
+                    } else {
+                        statusSpan.className = 'status-ended';
+                    }
+                    
+                    statusCell.appendChild(statusSpan);
+                });
+            }
+
+            // Add Android devices section
+            if (Object.keys(androidModelCounts).length > 0) {
+                // Add spacer row if iOS devices exist
+                if (Object.keys(iosModelCounts).length > 0) {
+                    const spacerRow = tbody.insertRow();
+                    spacerRow.style.height = '10px';
+                    spacerRow.insertCell(0).colSpan = 4;
                 }
-                
-                statusCell.appendChild(statusSpan);
-            });
+
+                // Add Android section header
+                const androidHeaderRow = tbody.insertRow();
+                androidHeaderRow.style.backgroundColor = '#e8f5e8';
+                androidHeaderRow.style.fontWeight = 'bold';
+                const androidHeaderCell = androidHeaderRow.insertCell(0);
+                androidHeaderCell.colSpan = 4;
+                androidHeaderCell.innerHTML = '🤖 Android Devices';
+                androidHeaderCell.style.padding = '8px';
+                androidHeaderCell.style.color = '#2e7d32';
+
+                // Sort by count (descending) and limit to top models
+                const sortedAndroidModels = Object.entries(androidModelCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10); // Show top 10 Android models
+
+                sortedAndroidModels.forEach(([model, count]) => {
+                    const androidLifecycle = getAndroidLifecycleInfo(model);
+                    
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = model;
+                    row.insertCell(1).textContent = count;
+                    row.insertCell(2).textContent = androidLifecycle.eol;
+                    
+                    const statusCell = row.insertCell(3);
+                    const statusSpan = document.createElement('span');
+                    statusSpan.textContent = androidLifecycle.status;
+                    statusSpan.style.color = androidLifecycle.color;
+                    
+                    statusCell.appendChild(statusSpan);
+                });
+            }
+
+            // Add message if no devices
+            if (Object.keys(iosModelCounts).length === 0 && Object.keys(androidModelCounts).length === 0) {
+                const noDataRow = tbody.insertRow();
+                const noDataCell = noDataRow.insertCell(0);
+                noDataCell.colSpan = 4;
+                noDataCell.innerHTML = 'No device lifecycle data available';
+                noDataCell.style.textAlign = 'center';
+                noDataCell.style.color = '#6c757d';
+                noDataCell.style.fontStyle = 'italic';
+                noDataCell.style.padding = '20px';
+            }
+        }
+        
+        // Android lifecycle estimation function
+        function getAndroidLifecycleInfo(model) {
+            const modelLower = model.toLowerCase();
+            const currentYear = new Date().getFullYear();
+            
+            // Zebra devices (enterprise scanners) - typically 5-7 year lifecycle
+            if (modelLower.includes('tc5') || modelLower.includes('tc7') || modelLower.includes('mc') || modelLower.includes('zebra')) {
+                return {
+                    eol: 'Est. 2028-2030',
+                    status: 'Enterprise Device',
+                    color: '#28a745'
+                };
+            }
+            
+            // Samsung devices - estimate based on common models
+            if (modelLower.includes('samsung')) {
+                if (modelLower.includes('galaxy') && (modelLower.includes('s2') || modelLower.includes('a5') || modelLower.includes('note'))) {
+                    return {
+                        eol: 'Est. 2026-2029',
+                        status: 'Samsung Support',
+                        color: '#28a745'
+                    };
+                } else {
+                    return {
+                        eol: 'Variable',
+                        status: 'Review Required',
+                        color: '#6c757d'
+                    };
+                }
+            }
+            
+            // Google Pixel devices
+            if (modelLower.includes('pixel')) {
+                return {
+                    eol: 'Est. 2027-2030',
+                    status: 'Google Support',
+                    color: '#28a745'
+                };
+            }
+            
+            // Generic Android fallback
+            return {
+                eol: 'Unknown',
+                status: 'Lifecycle data not available',
+                color: '#6c757d'
+            };
         }
 
         /* Duplicate exportToPDF function removed to fix double popup issue */
@@ -3583,62 +4330,9 @@
 
         /* Modal-related functions removed to clean up layout - functionality can be re-added if needed */
 
-        // Update the urgent indicator in the header
-        function updateUrgentIndicator(urgentItems) {
-            const urgentIndicator = document.getElementById('urgentIndicator');
-            if (!urgentIndicator) return;
-            
-            // Calculate total urgent items with priority weighting
-            const highPriorityItems = urgentItems.filter(item => item.severity === 'high');
-            const mediumPriorityItems = urgentItems.filter(item => item.severity === 'medium');
-            const lowPriorityItems = urgentItems.filter(item => item.severity === 'low');
-            
-            const totalCount = urgentItems.reduce((sum, item) => sum + item.count, 0);
-            
-            // Update the count display
-            const countElement = urgentIndicator.querySelector('.urgent-count');
-            if (countElement) {
-                countElement.textContent = totalCount;
-            }
-            
-            // Update the indicator appearance based on urgency
-            urgentIndicator.classList.remove('no-urgent');
-            
-            if (highPriorityItems.length > 0) {
-                urgentIndicator.style.background = 'rgba(220, 53, 69, 0.9)'; // Red for high priority
-                urgentIndicator.title = `${highPriorityItems.length} critical issues requiring immediate attention`;
-            } else if (mediumPriorityItems.length > 0) {
-                urgentIndicator.style.background = 'rgba(255, 193, 7, 0.9)'; // Yellow for medium priority
-                urgentIndicator.title = `${mediumPriorityItems.length} warning issues requiring attention`;
-            } else if (lowPriorityItems.length > 0) {
-                urgentIndicator.style.background = 'rgba(108, 117, 125, 0.9)'; // Gray for low priority
-                urgentIndicator.title = `${lowPriorityItems.length} minor issues`;
-            } else {
-                urgentIndicator.classList.add('no-urgent');
-                urgentIndicator.style.background = 'rgba(40, 167, 69, 0.9)'; // Green for no issues
-                urgentIndicator.title = 'No urgent items';
-            }
-            
-            // Show the indicator
-            urgentIndicator.style.display = 'block';
-        }
 
-        // Scroll to urgent items section
-        function scrollToUrgentItems() {
-            const urgentSection = document.querySelector('.urgent-items');
-            if (urgentSection) {
-                urgentSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                
-                // Add a brief highlight effect
-                urgentSection.style.background = '#fff3cd';
-                setTimeout(() => {
-                    urgentSection.style.background = '#fff';
-                }, 2000);
-            }
-        }
+
+
 
         // Historical Inventory Tracking Functions
         function saveHistoricalData() {
