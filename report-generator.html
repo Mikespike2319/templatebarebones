@@ -4406,7 +4406,13 @@
                 if (platform === 'iOS') {
                     platformGroups.iOS[os] = count;
                 } else if (platform === 'Android') {
-                    platformGroups.Android[os] = count;
+                    // Only include Android entries that have proper version formatting
+                    if (os.startsWith('Android OS ') || os.startsWith('Android ')) {
+                        platformGroups.Android[os] = count;
+                    } else {
+                        // Skip generic Android detection messages
+                        console.log('Skipping generic Android entry:', os);
+                    }
                 } else if (platform === 'Windows') {
                     platformGroups.Windows[os] = count;
                 } else {
