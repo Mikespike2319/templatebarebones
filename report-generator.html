@@ -4244,7 +4244,7 @@
             }
         }
 
-        // Enhanced OS detection with flat display (no collapsible groups)
+        // Enhanced OS detection with platform separation and iOS summarization
         function populateOSTable(devices) {
             const osTable = document.getElementById('osTable');
             if (!osTable) return;
@@ -4325,12 +4325,25 @@
             console.log('Enhanced OS counts:', osCounts);
             console.log('=== END ENHANCED OS DETECTION DEBUG ===');
 
-            // Sort OS entries by count (descending) and then by name
-            const sortedOSEntries = Object.entries(osCounts)
-                .sort(([a, countA], [b, countB]) => {
-                    if (countB !== countA) return countB - countA;
-                    return a.localeCompare(b);
-                });
+            // Group OS versions by platform
+            const platformGroups = {
+                iOS: {},
+                Android: {},
+                Windows: {},
+                Other: {}
+            };
+
+            Object.entries(osCounts).forEach(([os, count]) => {
+                if (os.toLowerCase().includes('ios')) {
+                    platformGroups.iOS[os] = count;
+                } else if (os.toLowerCase().includes('android')) {
+                    platformGroups.Android[os] = count;
+                } else if (os.toLowerCase().includes('windows')) {
+                    platformGroups.Windows[os] = count;
+                } else {
+                    platformGroups.Other[os] = count;
+                }
+            });
 
             // Clear existing table content
             tbody.innerHTML = '';
@@ -4352,28 +4365,84 @@
                 warningCell.style.textAlign = 'center';
             }
 
-            // Create flat table rows for each OS version
-            sortedOSEntries.forEach(([os, count]) => {
-                const percentage = ((count / devices.length) * 100).toFixed(1);
-                const row = tbody.insertRow();
-                
-                // OS name cell
-                const osCell = row.insertCell(0);
-                osCell.textContent = os;
-                osCell.style.fontWeight = '500';
-                
-                // Count cell
-                const countCell = row.insertCell(1);
-                countCell.textContent = count;
-                countCell.style.textAlign = 'center';
-                countCell.style.fontWeight = '600';
-                
-                // Percentage cell
-                const percentCell = row.insertCell(2);
-                percentCell.textContent = `${percentage}%`;
-                percentCell.style.textAlign = 'center';
-                percentCell.style.color = 'var(--neutral-600)';
-                percentCell.style.fontSize = '0.8rem';
+            // Process each platform
+            Object.entries(platformGroups).forEach(([platform, versions]) => {
+                if (Object.keys(versions).length === 0) return;
+
+                // Sort versions by count (descending)
+                const sortedVersions = Object.entries(versions)
+                    .sort(([a, countA], [b, countB]) => countB - countA);
+
+                // For iOS, show only top 3 versions, then summarize the rest
+                if (platform === 'iOS' && sortedVersions.length > 3) {
+                    // Show top 3 iOS versions
+                    sortedVersions.slice(0, 3).forEach(([version, count]) => {
+                        const percentage = ((count / devices.length) * 100).toFixed(1);
+                        const row = tbody.insertRow();
+                        
+                        const osCell = row.insertCell(0);
+                        osCell.textContent = version;
+                        osCell.style.fontWeight = '500';
+                        
+                        const countCell = row.insertCell(1);
+                        countCell.textContent = count;
+                        countCell.style.textAlign = 'center';
+                        countCell.style.fontWeight = '600';
+                        
+                        const percentCell = row.insertCell(2);
+                        percentCell.textContent = `${percentage}%`;
+                        percentCell.style.textAlign = 'center';
+                        percentCell.style.color = 'var(--neutral-600)';
+                        percentCell.style.fontSize = '0.8rem';
+                    });
+
+                    // Summarize remaining iOS versions
+                    const remainingVersions = sortedVersions.slice(3);
+                    const remainingCount = remainingVersions.reduce((sum, [_, count]) => sum + count, 0);
+                    const remainingPercentage = ((remainingCount / devices.length) * 100).toFixed(1);
+                    
+                    if (remainingCount > 0) {
+                        const row = tbody.insertRow();
+                        
+                        const osCell = row.insertCell(0);
+                        osCell.textContent = `iOS Other (${remainingVersions.length} versions)`;
+                        osCell.style.fontWeight = '500';
+                        osCell.style.color = 'var(--neutral-500)';
+                        osCell.style.fontStyle = 'italic';
+                        
+                        const countCell = row.insertCell(1);
+                        countCell.textContent = remainingCount;
+                        countCell.style.textAlign = 'center';
+                        countCell.style.fontWeight = '600';
+                        
+                        const percentCell = row.insertCell(2);
+                        percentCell.textContent = `${remainingPercentage}%`;
+                        percentCell.style.textAlign = 'center';
+                        percentCell.style.color = 'var(--neutral-600)';
+                        percentCell.style.fontSize = '0.8rem';
+                    }
+                } else {
+                    // For other platforms, show all versions
+                    sortedVersions.forEach(([version, count]) => {
+                        const percentage = ((count / devices.length) * 100).toFixed(1);
+                        const row = tbody.insertRow();
+                        
+                        const osCell = row.insertCell(0);
+                        osCell.textContent = version;
+                        osCell.style.fontWeight = '500';
+                        
+                        const countCell = row.insertCell(1);
+                        countCell.textContent = count;
+                        countCell.style.textAlign = 'center';
+                        countCell.style.fontWeight = '600';
+                        
+                        const percentCell = row.insertCell(2);
+                        percentCell.textContent = `${percentage}%`;
+                        percentCell.style.textAlign = 'center';
+                        percentCell.style.color = 'var(--neutral-600)';
+                        percentCell.style.fontSize = '0.8rem';
+                    });
+                }
             });
         }
 
