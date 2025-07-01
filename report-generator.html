@@ -882,8 +882,8 @@
 
         .compact-body {
             padding: var(--space-sm);
-            max-height: 300px;
-            overflow-y: auto;
+            max-height: none;
+            overflow-y: visible;
         }
 
         .compact-table {
@@ -1438,7 +1438,7 @@
         .monthly-table th {
             background: var(--neutral-100);
             padding: var(--space-sm);
-            text-align: left;
+            text-align: center;
             font-weight: 600;
             font-size: var(--text-xs);
             color: var(--neutral-700);
@@ -5275,12 +5275,12 @@
 
         // Lifecycle table configuration
         const lifecycleConfig = {
-            maxModelsPerPlatform: 10, // Adjustable: show more or fewer models
-            showAllModels: false, // Set to true to show all models
+            maxModelsPerPlatform: 999, // Show all models
+            showAllModels: true, // Set to true to show all models
             sortBy: 'count', // 'count' or 'eol' - sort by device count or end-of-life date
             includeUnknownModels: true, // Include devices with unknown lifecycle data
             highlightCritical: true, // Highlight devices with critical EOL status
-            compactMode: false // Compact mode for smaller displays
+            compactMode: true // Compact mode for smaller displays to fit more content
         };
 
         // Function to adjust lifecycle table configuration
@@ -5373,6 +5373,12 @@
                     
                     const row = tbody.insertRow();
                     
+                    // Apply compact styling if enabled
+                    if (lifecycleConfig.compactMode) {
+                        row.style.fontSize = '0.75rem';
+                        row.style.lineHeight = '1.2';
+                    }
+                    
                     // Highlight critical devices if enabled
                     if (lifecycleConfig.highlightCritical && deviceStatus.class === 'eol-critical') {
                         row.style.backgroundColor = '#fff3cd';
@@ -5443,6 +5449,12 @@
                      const androidLifecycle = getAndroidLifecycleInfo(model);
                      
                      const row = tbody.insertRow();
+                     
+                     // Apply compact styling if enabled
+                     if (lifecycleConfig.compactMode) {
+                         row.style.fontSize = '0.75rem';
+                         row.style.lineHeight = '1.2';
+                     }
                      
                      // Highlight critical devices if enabled
                      if (lifecycleConfig.highlightCritical && androidLifecycle.className === 'status-ended') {
