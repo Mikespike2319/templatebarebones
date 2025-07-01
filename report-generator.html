@@ -3260,6 +3260,12 @@
                 sheetSelector.remove();
             }
             
+            // Remove historical inventory analysis buttons
+            const trackerActions = reportClone.querySelector('.tracker-actions');
+            if (trackerActions) {
+                trackerActions.remove();
+            }
+            
             // Add the cleaned report content
             container.appendChild(reportClone);
             exportBody.appendChild(container);
@@ -5391,7 +5397,16 @@
             const modelLower = model.toLowerCase();
             const currentYear = new Date().getFullYear();
             
-            // Zebra devices (enterprise scanners) - typically 5-7 year lifecycle
+            // HC50 Zebra devices - specific EOL date
+            if (modelLower.includes('hc50')) {
+                return {
+                    eol: '2029',
+                    status: 'Enterprise Device',
+                    className: 'status-supported'
+                };
+            }
+            
+            // Other Zebra devices (enterprise scanners) - typically 5-7 year lifecycle
             if (modelLower.includes('tc5') || modelLower.includes('tc7') || modelLower.includes('mc') || modelLower.includes('zebra')) {
                 return {
                     eol: 'Est. 2028-2030',
