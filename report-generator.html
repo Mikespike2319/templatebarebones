@@ -4319,6 +4319,10 @@
                             // Try just finding any number
                             versionMatch = device.osVersion.match(/(\d+)/);
                         }
+                        if (!versionMatch) {
+                            // Try extracting from the full string
+                            versionMatch = device.osVersion.match(/.*?(\d+)/);
+                        }
                         detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${device.osVersion}`;
                     } else if (osVersion.includes('windows')) {
                         platform = 'Windows';
@@ -4367,15 +4371,21 @@
                         detectedOS = iosMatch ? `iOS ${iosMatch[1]}` : 'iOS (detected from device data)';
                     } else if (deviceStr.includes('android')) {
                         platform = 'Android';
-                        // Try to extract Android version from device data
-                        const androidMatch = deviceStr.match(/android\s*(\d+(?:\.\d+)*)/i);
+                        // Try to extract Android version from device data with multiple patterns
+                        let androidMatch = deviceStr.match(/android\s*(\d+(?:\.\d+)*)/i);
+                        if (!androidMatch) {
+                            // Try alternative patterns
+                            androidMatch = deviceStr.match(/android.*?(\d+)/i);
+                        }
+                        if (!androidMatch) {
+                            // Try just finding any number after "android"
+                            androidMatch = deviceStr.match(/android[^0-9]*(\d+)/i);
+                        }
                         if (androidMatch) {
                             detectedOS = `Android OS ${androidMatch[1]}`;
                         } else {
-                            // If we can't extract a version, don't create a generic entry
-                            // This will be counted as "Unknown" instead
-                            platform = 'Unknown';
-                            detectedOS = 'Unknown';
+                            // If we can't extract a version, still keep as Android but generic
+                            detectedOS = 'Android (version unknown)';
                         }
                     } else if (deviceStr.includes('windows')) {
                         platform = 'Windows';
@@ -4413,8 +4423,13 @@
                 if (platform === 'iOS') {
                     platformGroups.iOS[os] = count;
                 } else if (platform === 'Android') {
-                    // Include all Android entries (no more generic detection messages)
-                    platformGroups.Android[os] = count;
+                    // Only include Android entries that have proper version formatting
+                    if (os.startsWith('Android OS ') && !os.includes('version unknown')) {
+                        platformGroups.Android[os] = count;
+                    } else {
+                        // Skip generic Android detection messages
+                        console.log('Skipping generic Android entry:', os);
+                    }
                 } else if (platform === 'Windows') {
                     platformGroups.Windows[os] = count;
                 } else {
