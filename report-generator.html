@@ -86,6 +86,116 @@
             box-shadow: var(--shadow-md);
         }
         
+        /* Header layout with mode toggle */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        .mode-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .mode-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .mode-toggle-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Layout mode classes */
+        .landscape-mode .container {
+            max-width: 1400px;
+        }
+
+        .landscape-mode .summary-cards {
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .landscape-mode .compliance-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .landscape-mode .three-column {
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .landscape-mode .two-column {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .landscape-mode .urgent-items-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        /* Portrait mode (default) */
+        .portrait-mode .container {
+            max-width: 1024px;
+        }
+
+        .portrait-mode .summary-cards {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .portrait-mode .compliance-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+
+        .portrait-mode .three-column {
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+
+        .portrait-mode .two-column {
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+
+        .portrait-mode .urgent-items-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
         /* Enhanced tooltips for professional context */
         .tooltip {
             position: relative;
@@ -2127,6 +2237,131 @@
             color: var(--neutral-500);
             margin-left: var(--space-sm);
         }
+
+        /* Landscape mode optimizations */
+        .landscape-mode .summary-cards {
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .landscape-mode .summary-card {
+            min-height: 140px;
+        }
+
+        .landscape-mode .compliance-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .landscape-mode .compliance-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-xl);
+        }
+
+        .landscape-mode .section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .landscape-mode .three-column {
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .landscape-mode .two-column {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .landscape-mode .urgent-items-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .landscape-mode .monthly-table-container {
+            overflow-x: auto;
+        }
+
+        .landscape-mode .monthly-table {
+            min-width: 600px;
+        }
+
+        /* Portrait mode optimizations */
+        .portrait-mode .summary-cards {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .portrait-mode .summary-card {
+            min-height: 160px;
+        }
+
+        .portrait-mode .compliance-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .portrait-mode .compliance-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+
+        .portrait-mode .section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .portrait-mode .three-column {
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+
+        .portrait-mode .two-column {
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+
+        .portrait-mode .urgent-items-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .landscape-mode .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .landscape-mode .compliance-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .landscape-mode .three-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .landscape-mode .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .portrait-mode .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .landscape-mode .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+            
+            .header-right {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2137,9 +2372,19 @@
             <h1>Device Inventory Report</h1>
             <p>Tallahassee Memorial Hospital - IT Asset Management</p>
                 </div>
-            <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
-                <span class="urgent-count">0</span>
-                <span>Urgent Items</span>
+                <div class="header-right">
+                    <div class="mode-toggle">
+                        <button id="modeToggle" class="mode-toggle-btn" onclick="toggleLayoutMode()">
+                            <svg id="modeIcon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17M15,15H9V9H15V15Z"/>
+                            </svg>
+                            <span id="modeText">Portrait</span>
+                        </button>
+                    </div>
+                    <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
+                        <span class="urgent-count">0</span>
+                        <span>Urgent Items</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2173,8 +2418,7 @@
         <div id="reportContainer">
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="regenerateReport()">Regenerate Report</button>
-                <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
-                <button class="btn btn-secondary" onclick="printReport()">Print Report</button>
+                <button class="btn btn-primary" onclick="exportToHTML()">Export to HTML</button>
                 <button class="btn btn-secondary" onclick="debugCategories()">Debug Categories</button>
             </div>
             
@@ -2888,18 +3132,181 @@
                 });
             }
             
+            // Initialize layout mode
+            initializeLayoutMode();
+            
             // Initialize the dynamic monthly system
             generateMonthlyInputs();
         });
 
-        // Print function with instructions (no popups)
-        function printReport() {
-            alert('To print the report:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Adjust print settings as needed\n3. Click Print\n\nNote: Make sure to enable "Background graphics" for best results.');
+        // Layout mode toggle function
+        function toggleLayoutMode() {
+            const body = document.body;
+            const modeToggle = document.getElementById('modeToggle');
+            const modeIcon = document.getElementById('modeIcon');
+            const modeText = document.getElementById('modeText');
+            
+            if (body.classList.contains('landscape-mode')) {
+                // Switch to portrait mode
+                body.classList.remove('landscape-mode');
+                body.classList.add('portrait-mode');
+                modeIcon.innerHTML = '<path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17M15,15H9V9H15V15Z"/>';
+                modeText.textContent = 'Portrait';
+                localStorage.setItem('tmh-layout-mode', 'portrait');
+            } else {
+                // Switch to landscape mode
+                body.classList.remove('portrait-mode');
+                body.classList.add('landscape-mode');
+                modeIcon.innerHTML = '<path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17M15,15H9V9H15V15Z"/>';
+                modeText.textContent = 'Landscape';
+                localStorage.setItem('tmh-layout-mode', 'landscape');
+            }
         }
 
-        // PDF export function (popup-free)
-        function exportToPDF() {
-            alert('To save as PDF:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Select "Save as PDF" as the destination\n3. Choose "More settings" and enable "Background graphics"\n4. Click Save\n\nThis method provides the best quality without popups.');
+        // HTML export function
+        function exportToHTML() {
+            // Create a copy of the current document
+            const reportContainer = document.getElementById('reportContainer');
+            if (!reportContainer) {
+                alert('No report data available to export.');
+                return;
+            }
+
+            // Create a new document for export
+            const exportDoc = document.implementation.createHTMLDocument('TMH Device Report');
+            
+            // Copy the head content (styles, fonts, etc.)
+            const originalHead = document.head;
+            const exportHead = exportDoc.head;
+            
+            // Copy meta tags and title
+            const title = exportDoc.createElement('title');
+            title.textContent = 'TMH Device Inventory Report - ' + new Date().toLocaleDateString();
+            exportHead.appendChild(title);
+            
+            // Copy viewport meta
+            const viewport = exportDoc.createElement('meta');
+            viewport.setAttribute('name', 'viewport');
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+            exportHead.appendChild(viewport);
+            
+            // Copy charset
+            const charset = exportDoc.createElement('meta');
+            charset.setAttribute('charset', 'UTF-8');
+            exportHead.appendChild(charset);
+            
+            // Copy all stylesheets and fonts
+            const styleLinks = originalHead.querySelectorAll('link[rel="stylesheet"]');
+            styleLinks.forEach(link => {
+                const newLink = exportDoc.createElement('link');
+                newLink.rel = 'stylesheet';
+                newLink.href = link.href;
+                exportHead.appendChild(newLink);
+            });
+            
+            // Copy all style tags
+            const styleTags = originalHead.querySelectorAll('style');
+            styleTags.forEach(style => {
+                const newStyle = exportDoc.createElement('style');
+                newStyle.textContent = style.textContent;
+                exportHead.appendChild(newStyle);
+            });
+            
+            // Create the body content
+            const exportBody = exportDoc.body;
+            
+            // Add header
+            const header = exportDoc.createElement('div');
+            header.className = 'header';
+            header.innerHTML = `
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1>Device Inventory Report</h1>
+                        <p>Tallahassee Memorial Hospital - IT Asset Management</p>
+                    </div>
+                    <div class="header-right">
+                        <div class="export-info">
+                            <span>Exported: ${new Date().toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            exportBody.appendChild(header);
+            
+            // Create container
+            const container = exportDoc.createElement('div');
+            container.className = 'container';
+            
+            // Clone the report content (excluding action buttons)
+            const reportClone = reportContainer.cloneNode(true);
+            
+            // Remove action buttons from the clone
+            const actionBar = reportClone.querySelector('.actions-bar');
+            if (actionBar) {
+                actionBar.remove();
+            }
+            
+            // Remove upload section if it exists
+            const uploadSection = reportClone.querySelector('.upload-section');
+            if (uploadSection) {
+                uploadSection.remove();
+            }
+            
+            // Remove sheet selector if it exists
+            const sheetSelector = reportClone.querySelector('#sheetSelectorContainer');
+            if (sheetSelector) {
+                sheetSelector.remove();
+            }
+            
+            // Add the cleaned report content
+            container.appendChild(reportClone);
+            exportBody.appendChild(container);
+            
+            // Add footer
+            const footer = exportDoc.createElement('div');
+            footer.className = 'footer';
+            footer.innerHTML = `
+                <div class="footer-content">
+                    <span>TMH Device Inventory Report - Generated on ${new Date().toLocaleDateString()}</span>
+                    <span>Tallahassee Memorial Hospital - IT Asset Management</span>
+                </div>
+            `;
+            exportBody.appendChild(footer);
+            
+            // Convert to HTML string
+            const htmlString = `<!DOCTYPE html>\n${exportDoc.documentElement.outerHTML}`;
+            
+            // Create and download the file
+            const blob = new Blob([htmlString], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `TMH_Device_Report_${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            // Show success message
+            showExportFeedback('HTML report exported successfully!', 'success');
+        }
+
+        // Initialize layout mode on page load
+        function initializeLayoutMode() {
+            const savedMode = localStorage.getItem('tmh-layout-mode') || 'portrait';
+            const body = document.body;
+            const modeIcon = document.getElementById('modeIcon');
+            const modeText = document.getElementById('modeText');
+            
+            if (savedMode === 'landscape') {
+                body.classList.add('landscape-mode');
+                modeIcon.innerHTML = '<path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17M15,15H9V9H15V15Z"/>';
+                modeText.textContent = 'Landscape';
+            } else {
+                body.classList.add('portrait-mode');
+                modeIcon.innerHTML = '<path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17M15,15H9V9H15V15Z"/>';
+                modeText.textContent = 'Portrait';
+            }
         }
 
         // Toggle function for collapsible OS version groups
