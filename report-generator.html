@@ -121,10 +121,10 @@
             z-index: 1000;
         }
         
-        /* Enhanced urgent items styling */
+        /* Enhanced urgent items styling with modern patterns inspired by research */
         .urgent-items-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: var(--space-sm);
             margin-top: var(--space-sm);
         }
@@ -132,54 +132,125 @@
         .urgent-item {
             background: white;
             border-radius: var(--radius-lg);
-            padding: var(--space-sm);
-            border-left: 3px solid #dc2626;
+            padding: var(--space-md);
+            border: 1px solid var(--neutral-200);
             box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .urgent-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            transition: width 0.2s ease;
         }
         
         .urgent-item:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+            border-color: var(--neutral-300);
+        }
+        
+        .urgent-item:hover::before {
+            width: 8px;
         }
         
         .urgent-item.severity-high {
-            border-left-color: #dc2626;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+            border-color: rgba(220, 38, 38, 0.2);
+        }
+        
+        .urgent-item.severity-high::before {
+            background: linear-gradient(180deg, #dc2626 0%, #ef4444 100%);
         }
         
         .urgent-item.severity-medium {
-            border-left-color: #f59e0b;
-            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        
+        .urgent-item.severity-medium::before {
+            background: linear-gradient(180deg, #f59e0b 0%, #fbbf24 100%);
         }
         
         .urgent-item.severity-low {
-            border-left-color: #6366f1;
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        .urgent-item.severity-low::before {
+            background: linear-gradient(180deg, #6366f1 0%, #818cf8 100%);
+        }
+        
+        .urgent-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
         }
         
         .urgent-item-icon {
-            font-size: 18px;
-            margin-bottom: var(--space-xs);
+            font-size: 1.5rem;
+            line-height: 1;
         }
         
         .urgent-item-title {
-            font-size: var(--text-lg);
+            font-size: var(--text-base);
             font-weight: 600;
             color: var(--neutral-900);
             margin-bottom: var(--space-xs);
+            line-height: 1.3;
         }
         
         .urgent-item-count {
             font-size: var(--text-2xl);
             font-weight: 700;
             margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
         }
         
         .urgent-item-description {
             font-size: var(--text-sm);
             color: var(--neutral-600);
             line-height: 1.4;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .urgent-priority-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+        }
+        
+        .urgent-priority-badge.high {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+        
+        .urgent-priority-badge.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        
+        .urgent-priority-badge.low {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
 
         .header-content {
@@ -665,11 +736,11 @@
         }
 
         .section-header {
-            background: var(--neutral-50);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
             padding: var(--space-md) var(--space-lg);
             border-bottom: 1px solid var(--neutral-200);
             font-weight: 600;
-            color: var(--neutral-800);
             font-size: var(--text-base);
         }
 
@@ -1942,6 +2013,110 @@
         }
 
         /* Existing styles continue below... */
+
+        /* Collapsible OS Version Styling */
+        .os-version-group {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .os-version-header {
+            background: var(--neutral-100);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--neutral-700);
+            transition: all 0.2s ease;
+            border: 1px solid var(--neutral-200);
+        }
+        
+        .os-version-header:hover {
+            background: var(--neutral-200);
+            color: var(--neutral-900);
+        }
+        
+        .os-version-header.ios {
+            background: rgba(30, 58, 95, 0.05);
+            border-color: rgba(30, 58, 95, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        .os-version-header.ios:hover {
+            background: rgba(30, 58, 95, 0.1);
+        }
+        
+        .os-version-header.android {
+            background: rgba(5, 150, 105, 0.05);
+            border-color: rgba(5, 150, 105, 0.1);
+            color: var(--success-green);
+        }
+        
+        .os-version-header.android:hover {
+            background: rgba(5, 150, 105, 0.1);
+        }
+        
+        .os-version-toggle {
+            font-size: var(--text-lg);
+            transition: transform 0.2s ease;
+        }
+        
+        .os-version-toggle.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .os-version-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 0;
+        }
+        
+        .os-version-content.expanded {
+            max-height: 500px;
+        }
+        
+        .os-version-items {
+            padding: var(--space-sm) 0 0 var(--space-lg);
+            border-left: 2px solid var(--neutral-200);
+            margin-left: var(--space-md);
+        }
+        
+        .os-version-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-xs) var(--space-sm);
+            margin-bottom: var(--space-xs);
+            background: white;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--neutral-100);
+        }
+        
+        .os-version-item:hover {
+            background: var(--neutral-50);
+        }
+        
+        .os-version-name {
+            font-size: var(--text-sm);
+            color: var(--neutral-700);
+        }
+        
+        .os-version-count {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--neutral-900);
+            background: var(--neutral-100);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+        }
+        
+        .os-version-percentage {
+            font-size: var(--text-xs);
+            color: var(--neutral-500);
+            margin-left: var(--space-sm);
+        }
     </style>
 </head>
 <body>
@@ -2713,30 +2888,85 @@
             alert('To save as PDF:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Select "Save as PDF" as the destination\n3. Choose "More settings" and enable "Background graphics"\n4. Click Save\n\nThis method provides the best quality without popups.');
         }
 
+        // Toggle function for collapsible OS version groups
+        function toggleOSGroup(groupId) {
+            const content = document.getElementById(`${groupId}-content`);
+            const toggle = document.getElementById(`${groupId}-toggle`);
+            
+            if (content && toggle) {
+                const isExpanded = content.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    content.classList.remove('expanded');
+                    toggle.classList.remove('expanded');
+                    toggle.textContent = '▶';
+                } else {
+                    content.classList.add('expanded');
+                    toggle.classList.add('expanded');
+                    toggle.textContent = '▼';
+                }
+            }
+        }
+
+        // Make toggleOSGroup available globally
+        window.toggleOSGroup = toggleOSGroup;
+
         // Auto-fill current counts function
         function autoFillCurrentCounts() {
             const iosTotal = parseInt(document.getElementById('iosTotal').textContent) || 0;
             const androidTotal = parseInt(document.getElementById('androidTotal').textContent) || 0;
             
+            console.log('Auto-fill called with:', { iosTotal, androidTotal });
+            
             // Find the current month input
             const currentMonth = monthlyInputs.find(month => month.isCurrent);
+            console.log('Current month found:', currentMonth);
+            
             if (currentMonth) {
                 // Update the monthlyInputs data
                 if (iosTotal > 0) {
                     currentMonth.iosValue = iosTotal;
+                    console.log('Updated iOS value to:', iosTotal);
                 }
                 if (androidTotal > 0) {
                     currentMonth.androidValue = androidTotal;
+                    console.log('Updated Android value to:', androidTotal);
                 }
                 
                 // Refresh the table to show updated values
                 populateMonthlyTable();
+                
+                // Save to localStorage
+                saveCurrentMonthData();
+            } else {
+                console.log('No current month found in monthlyInputs');
             }
             
             updateMonthlyComparison();
+        }
+        
+        // New function to save current month data specifically
+        function saveCurrentMonthData() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth(); // 0-based
+            const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
             
-            // Save the data
-            saveMonthlyData();
+            const currentMonthData = monthlyInputs.find(month => month.isCurrent);
+            if (currentMonthData && (currentMonthData.iosValue > 0 || currentMonthData.androidValue > 0)) {
+                // Save current month data
+                monthlyDataHistory[monthKey] = {
+                    ios: currentMonthData.iosValue || 0,
+                    android: currentMonthData.androidValue || 0,
+                    date: currentDate.toISOString(),
+                    month: currentDate.toLocaleDateString('en-US', { month: 'long' }),
+                    year: currentYear,
+                    isCurrent: true // Mark as current month
+                };
+                
+                localStorage.setItem('tmh-monthly-data-history', JSON.stringify(monthlyDataHistory));
+                console.log('Saved current month data:', monthKey, monthlyDataHistory[monthKey]);
+            }
         }
 
         // Generate dynamic monthly inputs for trend analysis (new table format)
@@ -2919,15 +3149,12 @@
             const comparisonContainer = document.getElementById('monthlyComparison');
             if (!comparisonContainer) return;
             
-            // Collect data from all dynamic inputs
+            // Collect data from monthlyInputs data (not DOM inputs)
             const trendData = [];
             
             monthlyInputs.forEach(month => {
-                const iosInput = document.getElementById(`ios_${month.key}`);
-                const androidInput = document.getElementById(`android_${month.key}`);
-                
-                const iosValue = parseInt(iosInput?.value) || 0;
-                const androidValue = parseInt(androidInput?.value) || 0;
+                const iosValue = month.iosValue || 0;
+                const androidValue = month.androidValue || 0;
                 const totalValue = iosValue + androidValue;
                 
                 if (iosValue > 0 || androidValue > 0) {
@@ -3447,27 +3674,39 @@
                             let severityIcon = '';
                             let severityColor = '';
                             let priorityText = '';
+                            let badgeClass = '';
                             
                             if (item.severity === 'high') {
-                                severityIcon = '🚨';
+                                severityIcon = '🔴';
                                 severityColor = '#dc2626';
-                                priorityText = 'Critical Priority';
+                                priorityText = 'Critical';
+                                badgeClass = 'high';
                             } else if (item.severity === 'medium') {
-                                severityIcon = '⚠️';
+                                severityIcon = '🟡';
                                 severityColor = '#f59e0b';
-                                priorityText = 'Medium Priority';
+                                priorityText = 'Medium';
+                                badgeClass = 'medium';
                             } else {
-                                severityIcon = 'ℹ️';
+                                severityIcon = '🔵';
                                 severityColor = '#6366f1';
-                                priorityText = 'Low Priority';
+                                priorityText = 'Low';
+                                badgeClass = 'low';
                             }
                             
                             itemElement.innerHTML = `
-                                <div class="urgent-item-icon">${severityIcon}</div>
+                                <div class="urgent-priority-badge ${badgeClass}">
+                                    <span style="font-size: 0.5rem;">●</span>
+                                    ${priorityText}
+                                </div>
+                                <div class="urgent-item-header">
+                                    <div class="urgent-item-icon">${severityIcon}</div>
+                                </div>
                                 <div class="urgent-item-title">${item.title}</div>
-                                <div class="urgent-item-count" style="color: ${severityColor};">${item.count}</div>
+                                <div class="urgent-item-count" style="color: ${severityColor};">
+                                    <span>${item.count}</span>
+                                    <span style="font-size: var(--text-sm); font-weight: 500; color: var(--neutral-600);">items</span>
+                                </div>
                                 <div class="urgent-item-description">${item.description}</div>
-                                <div style="margin-top: 8px; font-size: 12px; color: ${severityColor}; font-weight: 600;">${priorityText}</div>
                             `;
                             
                             urgentItemsContainer.appendChild(itemElement);
@@ -3626,30 +3865,110 @@
             console.log('Enhanced OS counts:', osCounts);
             console.log('=== END ENHANCED OS DETECTION DEBUG ===');
 
-            // Sort by count (descending)
-            const sortedOS = Object.entries(osCounts).sort((a, b) => b[1] - a[1]);
+            // Group OS versions for collapsible display
+            const osGroups = {};
+            Object.entries(osCounts).forEach(([os, count]) => {
+                // Extract base OS and version
+                let baseOS = 'Unknown';
+                let version = '';
+                
+                if (os.toLowerCase().includes('ios')) {
+                    baseOS = 'iOS';
+                    // Extract version number (e.g., "iOS 18.3.1" -> "18.3.1")
+                    const versionMatch = os.match(/(\d+(?:\.\d+)*)/);
+                    if (versionMatch) {
+                        version = versionMatch[1];
+                        // Group minor versions under major (e.g., 18.3.1 under 18.3)
+                        const majorMinor = version.split('.').slice(0, 2).join('.');
+                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
+                        if (!osGroups[baseOS][majorMinor]) osGroups[baseOS][majorMinor] = {};
+                        osGroups[baseOS][majorMinor][version] = count;
+                    } else {
+                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
+                        if (!osGroups[baseOS]['Other']) osGroups[baseOS]['Other'] = {};
+                        osGroups[baseOS]['Other'][os] = count;
+                    }
+                } else if (os.toLowerCase().includes('android')) {
+                    baseOS = 'Android';
+                    const versionMatch = os.match(/(\d+(?:\.\d+)*)/);
+                    if (versionMatch) {
+                        version = versionMatch[1];
+                        const majorMinor = version.split('.').slice(0, 2).join('.');
+                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
+                        if (!osGroups[baseOS][majorMinor]) osGroups[baseOS][majorMinor] = {};
+                        osGroups[baseOS][majorMinor][version] = count;
+                    } else {
+                        if (!osGroups[baseOS]) osGroups[baseOS] = {};
+                        if (!osGroups[baseOS]['Other']) osGroups[baseOS]['Other'] = {};
+                        osGroups[baseOS]['Other'][os] = count;
+                    }
+                } else {
+                    // Handle other OS types or unknown
+                    if (!osGroups['Other']) osGroups['Other'] = {};
+                    if (!osGroups['Other']['Other']) osGroups['Other']['Other'] = {};
+                    osGroups['Other']['Other'][os] = count;
+                }
+            });
+
+            // Clear existing table content
+            tbody.innerHTML = '';
+
+            // Create collapsible groups
+            Object.entries(osGroups).forEach(([baseOS, versionGroups]) => {
+                const baseOSClass = baseOS.toLowerCase();
+                const groupId = `os-group-${baseOSClass}`;
+                
+                // Calculate total for base OS
+                const totalCount = Object.values(versionGroups).reduce((sum, versions) => 
+                    sum + Object.values(versions).reduce((vSum, count) => vSum + count, 0), 0);
+                const totalPercentage = ((totalCount / devices.length) * 100).toFixed(1);
+                
+                // Create container for this OS group
+                const groupContainer = document.createElement('div');
+                groupContainer.className = 'os-version-group';
+                groupContainer.innerHTML = `
+                    <div class="os-version-header ${baseOSClass}" onclick="toggleOSGroup('${groupId}')">
+                        <div>
+                            <span style="font-weight: 600;">${baseOS}</span>
+                            <span style="margin-left: 8px; font-size: var(--text-sm); color: var(--neutral-600);">${totalCount} devices (${totalPercentage}%)</span>
+                        </div>
+                        <span class="os-version-toggle" id="${groupId}-toggle">▶</span>
+                    </div>
+                    <div class="os-version-content" id="${groupId}-content">
+                        <div class="os-version-items" id="${groupId}-items"></div>
+                    </div>
+                `;
+                
+                // Insert the group container into a table row
+                const groupRow = tbody.insertRow();
+                const groupCell = groupRow.insertCell(0);
+                groupCell.colSpan = 3;
+                groupCell.style.padding = '0';
+                groupCell.style.border = 'none';
+                groupCell.appendChild(groupContainer);
+                
+                // Populate the items container
+                const itemsContainer = groupContainer.querySelector(`#${groupId}-items`);
+                Object.entries(versionGroups).forEach(([majorMinor, versions]) => {
+                    Object.entries(versions).forEach(([fullVersion, count]) => {
+                        const percentage = ((count / devices.length) * 100).toFixed(1);
+                        const versionItem = document.createElement('div');
+                        versionItem.className = 'os-version-item';
+                        versionItem.innerHTML = `
+                            <span class="os-version-name">${fullVersion}</span>
+                            <div>
+                                <span class="os-version-count">${count}</span>
+                                <span class="os-version-percentage">${percentage}%</span>
+                            </div>
+                        `;
+                        itemsContainer.appendChild(versionItem);
+                    });
+                });
+            });
 
             // Add warning if too many unknowns
             const unknownCount = osCounts['Unknown'] || 0;
             const unknownPercentage = (unknownCount / devices.length) * 100;
-            
-            sortedOS.forEach(([os, count]) => {
-                const percentage = ((count / devices.length) * 100).toFixed(1);
-                const row = tbody.insertRow();
-                
-                const osCell = row.insertCell(0);
-                osCell.textContent = os;
-                
-                // Add visual indicator for unknown OS
-                if (os === 'Unknown' && unknownPercentage > 50) {
-                    osCell.style.color = '#dc3545';
-                    osCell.style.fontWeight = 'bold';
-                    osCell.title = 'High percentage of unknown OS detected. This may indicate incomplete data export.';
-                }
-                
-                row.insertCell(1).textContent = count;
-                row.insertCell(2).textContent = `${percentage}%`;
-            });
             
             // Add warning message if high unknown percentage
             if (unknownPercentage > 50) {
@@ -4694,7 +5013,7 @@
             } else if (yearsUntilEOL <= 2) {
                 return { status: `EOL in ${yearsUntilEOL} year${yearsUntilEOL > 1 ? 's' : ''}`, class: 'eol-warning' };
             } else {
-                return { status: `Supported until ${lifecycle.endOfLife}`, class: 'eol-good' };
+                return { status: 'Supported', class: 'eol-good' };
             }
         }
 
@@ -5412,69 +5731,9 @@
             }
         }
 
-        function autoFillCurrentCounts() {
-            // Get current device counts from the summary cards
-            const iosCount = parseInt(document.getElementById('iosTotal').textContent) || 0;
-            const androidCount = parseInt(document.getElementById('androidTotal').textContent) || 0;
-            
-            // Auto-fill the current month fields
-            const iosCurrent = document.getElementById('ios_current');
-            const androidCurrent = document.getElementById('android_current');
-            
-            if (iosCurrent) {
-                iosCurrent.value = iosCount;
-            }
-            if (androidCurrent) {
-                androidCurrent.value = androidCount;
-            }
-            
-            // Update the comparison table
-            updateMonthlyComparison();
-            
-            // Show success message
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = 'Filled!';
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 2000);
-        }
 
-        function clearMonthlyCounts() {
-            if (!confirm('Are you sure you want to clear all monthly count data? This action cannot be undone.')) {
-                return;
-            }
-            
-            const months = ['march2025', 'april2025', 'may2025', 'june2025'];
-            const platforms = ['ios', 'android'];
-            
-            // Clear all monthly input fields
-            platforms.forEach(platform => {
-                months.forEach(month => {
-                    const input = document.getElementById(`${platform}_${month}`);
-                    if (input) {
-                        input.value = '';
-                    }
-                });
-                
-                // Clear current month field
-                const currentInput = document.getElementById(`${platform}_current`);
-                if (currentInput) {
-                    currentInput.value = '';
-                }
-            });
-            
-            // Update the comparison table
-            updateMonthlyComparison();
-            
-            // Show success message
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = 'Cleared!';
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 2000);
-        }
+
+
 
         function debugCategories() {
             if (!window.lastProcessedData || !window.lastFoundColumns) {
