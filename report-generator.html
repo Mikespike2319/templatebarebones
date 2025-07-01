@@ -4283,8 +4283,16 @@
                         detectedOS = `iOS ${device.operatingSystem}`;
                     } else if (operatingSystem.includes('android')) {
                         platform = 'Android';
-                        // Format Android version properly
-                        const versionMatch = device.operatingSystem.match(/(\d+(?:\.\d+)*)/);
+                        // Format Android version properly - try multiple patterns
+                        let versionMatch = device.operatingSystem.match(/(\d+(?:\.\d+)*)/);
+                        if (!versionMatch) {
+                            // Try alternative patterns
+                            versionMatch = device.operatingSystem.match(/android\s*(\d+(?:\.\d+)*)/i);
+                        }
+                        if (!versionMatch) {
+                            // Try just finding any number
+                            versionMatch = device.operatingSystem.match(/(\d+)/);
+                        }
                         detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${device.operatingSystem}`;
                     } else if (operatingSystem.includes('windows')) {
                         platform = 'Windows';
@@ -4301,8 +4309,16 @@
                         detectedOS = `iOS ${device.osVersion}`;
                     } else if (osVersion.includes('android')) {
                         platform = 'Android';
-                        // Format Android version properly
-                        const versionMatch = device.osVersion.match(/(\d+(?:\.\d+)*)/);
+                        // Format Android version properly - try multiple patterns
+                        let versionMatch = device.osVersion.match(/(\d+(?:\.\d+)*)/);
+                        if (!versionMatch) {
+                            // Try alternative patterns
+                            versionMatch = device.osVersion.match(/android\s*(\d+(?:\.\d+)*)/i);
+                        }
+                        if (!versionMatch) {
+                            // Try just finding any number
+                            versionMatch = device.osVersion.match(/(\d+)/);
+                        }
                         detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${device.osVersion}`;
                     } else if (osVersion.includes('windows')) {
                         platform = 'Windows';
@@ -4327,8 +4343,12 @@
                         if (detectedOS === 'Unknown') {
                             detectedOS = 'Android (inferred from model)';
                         } else {
-                            // Format Android version properly
-                            const versionMatch = detectedOS.match(/(\d+(?:\.\d+)*)/);
+                            // Format Android version properly - try multiple patterns
+                            let versionMatch = detectedOS.match(/(\d+(?:\.\d+)*)/);
+                            if (!versionMatch) {
+                                // Try just finding any number
+                                versionMatch = detectedOS.match(/(\d+)/);
+                            }
                             detectedOS = versionMatch ? `Android OS ${versionMatch[1]}` : `Android ${detectedOS}`;
                         }
                     } else if (model.includes('surface') || model.includes('dell') || model.includes('hp') ||
@@ -4370,7 +4390,8 @@
                         model: device.model,
                         detectedOS: detectedOS,
                         platform: platform,
-                        deviceName: device.deviceName || device.displayName || 'Unknown'
+                        deviceName: device.deviceName || device.displayName || 'Unknown',
+                        rawData: JSON.stringify(device).substring(0, 200) + '...'
                     });
                 }
             });
