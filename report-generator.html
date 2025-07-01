@@ -4257,56 +4257,93 @@
             console.log('=== ENHANCED OS DETECTION DEBUG ===');
             console.log('Total devices for OS table:', devices.length);
 
-            // Enhanced OS detection with model-based inference
-            const osCounts = {};
+
+
+            // Group OS versions by platform using tracked platform data
+            const platformGroups = {
+                iOS: {},
+                Android: {},
+                Windows: {},
+                Other: {}
+            };
+
+            // Create a map to track platform for each OS string
+            const osPlatformMap = {};
+            
             devices.forEach((device, index) => {
                 let detectedOS = 'Unknown';
+                let platform = 'Unknown';
                 
-                // Priority 1: Try osVersion field
-                if (device.osVersion) {
+                // Priority 1: Try operatingSystem field first (more reliable)
+                if (device.operatingSystem) {
+                    const operatingSystem = device.operatingSystem.toString().toLowerCase();
+                    if (operatingSystem.includes('ios') || operatingSystem.includes('iphone') || operatingSystem.includes('ipad')) {
+                        platform = 'iOS';
+                        detectedOS = `iOS ${device.operatingSystem}`;
+                    } else if (operatingSystem.includes('android')) {
+                        platform = 'Android';
+                        detectedOS = `Android ${device.operatingSystem}`;
+                    } else if (operatingSystem.includes('windows')) {
+                        platform = 'Windows';
+                        detectedOS = `Windows ${device.operatingSystem}`;
+                    } else {
+                        detectedOS = device.operatingSystem.toString();
+                    }
+                } 
+                // Priority 2: Try osVersion field with platform inference
+                else if (device.osVersion) {
                     const osVersion = device.osVersion.toString().toLowerCase();
-                    if (osVersion.includes('ios')) {
+                    if (osVersion.includes('ios') || osVersion.includes('iphone') || osVersion.includes('ipad')) {
+                        platform = 'iOS';
                         detectedOS = `iOS ${device.osVersion}`;
                     } else if (osVersion.includes('android')) {
+                        platform = 'Android';
                         detectedOS = `Android ${device.osVersion}`;
                     } else if (osVersion.includes('windows')) {
+                        platform = 'Windows';
                         detectedOS = `Windows ${device.osVersion}`;
                     } else {
-                        // If osVersion doesn't contain the OS name, use the value as-is
+                        // If osVersion is just a number, we need to infer platform from model
                         detectedOS = device.osVersion.toString();
                     }
                 } 
-                // Priority 2: Try operatingSystem field  
-                else if (device.operatingSystem) {
-                    detectedOS = device.operatingSystem.toString();
-                } 
                 // Priority 3: Infer from model data (common for Intune exports)
-                else if (device.model) {
+                if (platform === 'Unknown' && device.model) {
                     const model = device.model.toString().toLowerCase();
                     if (model.includes('iphone') || model.includes('ipad') || model.includes('ipod')) {
-                        detectedOS = 'iOS (inferred from model)';
+                        platform = 'iOS';
+                        detectedOS = detectedOS === 'Unknown' ? 'iOS (inferred from model)' : `iOS ${detectedOS}`;
                     } else if (model.includes('samsung') || model.includes('pixel') || model.includes('lg') || 
                                model.includes('motorola') || model.includes('oneplus') || model.includes('huawei') ||
                                model.includes('xiaomi') || model.includes('htc') || model.includes('sony') ||
                                model.includes('nokia') || model.includes('tc5') || model.includes('tc7') ||
                                model.includes('zebra') || model.includes('mc9') || model.includes('mc3')) {
-                        detectedOS = 'Android (inferred from model)';
+                        platform = 'Android';
+                        detectedOS = detectedOS === 'Unknown' ? 'Android (inferred from model)' : `Android ${detectedOS}`;
                     } else if (model.includes('surface') || model.includes('dell') || model.includes('hp') ||
                                model.includes('lenovo') || model.includes('thinkpad') || model.includes('latitude')) {
-                        detectedOS = 'Windows (inferred from model)';
+                        platform = 'Windows';
+                        detectedOS = detectedOS === 'Unknown' ? 'Windows (inferred from model)' : `Windows ${detectedOS}`;
                     }
                 }
                 // Priority 4: Fallback detection from other device fields
-                else {
+                if (platform === 'Unknown') {
                     const deviceStr = JSON.stringify(device).toLowerCase();
                     if (deviceStr.includes('ios') || deviceStr.includes('iphone') || deviceStr.includes('ipad')) {
+                        platform = 'iOS';
                         detectedOS = 'iOS (detected from device data)';
                     } else if (deviceStr.includes('android')) {
+                        platform = 'Android';
                         detectedOS = 'Android (detected from device data)';
                     } else if (deviceStr.includes('windows')) {
+                        platform = 'Windows';
                         detectedOS = 'Windows (detected from device data)';
                     }
                 }
+                
+                // Store the platform for this OS string
+                osPlatformMap[detectedOS] = platform;
+                osCounts[detectedOS] = (osCounts[detectedOS] || 0) + 1;
                 
                 // Debug first few devices
                 if (index < 5) {
@@ -4315,30 +4352,24 @@
                         operatingSystem: device.operatingSystem,
                         model: device.model,
                         detectedOS: detectedOS,
+                        platform: platform,
                         deviceName: device.deviceName || device.displayName || 'Unknown'
                     });
                 }
-                
-                osCounts[detectedOS] = (osCounts[detectedOS] || 0) + 1;
             });
 
             console.log('Enhanced OS counts:', osCounts);
+            console.log('Platform mapping:', osPlatformMap);
             console.log('=== END ENHANCED OS DETECTION DEBUG ===');
 
-            // Group OS versions by platform
-            const platformGroups = {
-                iOS: {},
-                Android: {},
-                Windows: {},
-                Other: {}
-            };
-
+            // Group by platform using the tracked platform data
             Object.entries(osCounts).forEach(([os, count]) => {
-                if (os.toLowerCase().includes('ios')) {
+                const platform = osPlatformMap[os] || 'Other';
+                if (platform === 'iOS') {
                     platformGroups.iOS[os] = count;
-                } else if (os.toLowerCase().includes('android')) {
+                } else if (platform === 'Android') {
                     platformGroups.Android[os] = count;
-                } else if (os.toLowerCase().includes('windows')) {
+                } else if (platform === 'Windows') {
                     platformGroups.Windows[os] = count;
                 } else {
                     platformGroups.Other[os] = count;
