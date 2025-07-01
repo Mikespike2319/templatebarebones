@@ -4267,7 +4267,8 @@
                 Other: {}
             };
 
-            // Create a map to track platform for each OS string
+            // Initialize OS counts and platform mapping
+            const osCounts = {};
             const osPlatformMap = {};
             
             devices.forEach((device, index) => {
