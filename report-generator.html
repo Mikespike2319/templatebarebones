@@ -8,25 +8,57 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --tmh-blue: #003d5c;
-            --tmh-blue-light: #0056b3;
-            --tmh-blue-accent: #4a90b8;
-            --tmh-teal: #17a2b8;
-            --tmh-gray: #5a6c7d;
-            --tmh-gray-light: #8394a5;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --warning-color: #fd7e14;
-            --danger-color: #dc3545;
-            --border-color: #e3e9f0;
-            --light-bg: #f8f9fa;
-            --accent: #e9ecef;
-            --card-shadow: rgba(0, 61, 92, 0.08);
-            --text-primary: #333;
-            --text-secondary: #5a6c7d;
+            /* Professional color palette */
+            --primary-blue: #1e3a5f;
+            --secondary-blue: #2c5282;
+            --accent-blue: #3182ce;
+            --light-blue: #e6f2ff;
+            --success-green: #059669;
+            --warning-amber: #f59e0b;
+            --danger-red: #dc2626;
+            --neutral-50: #fafafa;
+            --neutral-100: #f4f4f5;
+            --neutral-200: #e4e4e7;
+            --neutral-300: #d4d4d8;
+            --neutral-400: #a1a1aa;
+            --neutral-500: #71717a;
+            --neutral-600: #52525b;
+            --neutral-700: #3f3f46;
+            --neutral-800: #27272a;
+            --neutral-900: #18181b;
+            
+            /* Spacing system */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Border radius */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
         }
 
         * {
@@ -36,912 +68,785 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--light-bg);
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            line-height: 1.5;
+            color: var(--neutral-900);
+            background-color: var(--neutral-50);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Modern header design */
         .header {
-            background: linear-gradient(135deg, #003d5c 0%, #0056b3 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
-            padding: 0.8rem 0;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: var(--space-lg) 0;
             position: relative;
+            box-shadow: var(--shadow-md);
         }
 
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.2rem;
-            font-weight: 300;
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .header p {
-            font-size: 0.9rem;
+        .header-left h1 {
+            font-size: var(--text-2xl);
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            letter-spacing: -0.025em;
+        }
+
+        .header-left p {
+            font-size: var(--text-sm);
             opacity: 0.9;
+            font-weight: 400;
         }
 
         .urgent-indicator {
-            position: absolute;
-            top: 0.8rem;
-            right: 1rem;
-            background: rgba(220, 53, 69, 0.9);
+            background: rgba(239, 68, 68, 0.9);
             color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-sm);
             font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
             cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 100px;
-            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         .urgent-indicator:hover {
-            background: rgba(220, 53, 69, 1);
+            background: rgba(239, 68, 68, 1);
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-md);
         }
 
         .urgent-indicator.no-urgent {
-            background: rgba(40, 167, 69, 0.9);
+            background: rgba(5, 150, 105, 0.9);
         }
 
         .urgent-indicator.no-urgent:hover {
-            background: rgba(40, 167, 69, 1);
+            background: rgba(5, 150, 105, 1);
         }
 
         .urgent-count {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-right: 0.3rem;
+            font-size: var(--text-lg);
+            font-weight: 700;
         }
 
+        /* Container and layout */
         .container {
-            max-width: 100%;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0.8rem;
+            padding: var(--space-xl) var(--space-lg);
         }
 
-        .auth-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Modern card design */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+            transition: all 0.2s ease;
         }
 
-        .auth-section h2 {
-            color: var(--tmh-blue);
-            margin-bottom: 20px;
+        .card:hover {
+            box-shadow: var(--shadow-md);
         }
 
-        .auth-input {
+        .card-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--neutral-200);
+            background-color: var(--neutral-50);
+        }
+
+        .card-header h2 {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--neutral-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .card-body {
+            padding: var(--space-lg);
+        }
+
+        /* Upload section redesign */
+        .upload-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--neutral-300);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            text-align: center;
+            background-color: var(--neutral-50);
+            transition: all 0.2s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-blue);
+            background-color: var(--light-blue);
+        }
+
+        .file-label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: var(--text-base);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-label:hover {
+            background-color: var(--secondary-blue);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .file-label svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Enhanced metric cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-card.ios::before {
+            background: var(--accent-blue);
+        }
+
+        .metric-card.android::before {
+            background: var(--success-green);
+        }
+
+        .metric-card.total::before {
+            background: var(--primary-blue);
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--light-blue);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .metric-card.android .metric-icon {
+            background: rgba(5, 150, 105, 0.1);
+        }
+
+        .metric-label {
+            font-size: var(--text-sm);
+            color: var(--neutral-600);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-value {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--neutral-900);
+            line-height: 1.2;
+            margin-bottom: var(--space-sm);
+        }
+
+        .metric-description {
+            font-size: var(--text-sm);
+            color: var(--neutral-500);
+            line-height: 1.4;
+        }
+
+        .metric-trend {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .trend-up {
+            color: var(--success-green);
+        }
+
+        .trend-down {
+            color: var(--danger-red);
+        }
+
+        /* Compliance section redesign */
+        .compliance-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .compliance-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .compliance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .compliance-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .compliance-percentage {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--success-green);
+        }
+
+        .compliance-bar-container {
+            background-color: var(--neutral-100);
+            height: 12px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .compliance-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green), #10b981);
+            transition: width 0.6s ease;
+            border-radius: var(--radius-xl);
+        }
+
+        .compliance-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--neutral-200);
+        }
+
+        .compliance-stat {
+            text-align: center;
+        }
+
+        .compliance-stat-value {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .compliance-stat-label {
+            font-size: var(--text-xs);
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Modern table design */
+        .data-table {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1em;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: var(--text-sm);
         }
 
-        .auth-status {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
+        .data-table th {
+            background-color: var(--neutral-50);
+            padding: var(--space-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--neutral-700);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: var(--text-xs);
+            border-bottom: 2px solid var(--neutral-200);
         }
 
-        .auth-status.success {
-            background-color: #d4edda;
-            color: #155724;
+        .data-table td {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--neutral-100);
+            color: var(--neutral-700);
         }
 
-        .auth-status.error {
-            background-color: #f8d7da;
-            color: #721c24;
+        .data-table tr:hover td {
+            background-color: var(--neutral-50);
         }
 
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-supported {
+            background-color: rgba(5, 150, 105, 0.1);
+            color: var(--success-green);
+        }
+
+        .status-security {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-amber);
+        }
+
+        .status-ended {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+        /* Action buttons redesign */
+        .actions-bar {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            padding: var(--space-lg);
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: var(--text-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-blue);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--neutral-50);
+            border-color: var(--neutral-400);
+        }
+
+        /* Section layouts */
+        .section {
+            background: white;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .section-header {
+            background: var(--neutral-50);
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--neutral-200);
+            font-weight: 600;
+            color: var(--neutral-800);
+            font-size: var(--text-base);
+        }
+
+        .section-body {
+            padding: var(--space-lg);
+        }
+
+        /* Responsive grid layouts */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        /* Footer redesign */
+        .footer {
+            background-color: var(--primary-blue);
+            color: white;
+            text-align: center;
+            padding: var(--space-xl);
+            margin-top: var(--space-2xl);
+            border-radius: var(--radius-lg);
+        }
+
+        .footer p {
+            margin: var(--space-xs) 0;
+            font-size: var(--text-sm);
+        }
+
+        /* Loading states */
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid var(--border-color);
+            border: 2px solid var(--neutral-200);
             border-radius: 50%;
-            border-top-color: var(--tmh-blue);
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 10px;
+            border-top-color: var(--accent-blue);
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .upload-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .upload-container {
-            margin-bottom: 15px;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-label {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: var(--tmh-blue);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            border: 2px solid var(--tmh-blue);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .file-label:hover {
-            background-color: var(--tmh-blue-light);
-            border-color: var(--tmh-blue-light);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        .file-name {
-            display: block;
-            margin-top: 10px;
-            color: var(--tmh-gray);
-        }
-
+        /* Status messages */
         .status-message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
             font-weight: 500;
-        }
-
-        .status-waiting {
-            background-color: var(--light-bg);
-            color: var(--tmh-gray);
-        }
-
-        .status-processing {
-            background-color: #fff3cd;
-            color: #856404;
+            font-size: var(--text-sm);
+            margin-top: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
         }
 
         .status-success {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(5, 150, 105, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(5, 150, 105, 0.2);
         }
 
         .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
-        .data-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .status-waiting {
+            background-color: var(--neutral-100);
+            color: var(--neutral-600);
+            border: 1px solid var(--neutral-200);
         }
 
-        .data-section h2 {
-            color: var(--tmh-blue);
-            margin-bottom: 20px;
+        .status-processing {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-amber);
+            border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
-        #reportContainer {
-            display: none;
-            margin-top: 30px;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 6px;
-            padding: 0.8rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-left: 3px solid #0056b3;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .card h3 {
-            color: #003d5c;
-            font-size: 0.75rem;
-            margin-bottom: 0.3rem;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            font-weight: 600;
-        }
-
-        .card .number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #0056b3;
-            margin-bottom: 0.2rem;
-            line-height: 1;
-        }
-
-        .card .description {
-            color: #666;
-            font-size: 0.7rem;
-            line-height: 1.4;
-        }
-
+        /* Responsive design */
         @media (max-width: 768px) {
-            .summary-cards {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.6rem;
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
             }
-            
-            .card {
-                padding: 0.6rem;
-            }
-            
-            .card .number {
-                font-size: 1.5rem;
-            }
-        }
 
-        @media (max-width: 480px) {
-            .summary-cards {
+            .metrics-grid {
                 grid-template-columns: 1fr;
             }
-        }
 
-        .section {
-            background: white;
-            border-radius: 6px;
-            margin-bottom: 0.8rem;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .section-header {
-            background: #003d5c;
-            color: white;
-            padding: 0.5rem 0.8rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .three-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .compliance-section {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .compliance-item {
-            margin-bottom: 20px;
-        }
-
-        .compliance-item h3 {
-            color: var(--tmh-blue);
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .compliance-bar {
-            background-color: #e9ecef;
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 1rem 0;
-            position: relative;
-        }
-
-        .compliance-fill {
-            background: linear-gradient(90deg, #28a745, #20c997);
-            height: 100%;
-            transition: width 0.5s ease;
-            border-radius: 10px;
-        }
-
-        .compliance-text {
-            position: absolute;
-            top: 50%;
-            left: 8px;
-            transform: translateY(-50%);
-            color: white;
-            font-weight: 600;
-            font-size: 0.7em;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .data-grid {
+            .compliance-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                justify-content: stretch;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
             }
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.7rem;
-        }
-
-        th, td {
-            padding: 0.3rem;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #003d5c;
-            text-transform: uppercase;
-            font-size: 0.65rem;
-            letter-spacing: 0.3px;
-        }
-
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-bottom: 24px;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            font-size: 0.97em;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 8px 12px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .data-table th {
-            background-color: #003d5c;
-            color: white;
-            font-weight: 600;
-            border-right: 1px solid #274472;
-        }
-
-        .data-table th:last-child,
-        .data-table td:last-child {
-            border-right: none;
-        }
-
-        .data-table tr {
-            transition: background 0.15s;
-        }
-
-        .data-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .data-table tr:hover {
-            background-color: #f1f5fa;
-        }
-
-        .data-table td {
-            vertical-align: middle;
-        }
-
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border-left: 4px solid var(--tmh-blue);
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: 2px solid transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .btn-primary {
-            background-color: var(--tmh-blue);
-            color: white;
-            border-color: var(--tmh-blue);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--tmh-blue-light);
-            border-color: var(--tmh-blue-light);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .btn-secondary {
-            background-color: white;
-            color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--secondary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .chart-container, .compliance-section {
-            border-left: 4px solid var(--tmh-blue);
-            margin-bottom: 28px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-        }
-
-        .chart-container h2, .compliance-section h2 {
-            display: flex;
-            align-items: center;
-            font-size: 1.25em;
-            color: var(--tmh-blue);
-            margin-bottom: 18px;
-            border-bottom: 1.5px solid var(--accent);
-            padding-bottom: 6px;
-            font-weight: 700;
-        }
-
-        .chart-container h2::before, .compliance-section h2::before {
-            content: "\1F4CA";
-            font-size: 1.1em;
-            margin-right: 10px;
-            opacity: 0.7;
-        }
-
-        .compliance-section h2::before {
-            content: "\2705";
-        }
-
-        /* Summary cards styling handled above - removed duplicate */
-
-        .footer {
-            background-color: #003d5c;
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            margin-top: 2rem;
-            border-radius: 10px;
-        }
-
-        .footer p {
-            margin: 5px 0;
-        }
-
+        /* Print styles */
         @media print {
             * {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-           
+
             body {
-                margin: 0;
-                padding: 0;
-                font-size: 9px;
-                line-height: 1.3;
-            }
-           
-            .header {
-                padding: 0.5rem 0;
-                page-break-inside: avoid;
-            }
-           
-            .header h1 {
-                font-size: 1.4rem;
-                margin-bottom: 0.1rem;
-            }
-           
-            .header p {
-                font-size: 0.8rem;
-            }
-           
-            .container {
-                padding: 0.4rem;
-                max-width: 100%;
-            }
-           
-            .summary-cards {
-                gap: 0.4rem;
-                margin-bottom: 0.6rem;
-            }
-           
-            .card {
-                padding: 0.4rem;
-                border-radius: 4px;
-            }
-           
-            .card h3 {
-                font-size: 0.6rem;
-                margin-bottom: 0.2rem;
-            }
-           
-            .card .number {
-                font-size: 1.2rem;
-                margin-bottom: 0.1rem;
-            }
-           
-            .card .description {
-                font-size: 0.55rem;
-            }
-           
-            .section {
-                margin-bottom: 0.4rem;
-                page-break-inside: avoid;
-            }
-           
-            .section-header {
-                padding: 0.3rem 0.5rem;
-                font-size: 0.7rem;
-            }
-           
-            table {
-                font-size: 0.6rem;
-            }
-           
-            th, td {
-                padding: 0.15rem 0.2rem;
-            }
-           
-            th {
-                font-size: 0.55rem;
-            }
-           
-            h4 {
-                font-size: 0.65rem;
-                margin-bottom: 0.3rem;
-            }
-           
-            h5 {
-                font-size: 0.6rem;
-                margin-bottom: 0.2rem;
-            }
-           
-            .trend-indicator, .status-supported, .status-security, .status-ended {
-                font-size: 0.5rem;
-                padding: 0.05rem 0.2rem;
-            }
-           
-            .compliance-bar {
-                height: 8px;
-                margin: 0.2rem 0;
-            }
-           
-            .footer {
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-                margin-top: 0;
-                padding: 0.3rem;
-                font-size: 0.6rem;
-            }
-           
-            .three-column {
-                gap: 0.6rem;
-            }
-           
-            .two-column {
-                gap: 0.6rem;
+                font-size: 10pt;
+                line-height: 1.4;
             }
 
-            .actions, .upload-section, .urgent-indicator {
+            .header {
+                padding: var(--space-md) 0;
+            }
+
+            .container {
+                padding: var(--space-md);
+            }
+
+            .actions-bar, .upload-section, .urgent-indicator {
                 display: none !important;
             }
-           
-            /* Ensure all content fits on one page */
+
+            .card, .section {
+                box-shadow: none;
+                border: 1px solid var(--neutral-300);
+                break-inside: avoid;
+            }
+
             @page {
                 size: A4;
                 margin: 0.5in;
             }
-           
-            /* Prevent page breaks within sections */
-            .section, .card {
-                page-break-inside: avoid;
-            }
         }
 
-        .report-summary {
-            background: var(--accent);
-            border-left: 4px solid var(--tmh-blue);
-            padding: 16px 18px;
-            margin-bottom: 18px;
-            font-size: 1.08em;
-            font-weight: 500;
-            border-radius: 7px;
-        }
-        .key-insights {
-            background: #fffbe6;
-            border-left: 4px solid #ffc107;
-            padding: 14px 18px;
-            margin-bottom: 18px;
-            font-size: 1em;
-            border-radius: 7px;
-            color: #856404;
-        }
-        .key-insights ul {
-            margin: 0 0 0 18px;
-            padding: 0;
-        }
-        .key-insights li {
-            margin-bottom: 4px;
-        }
-
-        .urgent-items {
-            margin: 15px 0;
-            padding: 12px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .urgent-item {
-            padding: 10px;
-            margin: 8px 0;
-            border-left: 4px solid #ccc;
-            background: #f8f9fa;
-        }
-
-        .urgent-item.high {
-            border-left-color: #dc3545;
-            background: #fff5f5;
-        }
-
-        .urgent-item.medium {
-            border-left-color: #ffc107;
-            background: #fff9e6;
-        }
-
-        .urgent-item.low {
-            border-left-color: #6c757d;
-            background: #f8f9fa;
-        }
-
-        .urgent-item h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-        }
-
-        .urgent-item .count {
-            font-size: 18px;
-            font-weight: bold;
-            color: #dc3545;
-        }
-
-        .urgent-item p {
-            margin: 5px 0 0 0;
-            color: #666;
-        }
-
-        .no-urgent-items {
-            text-align: center;
-            padding: 20px;
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        /* Modal styles removed to clean up layout */
-
-        .eol-warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .eol-critical {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        .eol-good {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-
-        .trend-indicator {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.2rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .trend-positive {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .trend-negative {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .trend-neutral {
-            background-color: #e2e3e5;
-            color: #495057;
-        }
-
-        .status-supported {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 0.2rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-security {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 0.2rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-ended {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 0.2rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
+        /* Existing styles continue below... */
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Device Inventory Report</h1>
-            <p>Tallahassee Memorial Hospital - IT Asset Management</p>
-            <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
-                <span class="urgent-count">0</span>
-                <span>Urgent Items</span>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Device Inventory Report</h1>
+                    <p>Tallahassee Memorial Hospital - IT Asset Management</p>
+                </div>
+                <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
+                    <span class="urgent-count">0</span>
+                    <span>Urgent Items</span>
+                </div>
             </div>
         </div>
 
-        <div class="upload-section">
-            <div class="upload-container">
-                <input type="file" id="fileInput" accept=".xlsx,.xlsm,.csv" class="file-input" />
-                <label for="fileInput" class="file-label">
-                    <i class="fas fa-file-excel"></i>
-                    Choose Excel or CSV File
-                </label>
+        <div class="upload-section card">
+            <div class="card-body">
+                <div class="upload-area">
+                    <input type="file" id="fileInput" accept=".xlsx,.xlsm,.csv" class="file-input" style="display: none;" />
+                    <label for="fileInput" class="file-label">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M12,12L8,16H10.5V19H13.5V16H16L12,12Z"/>
+                        </svg>
+                        Choose Excel or CSV File
+                    </label>
+                    <p style="margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--neutral-500);">
+                        Drop your file here or click to browse
+                    </p>
+                </div>
+                <span id="fileName" class="file-name" style="display: block; margin-top: var(--space-md); color: var(--neutral-600); font-weight: 500;"></span>
+                <div id="sheetSelectorContainer" style="display: none; margin-top: var(--space-lg); padding: var(--space-md); background-color: var(--neutral-50); border-radius: var(--radius-md); border: 1px solid var(--neutral-200);">
+                    <label for="sheetSelect" style="font-weight: 600; color: var(--primary-blue); margin-right: var(--space-sm);">Select Sheet:</label>
+                    <select id="sheetSelect" style="padding: var(--space-sm) var(--space-md); border: 2px solid var(--primary-blue); border-radius: var(--radius-sm); font-size: var(--text-sm); background-color: white; color: var(--primary-blue); font-weight: 500;"></select>
+                    <small style="display: block; margin-top: var(--space-sm); color: var(--neutral-500); font-style: italic;">
+                        Report will automatically regenerate when you select a different sheet
+                    </small>
+                </div>
+                <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
             </div>
-            <span id="fileName" class="file-name"></span>
-            <div id="sheetSelectorContainer" style="display: none; margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 6px; border: 1px solid var(--border-color);">
-                <label for="sheetSelect" style="font-weight: 600; color: var(--tmh-blue); margin-right: 10px;">Select Sheet:</label>
-                <select id="sheetSelect" style="padding: 8px 12px; border: 2px solid var(--tmh-blue); border-radius: 4px; font-size: 14px; background-color: white; color: var(--tmh-blue); font-weight: 500;"></select>
-                <small style="display: block; margin-top: 8px; color: var(--tmh-gray); font-style: italic;">
-                    Report will automatically regenerate when you select a different sheet
-                </small>
-            </div>
-            <div class="status-message status-waiting" id="statusMessage">Waiting for upload…</div>
         </div>
 
         <div id="reportContainer">
-            <div class="actions">
+            <div class="actions-bar">
                 <button class="btn btn-primary" onclick="regenerateReport()">Regenerate Report</button>
                 <button class="btn btn-primary" onclick="exportToPDF()">Export to PDF</button>
                 <button class="btn btn-secondary" onclick="debugCategories()">Debug Categories</button>
             </div>
             
-            <div class="summary-cards">
-                <div class="card">
-                    <h3>Apple Devices</h3>
-                    <div class="number" id="iosTotal">0</div>
-                    <div class="description">iPads, iPhones & iOS medical devices</div>
+            <div class="metrics-grid">
+                <div class="metric-card ios">
+                    <div class="metric-icon">
+                        <svg width="24" height="24" fill="#3182ce" viewBox="0 0 24 24">
+                            <path d="M17.05 20.28C16.06 21.42 14.99 22 13.83 22C12.85 22 12.15 21.64 11.74 21.42C11.33 21.21 11.12 21.1 10.75 21.1C10.34 21.1 10.1 21.22 9.69 21.43C9.27 21.65 8.56 22 7.59 22C6.31 22 5.09 21.35 4 19.91C2.74 18.24 2 16.11 2 14.1C2 10.4 4.41 8.5 6.75 8.5C7.69 8.5 8.41 8.82 8.88 9.05C9.18 9.19 9.41 9.31 9.63 9.31C9.89 9.31 10.13 9.19 10.46 9.03C10.95 8.79 11.66 8.45 12.68 8.45C13.93 8.45 15.05 9 15.9 10C14.6 10.72 14 12.13 14 13.65C14 15.26 14.67 16.67 16.18 17.4C15.84 18.5 15.27 19.56 14.5 20.5L17.05 20.28M13.88 5.5C13.88 6.81 13.37 7.94 12.54 8.8C11.57 9.79 10.36 10.24 9.25 10.13C9.23 10 9.22 9.83 9.22 9.64C9.22 8.39 9.8 7.23 10.62 6.42C11.43 5.61 12.59 5.1 13.73 5C13.77 5.04 13.8 5.09 13.83 5.14C13.86 5.26 13.88 5.38 13.88 5.5Z"/>
+                        </svg>
+                    </div>
+                    <div class="metric-label">Apple Devices</div>
+                    <div class="metric-value" id="iosTotal">0</div>
+                    <div class="metric-description">iPads, iPhones & iOS medical devices</div>
+                    <div class="metric-trend trend-up" id="iosTrend" style="display: none;">
+                        <span>↑</span>
+                        <span id="iosTrendValue">0%</span>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Android Devices</h3>
-                    <div class="number" id="androidTotal">0</div>
-                    <div class="description">Scanners, tablets & mobile android devices</div>
+                <div class="metric-card android">
+                    <div class="metric-icon">
+                        <svg width="24" height="24" fill="#059669" viewBox="0 0 24 24">
+                            <path d="M15.9,5C15.6,5 15.4,5.2 15.4,5.5V6.5C15.4,6.8 15.6,7 15.9,7C16.2,7 16.4,6.8 16.4,6.5V5.5C16.4,5.2 16.2,5 15.9,5M7.9,5C7.6,5 7.4,5.2 7.4,5.5V6.5C7.4,6.8 7.6,7 7.9,7C8.2,7 8.4,6.8 8.4,6.5V5.5C8.4,5.2 8.2,5 7.9,5M20,12.5C20,12.2 19.8,12 19.5,12H19V8C19,6.6 18.1,5.4 16.9,5.1L18.1,3.5C18.3,3.3 18.2,3 18,2.8C17.8,2.6 17.5,2.7 17.3,2.9L16,4.6C15.3,4.2 14.5,4 13.6,4H10.4C9.5,4 8.7,4.2 8,4.6L6.7,2.9C6.5,2.7 6.2,2.6 6,2.8C5.8,3 5.7,3.3 5.9,3.5L7.1,5.1C5.9,5.4 5,6.6 5,8V12H4.5C4.2,12 4,12.2 4,12.5V19.5C4,19.8 4.2,20 4.5,20H5C5.6,20 6,19.6 6,19V13H18V19C18,19.6 18.4,20 19,20H19.5C19.8,20 20,19.8 20,19.5V12.5M8,11C7.4,11 7,10.6 7,10C7,9.4 7.4,9 8,9C8.6,9 9,9.4 9,10C9,10.6 8.6,11 8,11M16,11C15.4,11 15,10.6 15,10C15,9.4 15.4,9 16,9C16.6,9 17,9.4 17,10C17,10.6 16.6,11 16,11Z"/>
+                    </svg>
+                    </div>
+                    <div class="metric-label">Android Devices</div>
+                    <div class="metric-value" id="androidTotal">0</div>
+                    <div class="metric-description">Scanners, tablets & mobile android devices</div>
+                    <div class="metric-trend trend-up" id="androidTrend" style="display: none;">
+                        <span>↑</span>
+                        <span id="androidTrendValue">0%</span>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Total Device Fleet</h3>
-                    <div class="number" id="totalDevices">0</div>
-                    <div class="description">Mobile devices only (Windows excluded)</div>
+                <div class="metric-card total">
+                    <div class="metric-icon">
+                        <svg width="24" height="24" fill="#1e3a5f" viewBox="0 0 24 24">
+                            <path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"/>
+                    </svg>
+                    </div>
+                    <div class="metric-label">Total Device Fleet</div>
+                    <div class="metric-value" id="totalDevices">0</div>
+                    <div class="metric-description">Mobile devices only (Windows excluded)</div>
                 </div>
             </div>
 
             <div class="compliance-section">
-                <h2>Compliance Status</h2>
-                <div class="compliance-item">
-                    <h3>iOS Compliance</h3>
-                    <div class="compliance-bar">
-                        <div id="iosCompliant" class="compliance-fill" style="width: 0%"></div>
-                        <div id="iosComplianceText" class="compliance-text">0%</div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Compliance Overview</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="compliance-grid">
+                            <div class="compliance-card">
+                                <div class="compliance-header">
+                                    <div class="compliance-title">iOS Compliance</div>
+                                    <div class="compliance-percentage" id="iosCompliancePercent">0%</div>
+                                </div>
+                                <div class="compliance-bar-container">
+                                    <div class="compliance-bar-fill" id="iosComplianceFill"></div>
+                                </div>
+                                <div class="compliance-stats">
+                                    <div class="compliance-stat">
+                                        <div class="compliance-stat-value" id="iosCompliantCount">0</div>
+                                        <div class="compliance-stat-label">Compliant</div>
+                                    </div>
+                                    <div class="compliance-stat">
+                                        <div class="compliance-stat-value" id="iosNonCompliantCount">0</div>
+                                        <div class="compliance-stat-label">Non-Compliant</div>
+                                    </div>
+                                    <div class="compliance-stat">
+                                        <div class="compliance-stat-value" id="iosUnknownCount">0</div>
+                                        <div class="compliance-stat-label">Unknown</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="compliance-card">
+                                <div class="compliance-header">
+                                    <div class="compliance-title">Android Compliance</div>
+                                    <div class="compliance-percentage" id="androidCompliancePercent">0%</div>
+                                </div>
+                                <div class="compliance-bar-container">
+                                    <div class="compliance-bar-fill" id="androidComplianceFill"></div>
+                                </div>
+                                <div class="compliance-stats">
+                                    <div class="compliance-stat">
+                                        <div class="compliance-stat-value" id="androidCompliantCount">0</div>
+                                        <div class="compliance-stat-label">Compliant</div>
+                                    </div>
+                                    <div class="compliance-stat">
+                                        <div class="compliance-stat-value" id="androidNonCompliantCount">0</div>
+                                        <div class="compliance-stat-label">Non-Compliant</div>
+                                    </div>
+                                    <div class="compliance-stat">
+                                        <div class="compliance-stat-value" id="androidUnknownCount">0</div>
+                                        <div class="compliance-stat-label">Unknown</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="compliance-item">
-                    <h3>Android Compliance</h3>
-                    <div class="compliance-bar">
-                        <div id="androidCompliant" class="compliance-fill" style="width: 0%"></div>
-                        <div id="androidComplianceText" class="compliance-text">0%</div>
-                    </div>
-                </div>
-
             </div>
 
-            <!-- Platform Trend Comparison (Simplified) -->
+            <!-- Platform Trend Comparison -->
             <div class="section">
                 <div class="section-header">Platform Trend Comparison</div>
-                <div style="padding: 0.8rem;">
+                <div class="section-body">
                     <!-- Monthly Count Input Fields -->
-                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                        <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">Monthly Device Counts</h4>
+                    <div class="card" style="margin-bottom: var(--space-lg); background: var(--neutral-50);">
+                        <div class="card-body">
+                            <h4 style="color: var(--primary-blue); margin-bottom: var(--space-md); font-size: var(--text-base); font-weight: 600;">Monthly Device Counts</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                             <!-- iOS Monthly Counts -->
                             <div>
-                                <h5 style="color: #0056b3; margin-bottom: 0.8rem; font-size: 0.8rem;">iOS Device Counts</h5>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.75rem;">
+                                <h5 style="color: var(--accent-blue); margin-bottom: var(--space-sm); font-size: var(--text-sm); font-weight: 600;">iOS Device Counts</h5>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
                                     <div>
-                                        <label for="ios_march2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">March 2025:</label>
-                                        <input type="number" id="ios_march2025" placeholder="Count" style="width: 100%; padding: 0.4rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.7rem;" onchange="updateMonthlyComparison()">
+                                        <label for="ios_march2025" style="display: block; margin-bottom: var(--space-xs); font-weight: 500; font-size: var(--text-sm); color: var(--neutral-700);">March 2025:</label>
+                                        <input type="number" id="ios_march2025" placeholder="Count" style="width: 100%; padding: var(--space-sm); border: 1px solid var(--neutral-300); border-radius: var(--radius-sm); font-size: var(--text-sm);" onchange="updateMonthlyComparison()">
                                     </div>
                                     <div>
                                         <label for="ios_april2025" style="display: block; margin-bottom: 0.2rem; font-weight: 600;">April 2025:</label>
@@ -991,12 +896,23 @@
                         </div>
                         
                         <!-- Action Buttons -->
-                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
-                            <button onclick="autoFillCurrentCounts()" style="padding: 0.5rem 1rem; background: #003d5c; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s ease;">Auto-Fill Current</button>
-                            <button onclick="clearMonthlyCounts()" style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s ease;">Clear All</button>
-                            <button onclick="exportHistoricalData()" style="padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s ease;">Export CSV</button>
+                        <div style="margin-top: var(--space-lg); display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+                            <button onclick="autoFillCurrentCounts()" class="btn btn-primary">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12"/>
+                                </svg>
+                                Auto-Fill Current
+                            </button>
+                            <button onclick="clearMonthlyCounts()" class="btn btn-secondary">Clear All</button>
+                            <button onclick="exportHistoricalData()" class="btn btn-primary" style="background-color: var(--success-green);">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                                </svg>
+                                Export CSV
+                            </button>
                         </div>
                     </div>
+                </div>
                     
                     <div id="monthlyComparison">
                         <!-- Platform comparison table will be populated here -->
@@ -1006,25 +922,31 @@
 
             <!-- Device Details & Lifecycle -->
             <div class="section">
-                <div class="section-header">Device Categories & Compliance Status</div>
-                <div class="three-column" style="padding: 0.8rem;">
-                    <div>
-                        <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">iOS Device Categories</h4>
-                        <table id="iosTable">
-                            <thead>
-                                <tr><th>Category</th><th>Count</th></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
-                            <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">iOS Compliance</h5>
-                            <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="iosCompliantCount">0</span> | <strong>Non-Compliant:</strong> <span id="iosNonCompliantCount">0</span></p>
-                            <div class="compliance-bar">
-                                <div class="compliance-fill" id="iosComplianceFill" style="width: 0%;"></div>
+                <div class="section-header">Device Categories & Lifecycle Status</div>
+                <div class="section-body">
+                    <div class="three-column">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 style="font-size: var(--text-base); font-weight: 600;">iOS Devices</h3>
                             </div>
-                            <p style="text-align: center; font-size: 0.7rem;"><strong><span id="iosCompliancePercent">0%</span> Compliance</strong></p>
+                            <div class="card-body">
+                                <table class="data-table" id="iosTable">
+                                    <thead>
+                                        <tr><th>Category</th><th>Count</th></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--neutral-200);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                                        <span style="font-size: var(--text-sm); color: var(--neutral-600);">Compliance Rate</span>
+                                        <span style="font-size: var(--text-lg); font-weight: 600; color: var(--success-green);" id="iosCompliancePercent2">0%</span>
+                                    </div>
+                                    <div class="compliance-bar-container">
+                                        <div class="compliance-bar-fill" id="iosComplianceFill2"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
                     <div>
                         <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">Android Device Categories</h4>
                         <table id="androidTable">
@@ -1036,8 +958,8 @@
                         <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
                             <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">Android Compliance</h5>
                             <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="androidCompliantCount">0</span> | <strong>Non-Compliant:</strong> <span id="androidNonCompliantCount">0</span></p>
-                            <div class="compliance-bar">
-                                <div class="compliance-fill" id="androidComplianceFill" style="width: 0%;"></div>
+                            <div class="compliance-bar-container">
+                                <div class="compliance-bar-fill" id="androidComplianceFill"></div>
                             </div>
                             <p style="text-align: center; font-size: 0.7rem;"><strong><span id="androidCompliancePercent">0%</span> Compliance</strong></p>
                         </div>
@@ -1056,7 +978,9 @@
 
             <!-- Windows ConfigMgr & Special Categories Section -->
             <div class="section" id="windowsSpecialSection" style="display: none;">
-                <div class="section-header">Windows & Special Categories</div>
+                <div class="section-header">
+                    <h2>Windows & Special Categories</h2>
+                </div>
                 <div class="two-column" style="padding: 0.8rem;">
                     <div>
                         <h4 style="color: #003d5c; margin-bottom: 0.5rem; font-size: 0.8rem;">ConfigMgr Managed Devices</h4>
@@ -1089,8 +1013,8 @@
                         <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
                             <h5 style="color: #003d5c; font-size: 0.75rem; margin-bottom: 0.3rem;">Windows Compliance</h5>
                             <p style="font-size: 0.7rem;"><strong>Compliant:</strong> <span id="windowsCompliantCount">0</span> | <strong>Unknown (ConfigMgr):</strong> <span id="windowsConfigMgrCount">0</span> | <strong>Non-Compliant:</strong> <span id="windowsNonCompliantCount">0</span></p>
-                            <div class="compliance-bar">
-                                <div class="compliance-fill" id="windowsComplianceFill" style="width: 0%;"></div>
+                            <div class="compliance-bar-container">
+                                <div class="compliance-bar-fill" id="windowsComplianceFill"></div>
                             </div>
                             <p style="text-align: center; font-size: 0.7rem;"><strong><span id="windowsCompliancePercent">0%</span> Intune Compliance</strong></p>
                         </div>
@@ -1100,8 +1024,10 @@
 
             <!-- Operating System Breakdown -->
             <div class="section">
-                <div class="section-header">Operating System Breakdown</div>
-                <div style="padding: 0.8rem;">
+                <div class="section-header">
+                    <h2>Operating System Breakdown</h2>
+                </div>
+                <div class="section-body">
                     <table class="data-table" id="osTable">
                         <thead>
                             <tr>
@@ -2394,7 +2320,7 @@
             const { jsPDF } = window.jspdf;
             
             // Hide action buttons before capture
-            const actionButtons = document.querySelector('.actions');
+            const actionButtons = document.querySelector('.actions-bar');
             const originalDisplay = actionButtons.style.display;
             actionButtons.style.display = 'none';
             
