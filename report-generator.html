@@ -1445,6 +1445,24 @@
             color: var(--neutral-600);
         }
 
+        .trend-empty {
+            background: transparent;
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        /* Future empty month styling */
+        .future-empty-row {
+            opacity: 0.6;
+            background: var(--neutral-50);
+        }
+
+        .future-empty {
+            color: var(--neutral-400);
+            font-style: italic;
+            text-align: center;
+        }
+
         .trend-analysis-section {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -3057,24 +3075,39 @@
                 if (index > 0) {
                     const prevTotal = monthlyInputs[index - 1].iosValue + monthlyInputs[index - 1].androidValue;
                     const change = total - prevTotal;
-                    if (change > 0) {
-                        trend = `<span class="trend-indicator trend-up">↑ +${change}</span>`;
-                    } else if (change < 0) {
-                        trend = `<span class="trend-indicator trend-down">↓ ${change}</span>`;
-                    } else if (total > 0 || prevTotal > 0) {
-                        trend = `<span class="trend-indicator trend-neutral">→ 0</span>`;
+                    
+                    // Only show trend if current month has data, or if it's a meaningful change
+                    if (total > 0 || (total === 0 && prevTotal > 0 && !month.isHistorical)) {
+                        if (change > 0) {
+                            trend = `<span class="trend-indicator trend-up">↑ +${change}</span>`;
+                        } else if (change < 0) {
+                            trend = `<span class="trend-indicator trend-down">↓ ${change}</span>`;
+                        } else {
+                            trend = `<span class="trend-indicator trend-neutral">→ 0</span>`;
+                        }
+                    } else if (total === 0 && prevTotal === 0) {
+                        // Both months empty, no trend
+                        trend = `<span class="trend-indicator trend-empty">—</span>`;
+                    } else {
+                        // Current month is empty but previous had data (future month scenario)
+                        trend = `<span class="trend-indicator trend-empty">—</span>`;
                     }
                 }
                 
+                // Determine if this is a future empty month
+                const isFutureEmpty = total === 0 && !month.isCurrent && !month.isHistorical;
+                const rowClass = isFutureEmpty ? 'future-empty-row' : '';
+                
+                row.className = rowClass;
                 row.innerHTML = `
                     <td class="month-cell ${month.isCurrent ? 'current' : ''}">${month.shortLabel}</td>
-                    <td class="editable-cell ${month.isHistorical ? 'readonly-cell' : ''}" 
+                    <td class="editable-cell ${month.isHistorical ? 'readonly-cell' : ''} ${isFutureEmpty ? 'future-empty' : ''}" 
                         data-month="${month.key}" data-platform="ios" 
-                        ${!month.isHistorical ? 'onclick="editCell(this)"' : ''}>${month.iosValue || ''}</td>
-                    <td class="editable-cell ${month.isHistorical ? 'readonly-cell' : ''}" 
+                        ${!month.isHistorical ? 'onclick="editCell(this)"' : ''}>${month.iosValue || (isFutureEmpty ? '—' : '')}</td>
+                    <td class="editable-cell ${month.isHistorical ? 'readonly-cell' : ''} ${isFutureEmpty ? 'future-empty' : ''}" 
                         data-month="${month.key}" data-platform="android" 
-                        ${!month.isHistorical ? 'onclick="editCell(this)"' : ''}>${month.androidValue || ''}</td>
-                    <td class="total-cell">${total || ''}</td>
+                        ${!month.isHistorical ? 'onclick="editCell(this)"' : ''}>${month.androidValue || (isFutureEmpty ? '—' : '')}</td>
+                    <td class="total-cell ${isFutureEmpty ? 'future-empty' : ''}">${total || (isFutureEmpty ? '—' : '')}</td>
                     <td class="trend-col">${trend}</td>
                 `;
                 
