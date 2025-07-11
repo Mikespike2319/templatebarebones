@@ -3297,6 +3297,19 @@
 
         // HTML export function optimized for crystal clear PDF export
         function exportToHTML(templateType = 'detailed') {
+            console.log('Export function called with templateType:', templateType);
+            
+            // Check if any data has been uploaded and processed
+            const iosTotal = parseInt(document.getElementById('iosTotal')?.textContent || '0');
+            const androidTotal = parseInt(document.getElementById('androidTotal')?.textContent || '0');
+            const totalDevices = parseInt(document.getElementById('totalDevices')?.textContent || '0');
+            
+            // If no data has been processed (all values are 0), show error
+            if (iosTotal === 0 && androidTotal === 0 && totalDevices === 0) {
+                alert('No data available to export. Please upload and process a device inventory file first.');
+                return;
+            }
+            
             // Create a copy of the current document
             const reportContainer = document.getElementById('reportContainer');
             if (!reportContainer) {
@@ -3306,7 +3319,14 @@
 
             // Get current report data
             const reportData = getCurrentReportData();
+            console.log('Report data:', reportData);
             
+            // Additional validation
+            if (!reportData || (reportData.iosTotal === 0 && reportData.androidTotal === 0)) {
+                alert('No valid data found to export. Please ensure data has been processed correctly.');
+                return;
+            }
+
             // Create a new document for export
             const exportDoc = document.implementation.createHTMLDocument('TMH Device Report');
             
@@ -3352,13 +3372,14 @@
             
             // Generate HTML based on template type
             if (templateType === 'executive') {
-                generateExecutiveHTML(exportBody, reportData);
+                generateExecutiveHTML(exportDoc, exportBody, reportData);
             } else {
-                generateDetailedHTML(exportBody, reportData);
+                generateDetailedHTML(exportDoc, exportBody, reportData);
             }
             
             // Convert to HTML string
             const htmlString = `<!DOCTYPE html>\n${exportDoc.documentElement.outerHTML}`;
+            console.log('HTML string generated, length:', htmlString.length);
             
             // Create and download the file
             const blob = new Blob([htmlString], { type: 'text/html;charset=utf-8' });
@@ -3367,6 +3388,7 @@
             link.href = url;
             const fileName = templateType === 'executive' ? 'TMH_Executive_Report' : 'TMH_Device_Report';
             link.download = `${fileName}_${new Date().toISOString().split('T')[0]}.html`;
+            console.log('Downloading file:', link.download);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -3379,7 +3401,7 @@
 
         // Function to get current report data
         function getCurrentReportData() {
-            return {
+            const data = {
                 iosTotal: parseInt(document.getElementById('iosTotal')?.textContent || '0'),
                 androidTotal: parseInt(document.getElementById('androidTotal')?.textContent || '0'),
                 totalDevices: parseInt(document.getElementById('totalDevices')?.textContent || '0'),
@@ -3394,12 +3416,16 @@
                 androidCompliancePercent: document.getElementById('androidCompliancePercent')?.textContent || '0%',
                 generatedDate: new Date().toLocaleString()
             };
+            console.log('getCurrentReportData result:', data);
+            return data;
         }
 
         // Function to generate detailed HTML (based on tmh_device_report-2.html template)
-        function generateDetailedHTML(exportBody, reportData) {
+        function generateDetailedHTML(exportDoc, exportBody, reportData) {
+            console.log('Generating detailed HTML with data:', reportData);
+            
             // Add template-specific styles
-            const templateStyles = exportBody.createElement('style');
+            const templateStyles = exportDoc.createElement('style');
             templateStyles.textContent = `
                 * {
                     margin: 0;
@@ -3554,7 +3580,7 @@
             exportBody.head.appendChild(templateStyles);
             
             // Add header
-            const header = exportBody.createElement('div');
+            const header = exportDoc.createElement('div');
             header.className = 'header';
             header.innerHTML = `
                 <h1>TMH Device Inventory Report</h1>
@@ -3563,11 +3589,11 @@
             exportBody.appendChild(header);
             
             // Create container
-            const container = exportBody.createElement('div');
+            const container = exportDoc.createElement('div');
             container.className = 'container';
             
             // Add summary cards
-            const summaryCards = exportBody.createElement('div');
+            const summaryCards = exportDoc.createElement('div');
             summaryCards.className = 'summary-cards';
             summaryCards.innerHTML = `
                 <div class="card">
@@ -3590,7 +3616,7 @@
             container.appendChild(summaryCards);
             
             // Add compliance section
-            const complianceSection = exportBody.createElement('div');
+            const complianceSection = exportDoc.createElement('div');
             complianceSection.className = 'compliance-section';
             complianceSection.innerHTML = `
                 <div class="compliance-card">
@@ -3637,7 +3663,7 @@
             container.appendChild(complianceSection);
             
             // Add footer
-            const footer = exportBody.createElement('div');
+            const footer = exportDoc.createElement('div');
             footer.className = 'footer';
             footer.innerHTML = `
                 © 2025 Tallahassee Memorial Hospital - IT Asset Management Report
@@ -3645,12 +3671,15 @@
             container.appendChild(footer);
             
             exportBody.appendChild(container);
+            console.log('Detailed HTML generation completed');
         }
 
         // Function to generate executive HTML (based on tmh_executive_report-4.html template)
-        function generateExecutiveHTML(exportBody, reportData) {
+        function generateExecutiveHTML(exportDoc, exportBody, reportData) {
+            console.log('Generating executive HTML with data:', reportData);
+            
             // Add template-specific styles
-            const templateStyles = exportBody.createElement('style');
+            const templateStyles = exportDoc.createElement('style');
             templateStyles.textContent = `
                 * {
                     margin: 0;
@@ -3839,7 +3868,7 @@
             exportBody.head.appendChild(templateStyles);
             
             // Add header
-            const header = exportBody.createElement('div');
+            const header = exportDoc.createElement('div');
             header.className = 'header';
             header.innerHTML = `
                 <h1>Device Compliance & Lifecycle Report</h1>
@@ -3848,11 +3877,11 @@
             exportBody.appendChild(header);
             
             // Create container
-            const container = exportBody.createElement('div');
+            const container = exportDoc.createElement('div');
             container.className = 'container';
             
             // Add executive summary
-            const executiveSummary = exportBody.createElement('div');
+            const executiveSummary = exportDoc.createElement('div');
             executiveSummary.style.cssText = 'background: #f8f9fa; padding: 10px; margin-bottom: 15px; border-radius: 6px;';
             executiveSummary.innerHTML = `
                 <p style="font-size: 11px; margin: 0; color: #444; line-height: 1.4;">
@@ -3862,7 +3891,7 @@
             container.appendChild(executiveSummary);
             
             // Add summary cards
-            const summaryCards = exportBody.createElement('div');
+            const summaryCards = exportDoc.createElement('div');
             summaryCards.className = 'summary-cards';
             summaryCards.innerHTML = `
                 <div class="card">
@@ -3885,7 +3914,7 @@
             container.appendChild(summaryCards);
             
             // Add compliance section
-            const complianceSection = exportBody.createElement('div');
+            const complianceSection = exportDoc.createElement('div');
             complianceSection.className = 'compliance-section';
             complianceSection.innerHTML = `
                 <div class="compliance-card">
@@ -3924,7 +3953,7 @@
             container.appendChild(complianceSection);
             
             // Add footer
-            const footer = exportBody.createElement('div');
+            const footer = exportDoc.createElement('div');
             footer.className = 'footer';
             footer.innerHTML = `
                 © 2025 Tallahassee Memorial Hospital - IT Asset Management Report
@@ -3932,6 +3961,7 @@
             container.appendChild(footer);
             
             exportBody.appendChild(container);
+            console.log('Executive HTML generation completed');
         }
 
         // Initialize layout mode on page load
@@ -3960,6 +3990,12 @@
             const androidTotal = parseInt(document.getElementById('androidTotal').textContent) || 0;
             
             console.log('Auto-fill called with:', { iosTotal, androidTotal });
+            
+            // Check if any data has been processed
+            if (iosTotal === 0 && androidTotal === 0) {
+                alert('No data available to auto-fill. Please upload and process a device inventory file first.');
+                return;
+            }
             
             // Make sure we have monthly inputs generated
             if (!monthlyInputs || monthlyInputs.length === 0) {
@@ -6430,673 +6466,6 @@
         }
 
         /* Modal-related functions removed to clean up layout - functionality can be re-added if needed */
-
-
-
-
-
-        // Historical Inventory Tracking Functions
-        function saveHistoricalData() {
-            // Check if we have any data in the monthly tracker
-            let hasData = false;
-            
-            monthlyInputs.forEach(month => {
-                if ((month.iosValue && month.iosValue > 0) || (month.androidValue && month.androidValue > 0)) {
-                    hasData = true;
-                }
-            });
-            
-            if (!hasData) {
-                alert('Please enter at least one month of data in the monthly tracker before saving.');
-                return;
-            }
-            
-            // Save monthly data to localStorage
-            saveMonthlyData();
-            
-            // Show success message
-            const saveButton = event.target;
-            const originalText = saveButton.textContent;
-            saveButton.textContent = '✅ Saved!';
-            saveButton.style.background = '#28a745';
-            setTimeout(() => {
-                saveButton.textContent = originalText;
-                saveButton.style.background = '#003d5c';
-            }, 2000);
-        }
-
-        function loadHistoricalDataOld() {
-            // This function is deprecated - using dynamic monthly system instead
-            console.log('Old loadHistoricalData function called - redirecting to dynamic system');
-            if (monthlyInputs && monthlyInputs.length > 0) {
-                populateMonthlyTable();
-                updateMonthlyComparison();
-            } else {
-                generateMonthlyInputs();
-            }
-        }
-
-        function updateInventoryTrends() {
-            const months = [
-                { id: 'march2025', label: 'Mar 2025' },
-                { id: 'april2025', label: 'Apr 2025' },
-                { id: 'may2025', label: 'May 2025' },
-                { id: 'june2025', label: 'Jun 2025' }
-            ];
-            const platforms = ['ios', 'android'];
-            
-            const trendsContainer = document.getElementById('inventoryTrends');
-            const platformData = {};
-            let maxValue = 0;
-            
-            // Collect data for each platform
-            platforms.forEach(platform => {
-                platformData[platform] = [];
-                months.forEach(month => {
-                    const elementId = `${platform}_${month.id}`;
-                    const element = document.getElementById(elementId);
-                    if (element && element.value && element.value.trim() !== '') {
-                        const numValue = parseInt(element.value);
-                        platformData[platform].push({ label: month.label, value: numValue });
-                        maxValue = Math.max(maxValue, numValue);
-                    }
-                });
-                
-                // Add current month data if available
-                const currentElement = document.getElementById(`${platform}_current`);
-                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
-                    const numValue = parseInt(currentElement.value);
-                    platformData[platform].push({ label: 'Current', value: numValue });
-                    maxValue = Math.max(maxValue, numValue);
-                }
-            });
-            
-            if (Object.values(platformData).every(data => data.length === 0)) {
-                trendsContainer.innerHTML = '<p style="text-align: center; color: #6c757d; margin-top: 3rem; font-style: italic;">Platform trend data is pre-loaded. Click "💾 Save Trends" to see charts.</p>';
-                return;
-            }
-            
-            let chartHTML = '<h5 style="margin-bottom: 1rem; color: #003d5c;">Platform Trend Analysis</h5>';
-            
-            // Create side-by-side charts for iOS and Android
-            chartHTML += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">';
-            
-            // iOS Chart
-            if (platformData.ios.length > 0) {
-                chartHTML += '<div style="background: #f0f7ff; padding: 0.8rem; border-radius: 6px; border-left: 4px solid #0056b3;">';
-                chartHTML += '<h6 style="color: #0056b3; margin-bottom: 0.8rem; font-size: 0.8rem;">🍎 iOS Devices</h6>';
-                chartHTML += '<div style="display: flex; align-items: end; height: 100px; gap: 4px;">';
-                
-                platformData.ios.forEach((item, index) => {
-                    const height = (item.value / maxValue) * 100;
-                    const isCurrentMonth = item.label === 'Current';
-                    const barColor = isCurrentMonth ? '#28a745' : '#0056b3';
-                    
-                    chartHTML += `
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                            <div style="background: ${barColor}; width: 100%; height: ${height}%; min-height: 5px; border-radius: 3px 3px 0 0; margin-bottom: 3px; display: flex; align-items: end; justify-content: center; color: white; font-size: 0.6rem; font-weight: bold; padding: 1px;">
-                                ${item.value}
-                            </div>
-                            <div style="font-size: 0.5rem; color: #6c757d; text-align: center; writing-mode: vertical-rl; text-orientation: mixed;">
-                                ${item.label}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                chartHTML += '</div>';
-                
-                // iOS trend summary
-                if (platformData.ios.length > 1) {
-                    const firstValue = platformData.ios[0].value;
-                    const lastValue = platformData.ios[platformData.ios.length - 1].value;
-                    const change = lastValue - firstValue;
-                    const changePercent = ((change / firstValue) * 100).toFixed(1);
-                    const changeColor = change > 0 ? '#28a745' : change < 0 ? '#dc3545' : '#6c757d';
-                    const changeIcon = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
-                    
-                    chartHTML += `
-                        <div style="margin-top: 0.5rem; font-size: 0.7rem; color: ${changeColor}; font-weight: bold;">
-                            ${changeIcon} ${change > 0 ? '+' : ''}${change} (${changePercent}%)
-                        </div>
-                    `;
-                }
-                
-                chartHTML += '</div>';
-            }
-            
-            // Android Chart
-            if (platformData.android.length > 0) {
-                chartHTML += '<div style="background: #f0fff4; padding: 0.8rem; border-radius: 6px; border-left: 4px solid #28a745;">';
-                chartHTML += '<h6 style="color: #28a745; margin-bottom: 0.8rem; font-size: 0.8rem;">🤖 Android Devices</h6>';
-                chartHTML += '<div style="display: flex; align-items: end; height: 100px; gap: 4px;">';
-                
-                platformData.android.forEach((item, index) => {
-                    const height = (item.value / maxValue) * 100;
-                    const isCurrentMonth = item.label === 'Current';
-                    const barColor = isCurrentMonth ? '#0056b3' : '#28a745';
-                    
-                    chartHTML += `
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                            <div style="background: ${barColor}; width: 100%; height: ${height}%; min-height: 5px; border-radius: 3px 3px 0 0; margin-bottom: 3px; display: flex; align-items: end; justify-content: center; color: white; font-size: 0.6rem; font-weight: bold; padding: 1px;">
-                                ${item.value}
-                            </div>
-                            <div style="font-size: 0.5rem; color: #6c757d; text-align: center; writing-mode: vertical-rl; text-orientation: mixed;">
-                                ${item.label}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                chartHTML += '</div>';
-                
-                // Android trend summary
-                if (platformData.android.length > 1) {
-                    const firstValue = platformData.android[0].value;
-                    const lastValue = platformData.android[platformData.android.length - 1].value;
-                    const change = lastValue - firstValue;
-                    const changePercent = ((change / firstValue) * 100).toFixed(1);
-                    const changeColor = change > 0 ? '#28a745' : change < 0 ? '#dc3545' : '#6c757d';
-                    const changeIcon = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
-                    
-                    chartHTML += `
-                        <div style="margin-top: 0.5rem; font-size: 0.7rem; color: ${changeColor}; font-weight: bold;">
-                            ${changeIcon} ${change > 0 ? '+' : ''}${change} (${changePercent}%)
-                        </div>
-                    `;
-                }
-                
-                chartHTML += '</div>';
-            }
-            
-            chartHTML += '</div>';
-            
-            // Overall comparison
-            if (platformData.ios.length > 0 && platformData.android.length > 0) {
-                chartHTML += `
-                    <div style="padding: 0.8rem; background: #f8fafb; border-radius: 4px; border-left: 4px solid #003d5c;">
-                        <div style="font-size: 0.8rem; color: #003d5c; font-weight: 600; margin-bottom: 0.5rem;">Platform Comparison:</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.7rem;">
-                            <div>iOS: ${platformData.ios[platformData.ios.length - 1]?.value || 'N/A'} devices</div>
-                            <div>Android: ${platformData.android[platformData.android.length - 1]?.value || 'N/A'} devices</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            trendsContainer.innerHTML = chartHTML;
-        }
-
-        function updateCFOTrendTables() {
-            const months = [
-                { id: 'march2025', label: 'Mar' },
-                { id: 'april2025', label: 'Apr' },
-                { id: 'may2025', label: 'May' },
-                { id: 'june2025', label: 'Jun' }
-            ];
-            const platforms = ['ios', 'android'];
-            
-            platforms.forEach(platform => {
-                const tableId = `${platform}TrendTable`;
-                const tbody = document.querySelector(`#${tableId} tbody`);
-                if (!tbody) return;
-                
-                let tableHTML = '';
-                let previousValue = null;
-                
-                months.forEach(month => {
-                    const elementId = `${platform}_${month.id}`;
-                    const element = document.getElementById(elementId);
-                    
-                    if (element && element.value && element.value.trim() !== '') {
-                        const currentValue = parseInt(element.value);
-                        let changeHTML = '<span class="trend-indicator trend-neutral">—</span>';
-                        
-                        if (previousValue !== null) {
-                            const change = currentValue - previousValue;
-                            if (change > 0) {
-                                changeHTML = `<span class="trend-indicator trend-positive">+${change}</span>`;
-                            } else if (change < 0) {
-                                changeHTML = `<span class="trend-indicator trend-negative">${change}</span>`;
-                            } else {
-                                changeHTML = '<span class="trend-indicator trend-neutral">0</span>';
-                            }
-                        }
-                        
-                        tableHTML += `
-                            <tr>
-                                <td>${month.label}</td>
-                                <td>${currentValue.toLocaleString()}</td>
-                                <td>${changeHTML}</td>
-                            </tr>
-                        `;
-                        
-                        previousValue = currentValue;
-                    }
-                });
-                
-                // Add current month if available
-                const currentElement = document.getElementById(`${platform}_current`);
-                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
-                    const currentValue = parseInt(currentElement.value);
-                    let changeHTML = '<span class="trend-indicator trend-neutral">—</span>';
-                    
-                    if (previousValue !== null) {
-                        const change = currentValue - previousValue;
-                        if (change > 0) {
-                            changeHTML = `<span class="trend-indicator trend-positive">+${change}</span>`;
-                        } else if (change < 0) {
-                            changeHTML = `<span class="trend-indicator trend-negative">${change}</span>`;
-                        } else {
-                            changeHTML = '<span class="trend-indicator trend-neutral">0</span>';
-                        }
-                    }
-                    
-                    tableHTML += `
-                        <tr style="background: ${platform === 'ios' ? '#e3f2fd' : '#e8f5e8'}; font-weight: bold;">
-                            <td>Current</td>
-                            <td>${currentValue.toLocaleString()}</td>
-                            <td>${changeHTML}</td>
-                        </tr>
-                    `;
-                }
-                
-                tbody.innerHTML = tableHTML;
-            });
-        }
-
-        function updateMonthlyComparison() {
-            const months = [
-                { id: 'march2025', label: 'March 2025' },
-                { id: 'april2025', label: 'April 2025' },
-                { id: 'may2025', label: 'May 2025' },
-                { id: 'june2025', label: 'June 2025' }
-            ];
-            const platforms = ['ios', 'android'];
-            
-            const comparisonContainer = document.getElementById('monthlyComparison');
-            
-            let tableHTML = `
-                <h4 style="color: #003d5c; margin-bottom: 1rem; font-size: 0.9rem;">Platform Trend Comparison</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            `;
-            
-            // Create separate tables for iOS and Android
-            platforms.forEach(platform => {
-                const platformData = [];
-                const platformName = platform.toUpperCase();
-                const platformColor = platform === 'ios' ? '#0056b3' : '#28a745';
-                
-                // Collect platform data
-                months.forEach(month => {
-                    const elementId = `${platform}_${month.id}`;
-                    const element = document.getElementById(elementId);
-                    if (element && element.value && element.value.trim() !== '') {
-                        platformData.push({ 
-                            label: month.label, 
-                            value: parseInt(element.value), 
-                            id: elementId 
-                        });
-                    }
-                });
-                
-                // Add current month if available
-                const currentElement = document.getElementById(`${platform}_current`);
-                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
-                    platformData.push({ 
-                        label: 'Current Month', 
-                        value: parseInt(currentElement.value), 
-                        id: `${platform}_current` 
-                    });
-                }
-                
-                if (platformData.length > 0) {
-                    tableHTML += `
-                        <div>
-                            <h5 style="color: ${platformColor}; margin-bottom: 0.8rem; font-size: 0.8rem;">${platformName} Trends</h5>
-                            <table class="data-table" style="font-size: 0.7rem;">
-                                <thead>
-                                    <tr>
-                                        <th>Month</th>
-                                        <th>Count</th>
-                                        <th>Change</th>
-                                        <th>%</th>
-                                        <th>Trend</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
-                    
-                    platformData.forEach((item, index) => {
-                        let changeText = '-';
-                        let changePercent = '-';
-                        let trendIcon = '-';
-                        let changeColor = '#6c757d';
-                        
-                        if (index > 0) {
-                            const prevValue = platformData[index - 1].value;
-                            const change = item.value - prevValue;
-                            const percent = ((change / prevValue) * 100).toFixed(1);
-                            
-                            changeText = change > 0 ? `+${change}` : `${change}`;
-                            changePercent = change > 0 ? `+${percent}%` : `${percent}%`;
-                            
-                            if (change > 0) {
-                                changeColor = '#28a745';
-                                trendIcon = '↑';
-                            } else if (change < 0) {
-                                changeColor = '#dc3545';
-                                trendIcon = '↓';
-                            } else {
-                                changeColor = '#6c757d';
-                                trendIcon = '→';
-                            }
-                        }
-                        
-                        const isCurrentMonth = item.label === 'Current Month';
-                        const rowStyle = isCurrentMonth ? `background: ${platform === 'ios' ? '#e3f2fd' : '#e8f5e8'}; font-weight: bold;` : '';
-                        
-                        tableHTML += `
-                            <tr style="${rowStyle}">
-                                <td>${item.label.replace('2024', '').trim()}${isCurrentMonth ? ' *' : ''}</td>
-                                <td style="font-weight: bold;">${item.value.toLocaleString()}</td>
-                                <td style="color: ${changeColor}; font-weight: bold;">${changeText}</td>
-                                <td style="color: ${changeColor}; font-weight: bold;">${changePercent}</td>
-                                <td style="color: ${changeColor};">${trendIcon}</td>
-                            </tr>
-                        `;
-                    });
-                    
-                    tableHTML += `
-                            </tbody>
-                        </table>
-                    `;
-                    
-                    // Add platform summary
-                    if (platformData.length > 1) {
-                        const firstValue = platformData[0].value;
-                        const lastValue = platformData[platformData.length - 1].value;
-                        const totalChange = lastValue - firstValue;
-                        const totalChangePercent = ((totalChange / firstValue) * 100).toFixed(1);
-                        const changeColor = totalChange > 0 ? '#28a745' : totalChange < 0 ? '#dc3545' : '#6c757d';
-                        
-                        tableHTML += `
-                            <div style="margin-top: 0.5rem; padding: 0.5rem; background: ${platform === 'ios' ? '#f0f7ff' : '#f0fff4'}; border-radius: 4px; font-size: 0.7rem;">
-                                <strong>Period Change:</strong> 
-                                <span style="color: ${changeColor}; font-weight: bold;">
-                                    ${totalChange > 0 ? '+' : ''}${totalChange} (${totalChangePercent}%)
-                                </span>
-                            </div>
-                        `;
-                    }
-                    
-                    tableHTML += '</div>';
-                }
-            });
-            
-            tableHTML += '</div>';
-            
-            comparisonContainer.innerHTML = tableHTML;
-        }
-
-        function exportHistoricalData() {
-            const months = [
-                { id: 'march2025', label: 'March 2025' },
-                { id: 'april2025', label: 'April 2025' },
-                { id: 'may2025', label: 'May 2025' },
-                { id: 'june2025', label: 'June 2025' }
-            ];
-            const platforms = ['ios', 'android'];
-            
-            // Generate CSV content with platform-specific data
-            let csvContent = 'Month,iOS Count,iOS Change,iOS %,Android Count,Android Change,Android %\n';
-            
-            const platformData = {};
-            platforms.forEach(platform => {
-                platformData[platform] = [];
-                months.forEach(month => {
-                    const elementId = `${platform}_${month.id}`;
-                    const element = document.getElementById(elementId);
-                    if (element && element.value && element.value.trim() !== '') {
-                        platformData[platform].push({
-                            label: month.label,
-                            value: parseInt(element.value)
-                        });
-                    }
-                });
-                
-                // Add current month
-                const currentElement = document.getElementById(`${platform}_current`);
-                if (currentElement && currentElement.value && currentElement.value.trim() !== '') {
-                    platformData[platform].push({
-                        label: 'Current Month',
-                        value: parseInt(currentElement.value)
-                    });
-                }
-            });
-            
-            // Create rows based on maximum data length
-            const maxLength = Math.max(platformData.ios.length, platformData.android.length);
-            
-            for (let i = 0; i < maxLength; i++) {
-                const iosData = platformData.ios[i];
-                const androidData = platformData.android[i];
-                
-                let row = '';
-                
-                // Month label (use iOS data first, fall back to Android)
-                const monthLabel = iosData?.label || androidData?.label || '';
-                row += `"${monthLabel}",`;
-                
-                // iOS data
-                if (iosData) {
-                    const iosChange = i > 0 && platformData.ios[i-1] ? 
-                        iosData.value - platformData.ios[i-1].value : '';
-                    const iosPercent = i > 0 && platformData.ios[i-1] && platformData.ios[i-1].value > 0 ? 
-                        ((iosChange / platformData.ios[i-1].value) * 100).toFixed(1) + '%' : '';
-                    
-                    row += `${iosData.value},"${iosChange > 0 ? '+' + iosChange : iosChange}","${iosPercent}",`;
-                } else {
-                    row += ',,';
-                }
-                
-                // Android data
-                if (androidData) {
-                    const androidChange = i > 0 && platformData.android[i-1] ? 
-                        androidData.value - platformData.android[i-1].value : '';
-                    const androidPercent = i > 0 && platformData.android[i-1] && platformData.android[i-1].value > 0 ? 
-                        ((androidChange / platformData.android[i-1].value) * 100).toFixed(1) + '%' : '';
-                    
-                    row += `${androidData.value},"${androidChange > 0 ? '+' + androidChange : androidChange}","${androidPercent}"`;
-                } else {
-                    row += ',,';
-                }
-                
-                csvContent += row + '\n';
-            }
-            
-            // Create and download file
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'tmh-platform-trends.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Show success message
-            const exportButton = event.target;
-            const originalText = exportButton.textContent;
-            exportButton.textContent = 'Exported!';
-            setTimeout(() => {
-                exportButton.textContent = originalText;
-            }, 2000);
-        }
-
-        function clearHistoricalData() {
-            if (!confirm('Are you sure you want to clear all platform trend data? This action cannot be undone.')) {
-                return;
-            }
-            
-            const months = ['march2025', 'april2025', 'may2025', 'june2025'];
-            const platforms = ['ios', 'android'];
-            
-            // Clear all platform input fields
-            platforms.forEach(platform => {
-                months.forEach(month => {
-                    const input = document.getElementById(`${platform}_${month}`);
-                    if (input) {
-                        input.value = '';
-                    }
-                });
-            });
-            
-            // Clear localStorage
-            localStorage.removeItem('tmhPlatformTrends');
-            
-            // Update displays
-            updateInventoryTrends();
-            updateMonthlyComparison();
-            updateCFOTrendTables();
-            
-            // Show success message
-            const clearButton = event.target;
-            const originalText = clearButton.textContent;
-            clearButton.textContent = 'Cleared!';
-            setTimeout(() => {
-                clearButton.textContent = originalText;
-            }, 2000);
-        }
-
-        // Auto-load platform trend data on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Try to load saved platform trend data
-            const saved = localStorage.getItem('tmhPlatformTrends');
-            if (saved) {
-                try {
-                    const historicalData = JSON.parse(saved);
-                    const months = ['march2025', 'april2025', 'may2025', 'june2025'];
-                    const platforms = ['ios', 'android'];
-                    
-                    platforms.forEach(platform => {
-                        if (historicalData[platform]) {
-                            months.forEach(month => {
-                                const elementId = `${platform}_${month}`;
-                                const element = document.getElementById(elementId);
-                                if (element && historicalData[platform][month] !== undefined) {
-                                    element.value = historicalData[platform][month];
-                                }
-                            });
-                        }
-                    });
-                    
-                    updateInventoryTrends();
-                    updateMonthlyComparison();
-                    updateCFOTrendTables();
-                } catch (error) {
-                    console.log('Could not load platform trend data:', error);
-                }
-            }
-            
-            // Auto-save the pre-loaded data and populate CFO tables
-            setTimeout(() => {
-                saveHistoricalData();
-                updateCFOTrendTables();
-            }, 1000);
-            
-            // Add event listeners to platform trend inputs for real-time updates
-            const months = ['march2025', 'april2025', 'may2025', 'june2025'];
-            const platforms = ['ios', 'android'];
-            
-            platforms.forEach(platform => {
-                months.forEach(month => {
-                    const elementId = `${platform}_${month}`;
-                    const element = document.getElementById(elementId);
-                    if (element && historicalData[platform] && historicalData[platform][month] !== undefined) {
-                        element.value = historicalData[platform][month];
-                    }
-                });
-                
-                // Add current month if available
-                const currentElement = document.getElementById(`${platform}_current`);
-                if (currentElement && historicalData[platform] && historicalData[platform].current !== undefined) {
-                    currentElement.value = historicalData[platform].current;
-                }
-            });
-        });
-
-        // Debug function to log category information for troubleshooting
-        function logCategoryDebugInfo(devices, foundColumns) {
-            if (!foundColumns.includes('deviceCategoryKey')) {
-                console.log('No deviceCategoryKey column found - using fallback categorization');
-                return;
-            }
-            
-            console.log('\nCATEGORY DEBUG INFO:');
-            
-            // Get all unique categories
-            const allCategories = new Set();
-            const androidDevices = [];
-            const iosDevices = [];
-            const windowsDevices = [];
-            
-            devices.forEach(device => {
-                if (device.deviceCategoryKey) {
-                    allCategories.add(device.deviceCategoryKey.toString().trim());
-                }
-                
-                // Sort by OS for detailed breakdown
-                const deviceStr = JSON.stringify(device).toLowerCase();
-                if (deviceStr.includes('android')) {
-                    androidDevices.push(device);
-                } else if (deviceStr.includes('ios')) {
-                    iosDevices.push(device);
-                } else if (deviceStr.includes('windows')) {
-                    windowsDevices.push(device);
-                }
-            });
-            
-            console.log(`Total devices: ${devices.length}`);
-            console.log(`Total unique categories found: ${allCategories.size}`);
-            console.log(`Android devices: ${androidDevices.length}`);
-            console.log(`iOS devices: ${iosDevices.length}`);
-            console.log(`Windows devices: ${windowsDevices.length}`);
-            
-            // List all unique categories
-            console.log('\nAll detected categories:');
-            [...allCategories].sort().forEach(cat => {
-                console.log(`   • "${cat}"`);
-            });
-            
-            // Check for specific categories the user mentioned
-            const targetCategories = ['backstock', 'epic welcome', 'epic-welcome', 'epicwelcome'];
-            console.log('\nChecking for specific categories:');
-            targetCategories.forEach(target => {
-                const found = [...allCategories].filter(cat => 
-                    cat.toLowerCase().includes(target.toLowerCase())
-                );
-                if (found.length > 0) {
-                    console.log(`   Found "${target}": ${found.join(', ')}`);
-                } else {
-                    console.log(`   Not found: "${target}"`);
-                }
-            });
-            
-            // Android category breakdown
-            if (androidDevices.length > 0) {
-                console.log('\nAndroid device categories:');
-                const androidCats = {};
-                androidDevices.forEach(device => {
-                    const cat = device.deviceCategoryKey ? device.deviceCategoryKey.toString().trim() : '(no category)';
-                    androidCats[cat] = (androidCats[cat] || 0) + 1;
-                });
-                Object.entries(androidCats).sort((a, b) => b[1] - a[1]).forEach(([cat, count]) => {
-                    console.log(`   • "${cat}": ${count} devices`);
-                });
-            }
-        }
 
 
 
