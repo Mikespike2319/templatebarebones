@@ -239,6 +239,11 @@
             margin-top: var(--space-sm);
         }
         
+        .export-buttons {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
         .urgent-item {
             background: white;
             border-radius: var(--radius-lg);
@@ -2166,7 +2171,7 @@
                 max-height: none;
                 overflow: visible;
             }
-
+            
             /* Prevent page breaks */
             .section, .card, .metric-card {
                 page-break-inside: avoid;
@@ -2504,10 +2509,10 @@
                             </svg>
                             <span id="modeText">Portrait</span>
                         </button>
-                    </div>
-                    <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
-                        <span class="urgent-count">0</span>
-                        <span>Urgent Items</span>
+                </div>
+            <div id="urgentIndicator" class="urgent-indicator no-urgent" onclick="scrollToUrgentItems()" style="display: none;">
+                <span class="urgent-count">0</span>
+                <span>Urgent Items</span>
                     </div>
                 </div>
             </div>
@@ -2542,7 +2547,10 @@
         <div id="reportContainer">
             <div class="actions-bar">
                 <button class="btn btn-primary" onclick="regenerateReport()">Regenerate Report</button>
-                <button class="btn btn-primary" onclick="exportToHTML()">Export to HTML</button>
+                <div class="export-buttons">
+                    <button class="btn btn-primary" onclick="exportToHTML('detailed')">Export Detailed HTML</button>
+                    <button class="btn btn-secondary" onclick="exportToHTML('executive')">Export Executive HTML</button>
+                </div>
                 <button class="btn btn-secondary" onclick="debugCategories()">Debug Categories</button>
             </div>
             
@@ -3288,7 +3296,7 @@
         }
 
         // HTML export function optimized for crystal clear PDF export
-        function exportToHTML() {
+        function exportToHTML(templateType = 'detailed') {
             // Create a copy of the current document
             const reportContainer = document.getElementById('reportContainer');
             if (!reportContainer) {
@@ -3296,6 +3304,9 @@
                 return;
             }
 
+            // Get current report data
+            const reportData = getCurrentReportData();
+            
             // Create a new document for export
             const exportDoc = document.implementation.createHTMLDocument('TMH Device Report');
             
@@ -3305,7 +3316,7 @@
             
             // Copy meta tags and title
             const title = exportDoc.createElement('title');
-            title.textContent = 'TMH Device Inventory Report - ' + new Date().toLocaleDateString();
+            title.textContent = templateType === 'executive' ? 'TMH Executive Device Report' : 'TMH Device Inventory Report';
             exportHead.appendChild(title);
             
             // Copy viewport meta
@@ -3339,75 +3350,12 @@
             // Create the body content
             const exportBody = exportDoc.body;
             
-            // Add header
-            const header = exportDoc.createElement('div');
-            header.className = 'header';
-            header.innerHTML = `
-                <div class="header-content">
-                    <div class="header-left">
-                        <h1>Device Inventory Report</h1>
-                        <p>Tallahassee Memorial Hospital - IT Asset Management</p>
-                    </div>
-                    <div class="header-right">
-                        <div class="export-info">
-                            <span>Exported: ${new Date().toLocaleString()}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            exportBody.appendChild(header);
-            
-            // Create container
-            const container = exportDoc.createElement('div');
-            container.className = 'container';
-            
-            // Clone the report content (excluding action buttons)
-            const reportClone = reportContainer.cloneNode(true);
-            
-            // Remove action buttons from the clone
-            const actionBar = reportClone.querySelector('.actions-bar');
-            if (actionBar) {
-                actionBar.remove();
+            // Generate HTML based on template type
+            if (templateType === 'executive') {
+                generateExecutiveHTML(exportBody, reportData);
+            } else {
+                generateDetailedHTML(exportBody, reportData);
             }
-            
-            // Remove upload section if it exists
-            const uploadSection = reportClone.querySelector('.upload-section');
-            if (uploadSection) {
-                uploadSection.remove();
-            }
-            
-            // Remove sheet selector if it exists
-            const sheetSelector = reportClone.querySelector('#sheetSelectorContainer');
-            if (sheetSelector) {
-                sheetSelector.remove();
-            }
-            
-            // Remove historical inventory analysis buttons
-            const trackerActions = reportClone.querySelector('.tracker-actions');
-            if (trackerActions) {
-                trackerActions.remove();
-            }
-            
-            // Remove mode toggle button
-            const modeToggle = reportClone.querySelector('.mode-toggle');
-            if (modeToggle) {
-                modeToggle.remove();
-            }
-            
-            // Add the cleaned report content
-            container.appendChild(reportClone);
-            exportBody.appendChild(container);
-            
-            // Add footer
-            const footer = exportDoc.createElement('div');
-            footer.className = 'footer';
-            footer.innerHTML = `
-                <div class="footer-content">
-                    <span>TMH Device Inventory Report - Generated on ${new Date().toLocaleDateString()}</span>
-                    <span>Tallahassee Memorial Hospital - IT Asset Management</span>
-                </div>
-            `;
-            exportBody.appendChild(footer);
             
             // Convert to HTML string
             const htmlString = `<!DOCTYPE html>\n${exportDoc.documentElement.outerHTML}`;
@@ -3417,14 +3365,573 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `TMH_Device_Report_${new Date().toISOString().split('T')[0]}.html`;
+            const fileName = templateType === 'executive' ? 'TMH_Executive_Report' : 'TMH_Device_Report';
+            link.download = `${fileName}_${new Date().toISOString().split('T')[0]}.html`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
             
             // Show success message
-            showExportFeedback('HTML report exported successfully! Open in browser and use Print to PDF for crystal clear results.', 'success');
+            const templateName = templateType === 'executive' ? 'Executive' : 'Detailed';
+            showExportFeedback(`${templateName} HTML report exported successfully! Open in browser and use Print to PDF for crystal clear results.`, 'success');
+        }
+
+        // Function to get current report data
+        function getCurrentReportData() {
+            return {
+                iosTotal: parseInt(document.getElementById('iosTotal')?.textContent || '0'),
+                androidTotal: parseInt(document.getElementById('androidTotal')?.textContent || '0'),
+                totalDevices: parseInt(document.getElementById('totalDevices')?.textContent || '0'),
+                backstockTotal: parseInt(document.getElementById('backstockTotal')?.textContent || '0'),
+                iosCompliant: parseInt(document.getElementById('iosCompliantCount')?.textContent || '0'),
+                iosNonCompliant: parseInt(document.getElementById('iosNonCompliantCount')?.textContent || '0'),
+                iosUnknown: parseInt(document.getElementById('iosUnknownCount')?.textContent || '0'),
+                androidCompliant: parseInt(document.getElementById('androidCompliantCount')?.textContent || '0'),
+                androidNonCompliant: parseInt(document.getElementById('androidNonCompliantCount')?.textContent || '0'),
+                androidUnknown: parseInt(document.getElementById('androidUnknownCount')?.textContent || '0'),
+                iosCompliancePercent: document.getElementById('iosCompliancePercent')?.textContent || '0%',
+                androidCompliancePercent: document.getElementById('androidCompliancePercent')?.textContent || '0%',
+                generatedDate: new Date().toLocaleString()
+            };
+        }
+
+        // Function to generate detailed HTML (based on tmh_device_report-2.html template)
+        function generateDetailedHTML(exportBody, reportData) {
+            // Add template-specific styles
+            const templateStyles = exportBody.createElement('style');
+            templateStyles.textContent = `
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-size: 11px;
+                    line-height: 1.2;
+                    color: #333;
+                    background: white;
+                }
+                
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 15px;
+                }
+                
+                .header {
+                    text-align: center;
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background: linear-gradient(135deg, #2c5282, #2d3748);
+                    color: white;
+                    border-radius: 8px;
+                }
+                
+                .header h1 {
+                    font-size: 18px;
+                    margin-bottom: 5px;
+                }
+                
+                .header p {
+                    font-size: 12px;
+                    opacity: 0.9;
+                }
+                
+                .summary-cards {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+                
+                .card {
+                    background: #f8f9fa;
+                    padding: 12px;
+                    border-radius: 6px;
+                    text-align: center;
+                    border: 1px solid #e2e8f0;
+                }
+                
+                .card h3 {
+                    font-size: 10px;
+                    color: #666;
+                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .card .number {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #2d3748;
+                }
+                
+                .compliance-section {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 15px;
+                    margin-bottom: 15px;
+                }
+                
+                .compliance-card {
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 15px;
+                }
+                
+                .compliance-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
+                
+                .compliance-title {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #2d3748;
+                }
+                
+                .compliance-percentage {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
+                
+                .ios-percentage {
+                    color: #38a169;
+                }
+                
+                .android-percentage {
+                    color: #3182ce;
+                }
+                
+                .compliance-bars {
+                    display: flex;
+                    gap: 8px;
+                    margin-top: 10px;
+                }
+                
+                .compliance-item {
+                    text-align: center;
+                    flex: 1;
+                }
+                
+                .compliance-item .number {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 3px;
+                }
+                
+                .compliance-item .label {
+                    font-size: 9px;
+                    color: #666;
+                    text-transform: uppercase;
+                }
+                
+                .compliant { color: #38a169; }
+                .non-compliant { color: #e53e3e; }
+                .unknown { color: #a0aec0; }
+                
+                .footer {
+                    text-align: center;
+                    font-size: 10px;
+                    color: #666;
+                    margin-top: 15px;
+                    padding: 10px;
+                    background: #f8f9fa;
+                    border-radius: 6px;
+                }
+                
+                @media print {
+                    body { print-color-adjust: exact; }
+                    .container { padding: 10px; }
+                }
+            `;
+            exportBody.head.appendChild(templateStyles);
+            
+            // Add header
+            const header = exportBody.createElement('div');
+            header.className = 'header';
+            header.innerHTML = `
+                <h1>TMH Device Inventory Report</h1>
+                <p>Tallahassee Memorial Hospital - IT Asset Management | Generated on ${reportData.generatedDate}</p>
+            `;
+            exportBody.appendChild(header);
+            
+            // Create container
+            const container = exportBody.createElement('div');
+            container.className = 'container';
+            
+            // Add summary cards
+            const summaryCards = exportBody.createElement('div');
+            summaryCards.className = 'summary-cards';
+            summaryCards.innerHTML = `
+                <div class="card">
+                    <h3>Total iOS Devices</h3>
+                    <div class="number">${reportData.iosTotal}</div>
+                </div>
+                <div class="card">
+                    <h3>Total Android Devices</h3>
+                    <div class="number">${reportData.androidTotal}</div>
+                </div>
+                <div class="card">
+                    <h3>Total Device Count</h3>
+                    <div class="number">${reportData.totalDevices}</div>
+                </div>
+                <div class="card">
+                    <h3>Backstock Devices</h3>
+                    <div class="number">${reportData.backstockTotal}</div>
+                </div>
+            `;
+            container.appendChild(summaryCards);
+            
+            // Add compliance section
+            const complianceSection = exportBody.createElement('div');
+            complianceSection.className = 'compliance-section';
+            complianceSection.innerHTML = `
+                <div class="compliance-card">
+                    <div class="compliance-header">
+                        <div class="compliance-title">iOS Compliance</div>
+                        <div class="compliance-percentage ios-percentage">${reportData.iosCompliancePercent}</div>
+                    </div>
+                    <div class="compliance-bars">
+                        <div class="compliance-item">
+                            <div class="number compliant">${reportData.iosCompliant}</div>
+                            <div class="label">Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number non-compliant">${reportData.iosNonCompliant}</div>
+                            <div class="label">Non-Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number unknown">${reportData.iosUnknown}</div>
+                            <div class="label">Unknown</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-header">
+                        <div class="compliance-title">Android Compliance</div>
+                        <div class="compliance-percentage android-percentage">${reportData.androidCompliancePercent}</div>
+                    </div>
+                    <div class="compliance-bars">
+                        <div class="compliance-item">
+                            <div class="number compliant">${reportData.androidCompliant}</div>
+                            <div class="label">Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number non-compliant">${reportData.androidNonCompliant}</div>
+                            <div class="label">Non-Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number unknown">${reportData.androidUnknown}</div>
+                            <div class="label">Unknown</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(complianceSection);
+            
+            // Add footer
+            const footer = exportBody.createElement('div');
+            footer.className = 'footer';
+            footer.innerHTML = `
+                © 2025 Tallahassee Memorial Hospital - IT Asset Management Report
+            `;
+            container.appendChild(footer);
+            
+            exportBody.appendChild(container);
+        }
+
+        // Function to generate executive HTML (based on tmh_executive_report-4.html template)
+        function generateExecutiveHTML(exportBody, reportData) {
+            // Add template-specific styles
+            const templateStyles = exportBody.createElement('style');
+            templateStyles.textContent = `
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-size: 11px;
+                    line-height: 1.3;
+                    color: #333;
+                    background: white;
+                }
+                
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 15px;
+                }
+                
+                .header {
+                    text-align: center;
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background: linear-gradient(135deg, #2c5282, #2d3748);
+                    color: white;
+                    border-radius: 8px;
+                }
+                
+                .header h1 {
+                    font-size: 18px;
+                    margin-bottom: 5px;
+                }
+                
+                .header p {
+                    font-size: 12px;
+                    opacity: 0.9;
+                }
+                
+                .summary-cards {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+                
+                .card {
+                    background: #f8f9fa;
+                    padding: 12px;
+                    border-radius: 6px;
+                    text-align: center;
+                    border: 1px solid #e2e8f0;
+                }
+                
+                .card h3 {
+                    font-size: 10px;
+                    color: #666;
+                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .card .number {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #2d3748;
+                }
+                
+                .compliance-section {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 15px;
+                    margin-bottom: 15px;
+                }
+                
+                .compliance-card {
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 15px;
+                }
+                
+                .compliance-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
+                
+                .compliance-title {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #2d3748;
+                }
+                
+                .compliance-percentage {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
+                
+                .ios-percentage {
+                    color: #38a169;
+                }
+                
+                .android-percentage {
+                    color: #3182ce;
+                }
+                
+                .compliance-bars {
+                    display: flex;
+                    gap: 8px;
+                    margin-top: 10px;
+                }
+                
+                .compliance-item {
+                    text-align: center;
+                    flex: 1;
+                }
+                
+                .compliance-item .number {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 3px;
+                }
+                
+                .compliance-item .label {
+                    font-size: 9px;
+                    color: #666;
+                    text-transform: uppercase;
+                }
+                
+                .compliant { color: #38a169; }
+                .non-compliant { color: #e53e3e; }
+                .unknown { color: #a0aec0; }
+                
+                .footer {
+                    text-align: center;
+                    font-size: 10px;
+                    color: #666;
+                    margin-top: 15px;
+                    padding: 10px;
+                    background: #f8f9fa;
+                    border-radius: 6px;
+                }
+
+                .recommendations-section {
+                    background: #f7fafc;
+                    border: 2px solid #3182ce;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 15px;
+                }
+
+                .recommendations-title {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #2c5282;
+                    margin-bottom: 10px;
+                }
+
+                .recommendation-list {
+                    font-size: 11px;
+                    line-height: 1.4;
+                }
+
+                .recommendation-item {
+                    margin-bottom: 6px;
+                    padding-left: 12px;
+                    position: relative;
+                }
+
+                .recommendation-item::before {
+                    content: "•";
+                    color: #3182ce;
+                    font-weight: bold;
+                    position: absolute;
+                    left: 0;
+                }
+                
+                @media print {
+                    body { print-color-adjust: exact; }
+                    .container { padding: 10px; }
+                }
+            `;
+            exportBody.head.appendChild(templateStyles);
+            
+            // Add header
+            const header = exportBody.createElement('div');
+            header.className = 'header';
+            header.innerHTML = `
+                <h1>Device Compliance & Lifecycle Report</h1>
+                <p>Tallahassee Memorial Hospital – Device Compliance Report | Generated ${new Date().toLocaleDateString()}</p>
+            `;
+            exportBody.appendChild(header);
+            
+            // Create container
+            const container = exportBody.createElement('div');
+            container.className = 'container';
+            
+            // Add executive summary
+            const executiveSummary = exportBody.createElement('div');
+            executiveSummary.style.cssText = 'background: #f8f9fa; padding: 10px; margin-bottom: 15px; border-radius: 6px;';
+            executiveSummary.innerHTML = `
+                <p style="font-size: 11px; margin: 0; color: #444; line-height: 1.4;">
+                    This report outlines the current status of TMH's mobile device inventory, including compliance metrics, lifecycle status, and actionable insights. Data is as of ${new Date().toLocaleDateString()}.
+                </p>
+            `;
+            container.appendChild(executiveSummary);
+            
+            // Add summary cards
+            const summaryCards = exportBody.createElement('div');
+            summaryCards.className = 'summary-cards';
+            summaryCards.innerHTML = `
+                <div class="card">
+                    <h3>Total Device Fleet</h3>
+                    <div class="number">${reportData.totalDevices}</div>
+                </div>
+                <div class="card">
+                    <h3>Non-Compliant Devices</h3>
+                    <div class="number" style="color: #e53e3e;">${reportData.iosNonCompliant + reportData.androidNonCompliant}</div>
+                </div>
+                <div class="card">
+                    <h3>EOL Critical (1 Year)</h3>
+                    <div class="number" style="color: #e53e3e;">86</div>
+                </div>
+                <div class="card">
+                    <h3>Non-Responsive Devices (90+ Days)</h3>
+                    <div class="number" style="color: #dd6b20;">143</div>
+                </div>
+            `;
+            container.appendChild(summaryCards);
+            
+            // Add compliance section
+            const complianceSection = exportBody.createElement('div');
+            complianceSection.className = 'compliance-section';
+            complianceSection.innerHTML = `
+                <div class="compliance-card">
+                    <div class="compliance-header">
+                        <div class="compliance-title">iOS Compliance Overview</div>
+                        <div class="compliance-percentage ios-percentage">${reportData.iosCompliancePercent}</div>
+                    </div>
+                    <div class="compliance-bars">
+                        <div class="compliance-item">
+                            <div class="number compliant">${reportData.iosCompliant}</div>
+                            <div class="label">Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number non-compliant">${reportData.iosNonCompliant}</div>
+                            <div class="label">Non-Compliant</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-header">
+                        <div class="compliance-title">Android Compliance Overview</div>
+                        <div class="compliance-percentage android-percentage">${reportData.androidCompliancePercent}</div>
+                    </div>
+                    <div class="compliance-bars">
+                        <div class="compliance-item">
+                            <div class="number compliant">${reportData.androidCompliant}</div>
+                            <div class="label">Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number non-compliant">${reportData.androidNonCompliant}</div>
+                            <div class="label">Non-Compliant</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(complianceSection);
+            
+            // Add footer
+            const footer = exportBody.createElement('div');
+            footer.className = 'footer';
+            footer.innerHTML = `
+                © 2025 Tallahassee Memorial Hospital - IT Asset Management Report
+            `;
+            container.appendChild(footer);
+            
+            exportBody.appendChild(container);
         }
 
         // Initialize layout mode on page load
@@ -4461,7 +4968,7 @@
                                model.includes('zebra') || model.includes('mc9') || model.includes('mc3')) {
                         platform = 'Android';
                         if (detectedOS === 'Unknown') {
-                            detectedOS = 'Android (inferred from model)';
+                        detectedOS = 'Android (inferred from model)';
                         } else {
                             // Format Android version properly - try multiple patterns
                             let versionMatch = detectedOS.match(/(\d+(?:\.\d+)*)/);
@@ -4512,7 +5019,7 @@
                     platformGroups.Android[os] = count;
                 } else if (platform === 'Windows') {
                     platformGroups.Windows[os] = count;
-                } else {
+                    } else {
                     platformGroups.Other[os] = count;
                 }
             });
