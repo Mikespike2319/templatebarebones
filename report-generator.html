@@ -3304,6 +3304,8 @@
             const androidTotal = parseInt(document.getElementById('androidTotal')?.textContent || '0');
             const totalDevices = parseInt(document.getElementById('totalDevices')?.textContent || '0');
             
+            console.log('Current totals - iOS:', iosTotal, 'Android:', androidTotal, 'Total:', totalDevices);
+            
             // If no data has been processed (all values are 0), show error
             if (iosTotal === 0 && androidTotal === 0 && totalDevices === 0) {
                 alert('No data available to export. Please upload and process a device inventory file first.');
@@ -3417,6 +3419,7 @@
                 generatedDate: new Date().toLocaleString()
             };
             console.log('getCurrentReportData result:', data);
+            console.log('Element values - iosTotal:', document.getElementById('iosTotal')?.textContent, 'androidTotal:', document.getElementById('androidTotal')?.textContent);
             return data;
         }
 
