@@ -196,6 +196,231 @@
             gap: var(--space-lg);
         }
 
+        /* Template-based styles for main generator */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .card h3 {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .compliance-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .compliance-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .compliance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .compliance-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .compliance-percentage {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .ios-percentage {
+            color: #38a169;
+        }
+        
+        .android-percentage {
+            color: #3182ce;
+        }
+        
+        .compliance-bars {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .compliance-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .compliance-item .number {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .compliance-item .label {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .compliant { color: #38a169; }
+        .non-compliant { color: #e53e3e; }
+        .unknown { color: #a0aec0; }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            background: #2c5282;
+            margin: -12px -12px 10px -12px;
+            padding: 8px 12px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            font-size: 10px;
+        }
+        
+        .inventory-table th,
+        .inventory-table td {
+            padding: 4px 6px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .inventory-table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .trend-positive { color: #38a169; }
+        .trend-negative { color: #e53e3e; }
+        
+        .device-categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .category-list {
+            font-size: 10px;
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .lifecycle-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .urgent-card {
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            color: white;
+        }
+        
+        .critical { background: #e53e3e; }
+        .warning { background: #dd6b20; }
+        .medium { background: #3182ce; }
+        
+        .urgent-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .urgent-label {
+            font-size: 9px;
+            line-height: 1.3;
+        }
+        
+        .os-breakdown {
+            font-size: 10px;
+        }
+        
+        .os-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .os-bar {
+            width: 60px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin: 0 8px;
+            position: relative;
+        }
+        
+        .os-bar-fill {
+            height: 100%;
+            background: #3182ce;
+            border-radius: 2px;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
         /* Enhanced tooltips for professional context */
         .tooltip {
             position: relative;
@@ -2555,194 +2780,124 @@
             </div>
             
                         <!-- Executive Summary Cards -->
-            <div class="summary-cards modern-dashboard-cards">
-                <div class="summary-card card-ios">
-                    <h3 class="card-title">Total iOS Devices</h3>
-                    <div class="card-value" id="iosTotal">0</div>
-                    <div class="card-description">Active iPad & iPhone inventory</div>
-                    <div class="card-status">
-                        <span class="status-indicator status-active"></span>
-                        <span class="status-text">Active</span>
-                    </div>
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total iOS Devices</h3>
+                    <div class="number" id="iosTotal">0</div>
                 </div>
-                <div class="summary-card card-android">
-                    <h3 class="card-title">Total Android Devices</h3>
-                    <div class="card-value" id="androidTotal">0</div>
-                    <div class="card-description">HC50 Zebras, TC52, and other Android devices</div>
-                    <div class="card-status">
-                        <span class="status-indicator status-active"></span>
-                        <span class="status-text">Active</span>
-                    </div>
+                <div class="card">
+                    <h3>Total Android Devices</h3>
+                    <div class="number" id="androidTotal">0</div>
                 </div>
-                <div class="summary-card card-total">
-                    <h3 class="card-title">Total Device Count</h3>
-                    <div class="card-value" id="totalDevices">0</div>
-                    <div class="card-description">Combined iOS and Android inventory</div>
-                    <div class="card-status">
-                        <span class="status-indicator status-monitoring"></span>
-                        <span class="status-text">Monitoring</span>
-                    </div>
+                <div class="card">
+                    <h3>Total Device Count</h3>
+                    <div class="number" id="totalDevices">0</div>
                 </div>
-                <div class="summary-card card-backstock">
-                    <h3 class="card-title">
-                    <span class="tooltip" data-tooltip="Devices available in inventory but not currently assigned to users">BackStock Devices</span>
-                </h3>
-                    <div class="card-value" id="backstockTotal">0</div>
-                    <div class="card-description">Devices in storage (Android + iOS)</div>
-                    <div class="card-status">
-                        <span class="status-indicator status-available"></span>
-                        <span class="status-text">Available</span>
-                    </div>
+                <div class="card">
+                    <h3>Backstock Devices</h3>
+                    <div class="number" id="backstockTotal">0</div>
                 </div>
             </div>
 
 
 
             <div class="compliance-section">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Compliance Overview</h2>
+                <div class="compliance-card">
+                    <div class="compliance-header">
+                        <div class="compliance-title">iOS Compliance</div>
+                        <div class="compliance-percentage ios-percentage" id="iosCompliancePercent">0%</div>
                     </div>
-                    <div class="card-body">
-                        <div class="compliance-grid">
-                            <div class="compliance-card">
-                                <div class="compliance-header">
-                                    <div class="compliance-title">
-                            <span class="tooltip" data-tooltip="Percentage of iOS devices meeting security and policy requirements">iOS Compliance</span>
+                    <div class="compliance-bars">
+                        <div class="compliance-item">
+                            <div class="number compliant" id="iosCompliantCount">0</div>
+                            <div class="label">Compliant</div>
                         </div>
-                                    <div class="compliance-percentage" id="iosCompliancePercent">0%</div>
-                </div>
-                                <div class="compliance-bar-container">
-                                    <div class="compliance-bar-fill" id="iosComplianceFill"></div>
+                        <div class="compliance-item">
+                            <div class="number non-compliant" id="iosNonCompliantCount">0</div>
+                            <div class="label">Non-Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number unknown" id="iosUnknownCount">0</div>
+                            <div class="label">Unknown</div>
+                        </div>
                     </div>
-                                <div class="compliance-stats">
-                                    <div class="compliance-stat">
-                                        <div class="compliance-stat-value" id="iosCompliantCount">0</div>
-                                        <div class="compliance-stat-label">Compliant</div>
                 </div>
-                                    <div class="compliance-stat">
-                                        <div class="compliance-stat-value" id="iosNonCompliantCount">0</div>
-                                        <div class="compliance-stat-label">Non-Compliant</div>
-                                    </div>
-                                    <div class="compliance-stat">
-                                        <div class="compliance-stat-value" id="iosUnknownCount">0</div>
-                                        <div class="compliance-stat-label">Unknown</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="compliance-card">
-                                <div class="compliance-header">
-                                    <div class="compliance-title">
-                            <span class="tooltip" data-tooltip="Percentage of Android devices meeting security and policy requirements">Android Compliance</span>
+                <div class="compliance-card">
+                    <div class="compliance-header">
+                        <div class="compliance-title">Android Compliance</div>
+                        <div class="compliance-percentage android-percentage" id="androidCompliancePercent">0%</div>
+                    </div>
+                    <div class="compliance-bars">
+                        <div class="compliance-item">
+                            <div class="number compliant" id="androidCompliantCount">0</div>
+                            <div class="label">Compliant</div>
                         </div>
-                                    <div class="compliance-percentage" id="androidCompliancePercent">0%</div>
-                                </div>
-                                <div class="compliance-bar-container">
-                                    <div class="compliance-bar-fill" id="androidComplianceFill"></div>
-                                </div>
-                                <div class="compliance-stats">
-                                    <div class="compliance-stat">
-                                        <div class="compliance-stat-value" id="androidCompliantCount">0</div>
-                                        <div class="compliance-stat-label">Compliant</div>
-                                    </div>
-                                    <div class="compliance-stat">
-                                        <div class="compliance-stat-value" id="androidNonCompliantCount">0</div>
-                                        <div class="compliance-stat-label">Non-Compliant</div>
-                                    </div>
-                                    <div class="compliance-stat">
-                                        <div class="compliance-stat-value" id="androidUnknownCount">0</div>
-                                        <div class="compliance-stat-label">Unknown</div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="compliance-item">
+                            <div class="number non-compliant" id="androidNonCompliantCount">0</div>
+                            <div class="label">Non-Compliant</div>
+                        </div>
+                        <div class="compliance-item">
+                            <div class="number unknown" id="androidUnknownCount">0</div>
+                            <div class="label">Unknown</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Historical Inventory Analysis -->
-            <div class="section">
-                <div class="section-header">Historical Inventory Analysis</div>
-                <div class="section-body">
-                    <!-- Compact Monthly Tracker Table -->
-                    <div class="compact-monthly-tracker">
-                        <div class="tracker-header">
-                            <h3>Monthly Inventory Tracker</h3>
-                            <div class="tracker-actions">
-                                <button onclick="autoFillCurrentCounts()" class="btn-compact btn-primary">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12"/>
-                                    </svg>
-                                    Auto-Fill
-                                </button>
-                                <button onclick="exportHistoricalData()" class="btn-compact btn-export">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
-                                    </svg>
-                                    Export
-                                </button>
-                                <button onclick="clearMonthlyHistory()" class="btn-compact btn-danger">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-                                    </svg>
-                                    Clear
-                                </button>
-                            </div>
-                        </div>
-                        <div class="monthly-table-container">
-                            <table class="monthly-table" id="monthlyTrackerTable">
-                                <thead>
-                                    <tr>
-                                        <th>Month</th>
-                                        <th class="ios-col">iOS</th>
-                                        <th class="android-col">Android</th>
-                                        <th class="total-col">Total</th>
-                                        <th class="trend-col">Trend</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="monthlyTableBody">
-                                    <!-- Rows will be populated dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div id="monthlyComparison" class="trend-analysis-section">
-                        <!-- Platform comparison table will be populated here -->
+            <div class="main-content">
+                <div class="section">
+                    <div class="section-title">Monthly Inventory Tracker</div>
+                    <table class="inventory-table" id="monthlyTrackerTable">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>iOS</th>
+                                <th>Android</th>
+                                <th>Total</th>
+                                <th>Trend</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlyTableBody">
+                            <!-- Rows will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Operating System Breakdown</div>
+                    <div class="os-breakdown" id="osBreakdown">
+                        <!-- OS breakdown will be populated dynamically -->
                     </div>
                 </div>
             </div>
-
-            <!-- Device Details & Lifecycle -->
-            <div class="section">
-                <div class="section-header">Device Categories</div>
-                <div class="section-body">
-                    <div class="two-column">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 style="font-size: var(--text-base); font-weight: 600;">iOS Device Categories</h3>
+            
+            <div class="lifecycle-section" id="urgentItems">
+                <!-- Urgent items will be populated dynamically -->
+            </div>
+            
+            <div class="main-content">
+                <div class="section">
+                    <div class="section-title">Device Categories</div>
+                    <div class="device-categories">
+                        <div>
+                            <h4 style="font-size: 11px; margin-bottom: 8px; color: #2d3748;">iOS Device Categories</h4>
+                            <div class="category-list" id="iosCategories">
+                                <!-- iOS categories will be populated dynamically -->
                             </div>
-                            <div class="card-body">
-                                <table class="data-table" id="iosTable">
-                            <thead>
-                                <tr><th>Category</th><th>Count</th></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 11px; margin-bottom: 8px; color: #2d3748;">Android Device Categories</h4>
+                            <div class="category-list" id="androidCategories">
+                                <!-- Android categories will be populated dynamically -->
+                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 style="font-size: var(--text-base); font-weight: 600;">Android Device Categories</h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="data-table" id="androidTable">
-                                <thead>
-                                    <tr><th>Category</th><th>Count</th></tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Top Device Models by EOL Status</div>
+                    <div class="category-list" id="eolModels">
+                        <!-- EOL models will be populated dynamically -->
                     </div>
                 </div>
             </div>
@@ -4496,6 +4651,30 @@
                 document.getElementById('androidTotal').textContent = androidDevices.length;
                 document.getElementById('totalDevices').textContent = totalDevices;
                 
+                // Update compliance counts in new template structure
+                if (foundColumns.includes('complianceStateKey')) {
+                    // Calculate compliance percentages
+                    const iosCompliancePercent = iosDevices.length > 0 ? (iosCompliant / iosDevices.length) * 100 : 0;
+                    const androidCompliancePercent = androidDevices.length > 0 ? (androidCompliant / androidDevices.length) * 100 : 0;
+                    
+                    // Update iOS compliance
+                    document.getElementById('iosCompliantCount').textContent = iosCompliant;
+                    document.getElementById('iosNonCompliantCount').textContent = iosDevices.length - iosCompliant;
+                    document.getElementById('iosUnknownCount').textContent = 0; // No unknown status in current logic
+                    document.getElementById('iosCompliancePercent').textContent = `${iosCompliancePercent.toFixed(1)}%`;
+                    
+                    // Update Android compliance
+                    document.getElementById('androidCompliantCount').textContent = androidCompliant;
+                    document.getElementById('androidNonCompliantCount').textContent = androidDevices.length - androidCompliant;
+                    document.getElementById('androidUnknownCount').textContent = 0; // No unknown status in current logic
+                    document.getElementById('androidCompliancePercent').textContent = `${androidCompliancePercent.toFixed(1)}%`;
+                    
+                    console.log('Updated compliance counts in template structure:', {
+                        ios: { compliant: iosCompliant, total: iosDevices.length, percent: iosCompliancePercent.toFixed(1) },
+                        android: { compliant: androidCompliant, total: androidDevices.length, percent: androidCompliancePercent.toFixed(1) }
+                    });
+                }
+                
                 // Enhanced backstock calculation and display
                 const calculatedBackstockDevices = calculateAndDisplayBackstock(nonPersonalDevices, foundColumns);
 
@@ -4729,13 +4908,10 @@
 
         // Enhanced OS detection with platform separation and iOS summarization
         function populateOSTable(devices) {
-            const osTable = document.getElementById('osTable');
-            if (!osTable) return;
+            const osBreakdownContainer = document.getElementById('osBreakdown');
+            if (!osBreakdownContainer) return;
             
-            const tbody = osTable.getElementsByTagName('tbody')[0];
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
+            osBreakdownContainer.innerHTML = '';
 
             console.log('=== ENHANCED OS DETECTION DEBUG ===');
             console.log('Total devices for OS table:', devices.length);
@@ -4872,24 +5048,18 @@
                 }
             });
 
-            // Clear existing table content
-            tbody.innerHTML = '';
-
             // Add warning if too many unknowns
             const unknownCount = osCounts['Unknown'] || 0;
             const unknownPercentage = (unknownCount / devices.length) * 100;
             
             if (unknownPercentage > 50) {
-                const warningRow = tbody.insertRow();
-                const warningCell = warningRow.insertCell(0);
-                warningCell.colSpan = 3;
-                warningCell.innerHTML = `
-                    <div style="background: #fff3cd; color: #856404; padding: 8px; border-radius: 4px; font-size: 0.9em;">
-                        ⚠️ Warning: ${unknownPercentage.toFixed(1)}% of devices have unknown OS. 
-                        This may indicate incomplete export data or require additional OS detection logic.
-                    </div>
+                const warningItem = document.createElement('div');
+                warningItem.className = 'os-item warning';
+                warningItem.innerHTML = `
+                    <span>⚠️ Warning: ${unknownPercentage.toFixed(1)}% unknown OS</span>
+                    <span>Check export data</span>
                 `;
-                warningCell.style.textAlign = 'center';
+                osBreakdownContainer.appendChild(warningItem);
             }
 
             // Process each platform - show only top versions for cleaner display
@@ -4905,22 +5075,13 @@
                     // Show top 2 iOS versions
                     sortedVersions.slice(0, 2).forEach(([version, count]) => {
                         const percentage = ((count / devices.length) * 100).toFixed(1);
-                        const row = tbody.insertRow();
-                        
-                        const osCell = row.insertCell(0);
-                        osCell.textContent = version;
-                        osCell.style.fontWeight = '500';
-                        
-                        const countCell = row.insertCell(1);
-                        countCell.textContent = count;
-                        countCell.style.textAlign = 'center';
-                        countCell.style.fontWeight = '600';
-                        
-                        const percentCell = row.insertCell(2);
-                        percentCell.textContent = `${percentage}%`;
-                        percentCell.style.textAlign = 'center';
-                        percentCell.style.color = 'var(--neutral-600)';
-                        percentCell.style.fontSize = '0.8rem';
+                        const osItem = document.createElement('div');
+                        osItem.className = 'os-item';
+                        osItem.innerHTML = `
+                            <span>${version}</span>
+                            <span>${count} (${percentage}%)</span>
+                        `;
+                        osBreakdownContainer.appendChild(osItem);
                     });
 
                     // Summarize remaining iOS versions
@@ -4929,24 +5090,13 @@
                     const remainingPercentage = ((remainingCount / devices.length) * 100).toFixed(1);
                     
                     if (remainingCount > 0) {
-                        const row = tbody.insertRow();
-                        
-                        const osCell = row.insertCell(0);
-                        osCell.textContent = `iOS Other (${remainingVersions.length} versions)`;
-                        osCell.style.fontWeight = '500';
-                        osCell.style.color = 'var(--neutral-500)';
-                        osCell.style.fontStyle = 'italic';
-                        
-                        const countCell = row.insertCell(1);
-                        countCell.textContent = remainingCount;
-                        countCell.style.textAlign = 'center';
-                        countCell.style.fontWeight = '600';
-                        
-                        const percentCell = row.insertCell(2);
-                        percentCell.textContent = `${remainingPercentage}%`;
-                        percentCell.style.textAlign = 'center';
-                        percentCell.style.color = 'var(--neutral-600)';
-                        percentCell.style.fontSize = '0.8rem';
+                        const osItem = document.createElement('div');
+                        osItem.className = 'os-item summary';
+                        osItem.innerHTML = `
+                            <span>iOS Other (${remainingVersions.length} versions)</span>
+                            <span>${remainingCount} (${remainingPercentage}%)</span>
+                        `;
+                        osBreakdownContainer.appendChild(osItem);
                     }
                 } 
                 // For Android, show only top 2 versions, then summarize the rest
@@ -4954,22 +5104,13 @@
                     // Show top 2 Android versions
                     sortedVersions.slice(0, 2).forEach(([version, count]) => {
                         const percentage = ((count / devices.length) * 100).toFixed(1);
-                        const row = tbody.insertRow();
-                        
-                        const osCell = row.insertCell(0);
-                        osCell.textContent = version;
-                        osCell.style.fontWeight = '500';
-                        
-                        const countCell = row.insertCell(1);
-                        countCell.textContent = count;
-                        countCell.style.textAlign = 'center';
-                        countCell.style.fontWeight = '600';
-                        
-                        const percentCell = row.insertCell(2);
-                        percentCell.textContent = `${percentage}%`;
-                        percentCell.style.textAlign = 'center';
-                        percentCell.style.color = 'var(--neutral-600)';
-                        percentCell.style.fontSize = '0.8rem';
+                        const osItem = document.createElement('div');
+                        osItem.className = 'os-item';
+                        osItem.innerHTML = `
+                            <span>${version}</span>
+                            <span>${count} (${percentage}%)</span>
+                        `;
+                        osBreakdownContainer.appendChild(osItem);
                     });
 
                     // Summarize remaining Android versions
@@ -4978,46 +5119,26 @@
                     const remainingPercentage = ((remainingCount / devices.length) * 100).toFixed(1);
                     
                     if (remainingCount > 0) {
-                        const row = tbody.insertRow();
-                        
-                        const osCell = row.insertCell(0);
-                        osCell.textContent = `Android Other (${remainingVersions.length} versions)`;
-                        osCell.style.fontWeight = '500';
-                        osCell.style.color = 'var(--neutral-500)';
-                        osCell.style.fontStyle = 'italic';
-                        
-                        const countCell = row.insertCell(1);
-                        countCell.textContent = remainingCount;
-                        countCell.style.textAlign = 'center';
-                        countCell.style.fontWeight = '600';
-                        
-                        const percentCell = row.insertCell(2);
-                        percentCell.textContent = `${remainingPercentage}%`;
-                        percentCell.style.textAlign = 'center';
-                        percentCell.style.color = 'var(--neutral-600)';
-                        percentCell.style.fontSize = '0.8rem';
+                        const osItem = document.createElement('div');
+                        osItem.className = 'os-item summary';
+                        osItem.innerHTML = `
+                            <span>Android Other (${remainingVersions.length} versions)</span>
+                            <span>${remainingCount} (${remainingPercentage}%)</span>
+                        `;
+                        osBreakdownContainer.appendChild(osItem);
                     }
                 } 
                 // For other platforms or when only 1-2 versions exist, show all versions
                 else {
                     sortedVersions.forEach(([version, count]) => {
                         const percentage = ((count / devices.length) * 100).toFixed(1);
-                        const row = tbody.insertRow();
-                        
-                        const osCell = row.insertCell(0);
-                        osCell.textContent = version;
-                        osCell.style.fontWeight = '500';
-                        
-                        const countCell = row.insertCell(1);
-                        countCell.textContent = count;
-                        countCell.style.textAlign = 'center';
-                        countCell.style.fontWeight = '600';
-                        
-                        const percentCell = row.insertCell(2);
-                        percentCell.textContent = `${percentage}%`;
-                        percentCell.style.textAlign = 'center';
-                        percentCell.style.color = 'var(--neutral-600)';
-                        percentCell.style.fontSize = '0.8rem';
+                        const osItem = document.createElement('div');
+                        osItem.className = 'os-item';
+                        osItem.innerHTML = `
+                            <span>${version}</span>
+                            <span>${count} (${percentage}%)</span>
+                        `;
+                        osBreakdownContainer.appendChild(osItem);
                     });
                 }
             });
@@ -5292,11 +5413,11 @@
                 console.log('=== END ANDROID DETECTION DEBUG ===');
             }
 
-            // Populate iOS categories table
-            populateIOSCategoriesTable(iosDevices, foundColumns);
+            // Populate iOS categories in new template structure
+            populateIOSCategories(iosDevices, foundColumns);
             
-            // Populate Android categories table  
-            populateAndroidCategoriesTable(androidDevices, foundColumns);
+            // Populate Android categories in new template structure
+            populateAndroidCategories(androidDevices, foundColumns);
         }
 
         function updateSpecialCounts(configMgrDevices, unassignedDevices, windowsDevices, foundColumns) {
@@ -5323,6 +5444,210 @@
             }
             
             console.log('Updated special counts - ConfigMgr:', configMgrDevices, 'Unassigned:', unassignedDevices);
+        }
+
+        function populateIOSCategories(iosDevices, foundColumns) {
+            const iosCategoriesContainer = document.getElementById('iosCategories');
+            if (!iosCategoriesContainer) return;
+            
+            iosCategoriesContainer.innerHTML = '';
+
+            console.log('Populating iOS categories with', iosDevices.length, 'devices');
+
+            // Count devices by Category column with enhanced categorization
+            const categoryCounts = {};
+            iosDevices.forEach((device, index) => {
+                let category = '(no category)';
+                
+                // Use the Category column if available
+                if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                    // Clean and normalize the category name
+                    let rawCategory = device.deviceCategoryKey.toString().trim();
+                    
+                    // Handle specific TMH categories (case-insensitive)
+                    const lowerCategory = rawCategory.toLowerCase();
+                    
+                    // Enhanced debugging for category mapping
+                    if (index < 10) {
+                        console.log(`iOS Device ${index} category mapping:`, {
+                            original: rawCategory,
+                            lowercase: lowerCategory,
+                            device: device.deviceName || device.displayName || 'Unknown'
+                        });
+                    }
+                    
+                    if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
+                        category = 'iOS Backstock';
+                    } else if (lowerCategory.includes('epic welcome') || lowerCategory.includes('epic-welcome') || lowerCategory.includes('epicwelcome') || lowerCategory.includes('epic_welcome')) {
+                        category = 'Epic Welcome';
+                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('scanner') || lowerCategory.includes('barcode')) {
+                        category = 'Zebra/Scanner';
+                    } else if (lowerCategory.includes('tablet') || lowerCategory.includes('ipad')) {
+                        category = 'iPad';
+                    } else if (lowerCategory.includes('phone') || lowerCategory.includes('mobile phone')) {
+                        category = 'iPhone';
+                    } else if (lowerCategory.includes('kiosk') || lowerCategory.includes('self-service')) {
+                        category = 'Kiosk';
+                    } else if (lowerCategory.includes('rugged') || lowerCategory.includes('industrial')) {
+                        category = 'Rugged Device';
+                    } else if (lowerCategory.includes('mobile') && !lowerCategory.includes('phone')) {
+                        category = 'Mobile Device';
+                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing') || lowerCategory.includes('pilot')) {
+                        category = 'Test Device';
+                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration') || lowerCategory.includes('sample')) {
+                        category = 'Demo Device';
+                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared') || lowerCategory.includes('common')) {
+                        category = 'Shared/Pool Device';
+                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company') || lowerCategory.includes('business')) {
+                        category = 'Corporate Device';
+                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing') || lowerCategory.includes('clinical')) {
+                        category = 'Nursing Device';
+                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider') || lowerCategory.includes('medical')) {
+                        category = 'Provider Device';
+                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration') || lowerCategory.includes('office')) {
+                        category = 'Administrative Device';
+                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma') || lowerCategory.includes('urgent')) {
+                        category = 'Emergency/Trauma Device';
+                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or') || lowerCategory.includes('operating')) {
+                        category = 'Surgical Device';
+                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null' || lowerCategory === 'none') {
+                        category = '(unassigned)';
+                    } else {
+                        // Use the original category name if no specific mapping found
+                        category = rawCategory;
+                    }
+                } else if (foundColumns.includes('deviceCategoryKey')) {
+                    category = '(blank)';
+                } else {
+                    // If no Category column found, categorize by device type
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('ipad')) {
+                        category = 'iPad';
+                    } else if (deviceStr.includes('iphone')) {
+                        category = 'iPhone';
+                    } else {
+                        category = 'iOS Device';
+                    }
+                }
+                
+                if (index < 3) console.log(`iOS Device ${index} category:`, category, 'from device:', device);
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            });
+
+            console.log('iOS category counts:', categoryCounts);
+
+            // Sort by count (descending)
+            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+
+            sortedCategories.forEach(([category, count]) => {
+                const categoryItem = document.createElement('div');
+                categoryItem.className = 'category-item';
+                categoryItem.innerHTML = `
+                    <span>${category}</span>
+                    <span>${count}</span>
+                `;
+                iosCategoriesContainer.appendChild(categoryItem);
+            });
+        }
+
+        function populateAndroidCategories(androidDevices, foundColumns) {
+            const androidCategoriesContainer = document.getElementById('androidCategories');
+            if (!androidCategoriesContainer) return;
+            
+            androidCategoriesContainer.innerHTML = '';
+
+            console.log('Populating Android categories with', androidDevices.length, 'devices');
+
+            // Count devices by Category column with enhanced categorization
+            const categoryCounts = {};
+            androidDevices.forEach((device, index) => {
+                let category = '(no category)';
+                
+                // Use the Category column if available
+                if (foundColumns.includes('deviceCategoryKey') && device.deviceCategoryKey) {
+                    // Clean and normalize the category name
+                    let rawCategory = device.deviceCategoryKey.toString().trim();
+                    
+                    // Handle specific TMH categories (case-insensitive)
+                    const lowerCategory = rawCategory.toLowerCase();
+                    
+                    // Enhanced debugging for category mapping
+                    if (index < 10) {
+                        console.log(`Android Device ${index} category mapping:`, {
+                            original: rawCategory,
+                            lowercase: lowerCategory,
+                            device: device.deviceName || device.displayName || 'Unknown'
+                        });
+                    }
+                    
+                    if (lowerCategory.includes('backstock') || lowerCategory.includes('back stock')) {
+                        category = 'BackStock';
+                    } else if (lowerCategory.includes('zebra') || lowerCategory.includes('hc50') || lowerCategory.includes('tc5')) {
+                        category = 'HC50 Zebra';
+                    } else if (lowerCategory.includes('supply') || lowerCategory.includes('warehouse') || lowerCategory.includes('logistics')) {
+                        category = 'Supply Chain';
+                    } else if (lowerCategory.includes('rover') || lowerCategory.includes('mobile')) {
+                        category = 'Rover';
+                    } else if (lowerCategory.includes('kiosk') || lowerCategory.includes('self-service')) {
+                        category = 'Kiosk';
+                    } else if (lowerCategory.includes('rugged') || lowerCategory.includes('industrial')) {
+                        category = 'Rugged Device';
+                    } else if (lowerCategory.includes('test') || lowerCategory.includes('testing') || lowerCategory.includes('pilot')) {
+                        category = 'Test Device';
+                    } else if (lowerCategory.includes('demo') || lowerCategory.includes('demonstration') || lowerCategory.includes('sample')) {
+                        category = 'Demo Device';
+                    } else if (lowerCategory.includes('pool') || lowerCategory.includes('shared') || lowerCategory.includes('common')) {
+                        category = 'Shared/Pool Device';
+                    } else if (lowerCategory.includes('corporate') || lowerCategory.includes('company') || lowerCategory.includes('business')) {
+                        category = 'Corporate Device';
+                    } else if (lowerCategory.includes('nurse') || lowerCategory.includes('nursing') || lowerCategory.includes('clinical')) {
+                        category = 'Nursing Device';
+                    } else if (lowerCategory.includes('physician') || lowerCategory.includes('doctor') || lowerCategory.includes('provider') || lowerCategory.includes('medical')) {
+                        category = 'Provider Device';
+                    } else if (lowerCategory.includes('admin') || lowerCategory.includes('administration') || lowerCategory.includes('office')) {
+                        category = 'Administrative Device';
+                    } else if (lowerCategory.includes('emergency') || lowerCategory.includes('er') || lowerCategory.includes('trauma') || lowerCategory.includes('urgent')) {
+                        category = 'Emergency/Trauma Device';
+                    } else if (lowerCategory.includes('surgery') || lowerCategory.includes('surgical') || lowerCategory.includes('or') || lowerCategory.includes('operating')) {
+                        category = 'Surgical Device';
+                    } else if (lowerCategory.includes('unassigned') || lowerCategory === '' || lowerCategory === 'null' || lowerCategory === 'none') {
+                        category = '(unassigned)';
+                    } else {
+                        // Use the original category name if no specific mapping found
+                        category = rawCategory;
+                    }
+                } else if (foundColumns.includes('deviceCategoryKey')) {
+                    category = '(blank)';
+                } else {
+                    // If no Category column found, categorize by device type
+                    const deviceStr = JSON.stringify(device).toLowerCase();
+                    if (deviceStr.includes('zebra') || deviceStr.includes('hc50')) {
+                        category = 'HC50 Zebra';
+                    } else if (deviceStr.includes('android')) {
+                        category = 'Android Device';
+                    } else {
+                        category = 'Mobile Device';
+                    }
+                }
+                
+                if (index < 3) console.log(`Android Device ${index} category:`, category, 'from device:', device);
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            });
+
+            console.log('Android category counts:', categoryCounts);
+
+            // Sort by count (descending)
+            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+
+            sortedCategories.forEach(([category, count]) => {
+                const categoryItem = document.createElement('div');
+                categoryItem.className = 'category-item';
+                categoryItem.innerHTML = `
+                    <span>${category}</span>
+                    <span>${count}</span>
+                `;
+                androidCategoriesContainer.appendChild(categoryItem);
+            });
         }
 
         function populateIOSCategoriesTable(iosDevices, foundColumns) {
