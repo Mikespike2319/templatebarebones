@@ -266,27 +266,61 @@
                     totalDeployments: 0,
                     successfulDeployments: 0,
                     failedDeployments: 0,
-                    successRate: 0
+                    checkOutSuccess: 0,
+                    checkInSuccess: 0,
+                    checkOutTotal: 0,
+                    checkInTotal: 0,
+                    successRate: 0,
+                    checkOutSuccessRate: 0,
+                    checkInSuccessRate: 0
                 };
             }
             
             const metrics = {
                 totalDeployments: data.length,
                 successfulDeployments: 0,
-                failedDeployments: 0
+                failedDeployments: 0,
+                checkOutSuccess: 0,
+                checkInSuccess: 0,
+                checkOutTotal: 0,
+                checkInTotal: 0
             };
             
             data.forEach(record => {
                 const result = record.Result ? record.Result.toString().toLowerCase() : '';
+                const workflow = record.Workflow ? record.Workflow.toString().toLowerCase() : '';
+                
+                // Count successful vs failed deployments
                 if (result.includes('finished')) {
                     metrics.successfulDeployments++;
                 } else if (result.includes('failed')) {
                     metrics.failedDeployments++;
                 }
+                
+                // Count check-out vs check-in operations (both successful and failed)
+                if (workflow.includes('check-out')) {
+                    metrics.checkOutTotal++;
+                    if (result.includes('finished')) {
+                        metrics.checkOutSuccess++;
+                    }
+                } else if (workflow.includes('check-in')) {
+                    metrics.checkInTotal++;
+                    if (result.includes('finished')) {
+                        metrics.checkInSuccess++;
+                    }
+                }
             });
             
+            // Calculate success rates
             metrics.successRate = metrics.totalDeployments > 0 ? 
                 ((metrics.successfulDeployments / metrics.totalDeployments) * 100).toFixed(1) : 0;
+            
+            // Calculate check-out and check-in success rates separately
+            metrics.checkOutSuccessRate = metrics.checkOutTotal > 0 ? 
+                ((metrics.checkOutSuccess / metrics.checkOutTotal) * 100).toFixed(1) : 0;
+            
+            metrics.checkInSuccessRate = metrics.checkInTotal > 0 ? 
+                ((metrics.checkInSuccess / metrics.checkInTotal) * 100).toFixed(1) : 0;
             
             return metrics;
         }
