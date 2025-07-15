@@ -4697,14 +4697,14 @@
                                 <div class="percentage compliant">${deploymentMetrics.successRate}%</div>
                             </div>
                             <div class="metric-box">
-                                <h4>Check-Out Success</h4>
+                                <h4>Check-Out Success Rate</h4>
                                 <div class="value" style="color: #3182ce;">${deploymentMetrics.checkOutSuccess.toLocaleString()}</div>
                                 <div class="percentage" style="color: #3182ce;">${deploymentMetrics.checkOutSuccessRate}%</div>
                             </div>
                             <div class="metric-box">
-                                <h4>Check-In Success</h4>
-                                <div class="value" style="color: #3182ce;">${deploymentMetrics.checkInSuccess.toLocaleString()}</div>
-                                <div class="percentage" style="color: #3182ce;">${deploymentMetrics.checkInSuccessRate}%</div>
+                                <h4>Avg Check-Out Time</h4>
+                                <div class="value" style="color: #059669;">${deploymentMetrics.averageCheckOutDuration}s</div>
+                                <div class="percentage" style="color: #059669;">Fast deployment</div>
                             </div>
                         </div>
                     </div>
@@ -7352,14 +7352,13 @@
                     successfulDeployments: 0,
                     failedDeployments: 0,
                     checkOutSuccess: 0,
-                    checkInSuccess: 0,
                     checkOutTotal: 0,
-                    checkInTotal: 0,
                     averageDuration: 0,
                     totalDuration: 0,
+                    averageCheckOutDuration: 0,
+                    totalCheckOutDuration: 0,
                     successRate: 0,
-                    checkOutSuccessRate: 0,
-                    checkInSuccessRate: 0
+                    checkOutSuccessRate: 0
                 };
             }
             
@@ -7368,17 +7367,18 @@
                 successfulDeployments: 0,
                 failedDeployments: 0,
                 checkOutSuccess: 0,
-                checkInSuccess: 0,
                 checkOutTotal: 0,
-                checkInTotal: 0,
                 averageDuration: 0,
-                totalDuration: 0
+                totalDuration: 0,
+                averageCheckOutDuration: 0,
+                totalCheckOutDuration: 0
             };
             
             data.forEach(record => {
                 const result = record.Result ? record.Result.toString().toLowerCase() : '';
                 const workflow = record.Workflow ? record.Workflow.toString().toLowerCase() : '';
                 const duration = parseFloat(record['Duration (s)']) || 0;
+                const checkOutDuration = parseFloat(record['Check out duration (s)']) || 0;
                 
                 // Count successful vs failed deployments
                 if (result.includes('finished')) {
@@ -7387,16 +7387,15 @@
                     metrics.failedDeployments++;
                 }
                 
-                // Count check-out vs check-in operations (both successful and failed)
+                // Focus only on check-out operations - this is when users actually need devices
                 if (workflow.includes('check-out')) {
                     metrics.checkOutTotal++;
                     if (result.includes('finished')) {
                         metrics.checkOutSuccess++;
-                    }
-                } else if (workflow.includes('check-in')) {
-                    metrics.checkInTotal++;
-                    if (result.includes('finished')) {
-                        metrics.checkInSuccess++;
+                        // Only count checkout duration for successful checkouts
+                        if (checkOutDuration > 0) {
+                            metrics.totalCheckOutDuration += checkOutDuration;
+                        }
                     }
                 }
                 
@@ -7406,16 +7405,18 @@
             metrics.averageDuration = metrics.totalDeployments > 0 ? 
                 (metrics.totalDuration / metrics.totalDeployments).toFixed(1) : 0;
             
-            // Calculate success rates
+            // Calculate average checkout duration for successful checkouts only
+            const successfulCheckOuts = metrics.checkOutSuccess;
+            metrics.averageCheckOutDuration = successfulCheckOuts > 0 ? 
+                (metrics.totalCheckOutDuration / successfulCheckOuts).toFixed(1) : 0;
+            
+            // Calculate overall success rate
             metrics.successRate = metrics.totalDeployments > 0 ? 
                 ((metrics.successfulDeployments / metrics.totalDeployments) * 100).toFixed(1) : 0;
             
-            // Calculate check-out and check-in success rates separately
+            // Calculate check-out success rate only - this is the key metric for user experience
             metrics.checkOutSuccessRate = metrics.checkOutTotal > 0 ? 
                 ((metrics.checkOutSuccess / metrics.checkOutTotal) * 100).toFixed(1) : 0;
-            
-            metrics.checkInSuccessRate = metrics.checkInTotal > 0 ? 
-                ((metrics.checkInSuccess / metrics.checkInTotal) * 100).toFixed(1) : 0;
             
             return metrics;
         }
@@ -7448,12 +7449,12 @@
                             <span class="metric-value danger">${metrics.failedDeployments.toLocaleString()}</span>
                         </div>
                         <div class="metric-item">
-                            <span class="metric-label">Check-Out Success:</span>
-                            <span class="metric-value">${metrics.checkOutSuccess.toLocaleString()}</span>
+                            <span class="metric-label">Check-Out Success Rate:</span>
+                            <span class="metric-value">${metrics.checkOutSuccessRate}%</span>
                         </div>
                         <div class="metric-item">
-                            <span class="metric-label">Check-In Success:</span>
-                            <span class="metric-value">${metrics.checkInSuccess.toLocaleString()}</span>
+                            <span class="metric-label">Avg Check-Out Time:</span>
+                            <span class="metric-value">${metrics.averageCheckOutDuration}s</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Avg Duration:</span>
@@ -7475,8 +7476,8 @@
                     metricValues[1].textContent = metrics.successRate + '%';
                     metricValues[2].textContent = metrics.successfulDeployments.toLocaleString();
                     metricValues[3].textContent = metrics.failedDeployments.toLocaleString();
-                    metricValues[4].textContent = metrics.checkOutSuccess.toLocaleString();
-                    metricValues[5].textContent = metrics.checkInSuccess.toLocaleString();
+                    metricValues[4].textContent = metrics.checkOutSuccessRate + '%';
+                    metricValues[5].textContent = metrics.averageCheckOutDuration + 's';
                     metricValues[6].textContent = metrics.averageDuration + 's';
                 }
             }

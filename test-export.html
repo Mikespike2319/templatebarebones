@@ -267,12 +267,11 @@
                     successfulDeployments: 0,
                     failedDeployments: 0,
                     checkOutSuccess: 0,
-                    checkInSuccess: 0,
                     checkOutTotal: 0,
-                    checkInTotal: 0,
+                    averageCheckOutDuration: 0,
+                    totalCheckOutDuration: 0,
                     successRate: 0,
-                    checkOutSuccessRate: 0,
-                    checkInSuccessRate: 0
+                    checkOutSuccessRate: 0
                 };
             }
             
@@ -281,14 +280,15 @@
                 successfulDeployments: 0,
                 failedDeployments: 0,
                 checkOutSuccess: 0,
-                checkInSuccess: 0,
                 checkOutTotal: 0,
-                checkInTotal: 0
+                averageCheckOutDuration: 0,
+                totalCheckOutDuration: 0
             };
             
             data.forEach(record => {
                 const result = record.Result ? record.Result.toString().toLowerCase() : '';
                 const workflow = record.Workflow ? record.Workflow.toString().toLowerCase() : '';
+                const checkOutDuration = parseFloat(record['Check out duration (s)']) || 0;
                 
                 // Count successful vs failed deployments
                 if (result.includes('finished')) {
@@ -297,30 +297,31 @@
                     metrics.failedDeployments++;
                 }
                 
-                // Count check-out vs check-in operations (both successful and failed)
+                // Focus only on check-out operations - this is when users actually need devices
                 if (workflow.includes('check-out')) {
                     metrics.checkOutTotal++;
                     if (result.includes('finished')) {
                         metrics.checkOutSuccess++;
-                    }
-                } else if (workflow.includes('check-in')) {
-                    metrics.checkInTotal++;
-                    if (result.includes('finished')) {
-                        metrics.checkInSuccess++;
+                        // Only count checkout duration for successful checkouts
+                        if (checkOutDuration > 0) {
+                            metrics.totalCheckOutDuration += checkOutDuration;
+                        }
                     }
                 }
             });
+            
+            // Calculate average checkout duration for successful checkouts only
+            const successfulCheckOuts = metrics.checkOutSuccess;
+            metrics.averageCheckOutDuration = successfulCheckOuts > 0 ? 
+                (metrics.totalCheckOutDuration / successfulCheckOuts).toFixed(1) : 0;
             
             // Calculate success rates
             metrics.successRate = metrics.totalDeployments > 0 ? 
                 ((metrics.successfulDeployments / metrics.totalDeployments) * 100).toFixed(1) : 0;
             
-            // Calculate check-out and check-in success rates separately
+            // Calculate check-out success rate only - this is the key metric for user experience
             metrics.checkOutSuccessRate = metrics.checkOutTotal > 0 ? 
                 ((metrics.checkOutSuccess / metrics.checkOutTotal) * 100).toFixed(1) : 0;
-            
-            metrics.checkInSuccessRate = metrics.checkInTotal > 0 ? 
-                ((metrics.checkInSuccess / metrics.checkInTotal) * 100).toFixed(1) : 0;
             
             return metrics;
         }
