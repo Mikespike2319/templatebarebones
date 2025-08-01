@@ -428,6 +428,49 @@
         .footer p {
             margin-bottom: var(--space-2);
         }
+        
+        /* ===== DATA QUALITY INDICATORS ===== */
+        .quality-indicator {
+            text-align: center;
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .quality-score {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+        
+        .quality-score.excellent { color: var(--success); }
+        .quality-score.good { color: var(--warning); }
+        .quality-score.poor { color: var(--danger); }
+        
+        .quality-label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: var(--font-medium);
+        }
+        
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -455,6 +498,52 @@
                 <button id="generatePdfBtn" class="btn btn-success" disabled>Generate PDF</button>
                 <button id="exportHtmlBtn" class="btn btn-secondary" disabled>Export HTML</button>
             </div>
+            <div id="progressSection" class="hidden mt-4">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="text-sm text-gray-600 mt-2" id="progressText">Processing data...</p>
+            </div>
+        </div>
+
+        <!-- Sheet Information -->
+        <div id="sheetInfoSection" class="card hidden">
+            <div class="card-header">
+                <h2 class="card-title">Excel Sheet Analysis</h2>
+            </div>
+            <div class="grid grid-2">
+                <div>
+                    <p><strong>Selected Sheet:</strong> <span id="selectedSheet">-</span></p>
+                    <p><strong>Sheet Type:</strong> <span id="sheetType">-</span></p>
+                    <p><strong>Total Sheets:</strong> <span id="totalSheets">-</span></p>
+                </div>
+                <div>
+                    <p><strong>Data Rows:</strong> <span id="dataRows">-</span></p>
+                    <p><strong>Columns:</strong> <span id="dataColumns">-</span></p>
+                    <p><strong>Analysis:</strong> <span id="sheetAnalysis">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Quality Indicators -->
+        <div id="qualitySection" class="card hidden">
+            <div class="card-header">
+                <h2 class="card-title">Data Quality Analysis</h2>
+            </div>
+            <div class="grid grid-3">
+                <div class="quality-indicator">
+                    <div class="quality-score" id="completenessScore">-</div>
+                    <div class="quality-label">Data Completeness</div>
+                </div>
+                <div class="quality-indicator">
+                    <div class="quality-score" id="consistencyScore">-</div>
+                    <div class="quality-label">Data Consistency</div>
+                </div>
+                <div class="quality-indicator">
+                    <div class="quality-score" id="accuracyScore">-</div>
+                    <div class="quality-label">Data Accuracy</div>
+                </div>
+            </div>
         </div>
 
         <!-- Statistics Section -->
@@ -472,8 +561,8 @@
                 <div class="stat-label">Date Range</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="complianceRate">0%</div>
-                <div class="stat-label">Compliance Rate</div>
+                <div class="stat-number" id="dateRange">-</div>
+                <div class="stat-label">Date Range</div>
             </div>
         </div>
 
@@ -491,7 +580,7 @@
                                 <th>Category</th>
                                 <th>Count</th>
                                 <th>Percentage</th>
-                                <th>Status</th>
+                                <th>Trend</th>
                             </tr>
                         </thead>
                         <tbody id="summaryTableBody">
@@ -567,6 +656,9 @@
             
             async processFile(file) {
                 try {
+                    // Enhanced file validation
+                    this.validateFile(file);
+                    
                     if (file.name.endsWith('.csv')) {
                         return await this.processCSV(file);
                     } else if (file.name.match(/\.xlsx?$/)) {
@@ -577,6 +669,33 @@
                 } catch (error) {
                     console.error('Error processing file:', error);
                     throw error;
+                }
+            },
+            
+            validateFile(file) {
+                // Check file format
+                const isValidFormat = ['.csv', '.xlsx', '.xls'].some(format => 
+                    file.name.toLowerCase().endsWith(format)
+                );
+                
+                if (!isValidFormat) {
+                    throw new Error('Unsupported file format. Please use CSV or Excel files.');
+                }
+                
+                // Check file size (50MB limit for large Excel files)
+                const maxSize = 50 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    throw new Error('File size exceeds 50MB limit');
+                }
+                
+                // Check for empty files
+                if (file.size === 0) {
+                    throw new Error('File is empty');
+                }
+                
+                // Check for corrupted files
+                if (file.size < 100 && file.name.toLowerCase().endsWith('.xlsx')) {
+                    throw new Error('Excel file appears to be corrupted or empty');
                 }
             },
             
@@ -594,7 +713,10 @@
                                     const values = line.split(',');
                                     const row = {};
                                     headers.forEach((header, index) => {
-                                        row[header] = values[index] ? values[index].trim() : '';
+                                        let value = values[index] ? values[index].trim() : '';
+                                        // Sanitize data
+                                        value = this.sanitizeValue(value);
+                                        row[header] = value;
                                     });
                                     return row;
                                 });
@@ -608,34 +730,225 @@
                 });
             },
             
+            sanitizeValue(value) {
+                if (typeof value !== 'string') return value;
+                
+                // Remove HTML tags and scripts
+                value = value.replace(/<[^>]*>/g, '');
+                
+                // Remove excessive whitespace
+                value = value.replace(/\s+/g, ' ').trim();
+                
+                // Handle common data issues
+                if (value.toLowerCase() === 'null' || value.toLowerCase() === 'undefined') {
+                    return '';
+                }
+                
+                // Remove non-printable characters
+                value = value.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+                
+                return value;
+            },
+            
             async processExcel(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
+                    
                     reader.onload = (e) => {
                         try {
                             const data = new Uint8Array(e.target.result);
                             const workbook = XLSX.read(data, { type: 'array' });
-                            const sheetName = workbook.SheetNames[0];
-                            const worksheet = workbook.Sheets[sheetName];
-                            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                            
+                            if (workbook.SheetNames.length === 0) {
+                                throw new Error('Excel file contains no sheets');
+                            }
+                            
+                            // Analyze all sheets and determine the best one to use
+                            const sheetAnalysis = this.analyzeExcelSheets(workbook);
+                            const bestSheet = this.selectBestSheet(sheetAnalysis);
+                            
+                            if (!bestSheet) {
+                                throw new Error('No suitable data sheet found in Excel file');
+                            }
+                            
+                            const worksheet = workbook.Sheets[bestSheet.name];
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+                                header: 1,
+                                raw: false,
+                                dateNF: 'yyyy-mm-dd',
+                                defval: '',
+                                blankrows: false
+                            });
+                            
+                            if (jsonData.length < 2) {
+                                throw new Error('Selected sheet must contain at least a header row and one data row');
+                            }
                             
                             const headers = jsonData[0];
                             const dataRows = jsonData.slice(1).map(row => {
                                 const obj = {};
                                 headers.forEach((header, index) => {
-                                    obj[header] = row[index] || '';
+                                    let value = row[index] || '';
+                                    
+                                    // Handle Excel date serial numbers
+                                    if (typeof value === 'number' && value > 1 && value < 100000) {
+                                        // Check if it might be a date serial number
+                                        const excelEpoch = new Date(1900, 0, 1);
+                                        const date = new Date(excelEpoch.getTime() + (value - 2) * 24 * 60 * 60 * 1000);
+                                        if (!isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100) {
+                                            value = date.toISOString().split('T')[0];
+                                        }
+                                    }
+                                    
+                                    obj[header] = value;
                                 });
                                 return obj;
                             });
                             
-                            resolve({ headers, data: dataRows });
+                            resolve({ 
+                                headers, 
+                                data: dataRows, 
+                                sheetName: bestSheet.name,
+                                sheetType: bestSheet.type,
+                                allSheets: workbook.SheetNames
+                            });
                         } catch (error) {
                             reject(error);
                         }
                     };
-                    reader.onerror = reject;
+                    
+                    reader.onerror = () => reject(new Error('Failed to read Excel file'));
                     reader.readAsArrayBuffer(file);
                 });
+            },
+            
+            analyzeExcelSheets(workbook) {
+                const analysis = [];
+                
+                workbook.SheetNames.forEach(sheetName => {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+                    
+                    if (jsonData.length < 2) return; // Skip empty sheets
+                    
+                    const headers = jsonData[0];
+                    const dataRows = jsonData.slice(1);
+                    
+                    // Analyze sheet characteristics
+                    const sheetInfo = {
+                        name: sheetName,
+                        rowCount: dataRows.length,
+                        columnCount: headers.length,
+                        headers: headers,
+                        hasDates: false,
+                        hasCategories: false,
+                        hasNumbers: false,
+                        dataTypes: {},
+                        type: 'unknown'
+                    };
+                    
+                    // Analyze data types and content
+                    headers.forEach((header, index) => {
+                        const columnData = dataRows.map(row => row[index]).filter(val => val !== undefined && val !== '');
+                        const dataType = this.detectColumnType(columnData, header);
+                        sheetInfo.dataTypes[header] = dataType;
+                        
+                        if (dataType === 'date') sheetInfo.hasDates = true;
+                        if (dataType === 'category') sheetInfo.hasCategories = true;
+                        if (dataType === 'number') sheetInfo.hasNumbers = true;
+                    });
+                    
+                    // Determine sheet type based on content
+                    sheetInfo.type = this.determineSheetType(sheetInfo);
+                    
+                    analysis.push(sheetInfo);
+                });
+                
+                return analysis;
+            },
+            
+            detectColumnType(data, headerName) {
+                if (data.length === 0) return 'unknown';
+                
+                const headerLower = headerName.toLowerCase();
+                
+                // Check for date columns
+                if (headerLower.includes('date') || headerLower.includes('created') || headerLower.includes('updated') || headerLower.includes('time')) {
+                    return 'date';
+                }
+                
+                // Check for category columns
+                if (headerLower.includes('category') || headerLower.includes('type') || headerLower.includes('group') || headerLower.includes('class') || headerLower.includes('status')) {
+                    return 'category';
+                }
+                
+                // Check for numeric columns
+                const numericCount = data.filter(val => {
+                    if (typeof val === 'number') return true;
+                    if (typeof val === 'string') {
+                        const num = parseFloat(val);
+                        return !isNaN(num) && val.trim() !== '';
+                    }
+                    return false;
+                }).length;
+                
+                if (numericCount > data.length * 0.5) {
+                    return 'number';
+                }
+                
+                // Check for date values in data
+                const dateCount = data.filter(val => {
+                    if (typeof val === 'string') {
+                        const date = new Date(val);
+                        return !isNaN(date.getTime());
+                    }
+                    if (typeof val === 'number' && val > 1 && val < 100000) {
+                        // Check if it might be Excel date serial
+                        const excelEpoch = new Date(1900, 0, 1);
+                        const date = new Date(excelEpoch.getTime() + (val - 2) * 24 * 60 * 60 * 1000);
+                        return !isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100;
+                    }
+                    return false;
+                }).length;
+                
+                if (dateCount > data.length * 0.3) {
+                    return 'date';
+                }
+                
+                return 'text';
+            },
+            
+            determineSheetType(sheetInfo) {
+                // Priority order for sheet types
+                if (sheetInfo.hasDates && sheetInfo.hasCategories && sheetInfo.rowCount > 5) {
+                    return 'transaction';
+                }
+                if (sheetInfo.hasCategories && sheetInfo.rowCount > 3) {
+                    return 'summary';
+                }
+                if (sheetInfo.hasNumbers && sheetInfo.rowCount > 3) {
+                    return 'analytics';
+                }
+                if (sheetInfo.rowCount > 2) {
+                    return 'data';
+                }
+                return 'unknown';
+            },
+            
+            selectBestSheet(analysis) {
+                // Sort by priority: transaction > summary > analytics > data > unknown
+                const priority = { 'transaction': 5, 'summary': 4, 'analytics': 3, 'data': 2, 'unknown': 1 };
+                
+                const sortedSheets = analysis
+                    .filter(sheet => sheet.type !== 'unknown')
+                    .sort((a, b) => {
+                        if (priority[b.type] !== priority[a.type]) {
+                            return priority[b.type] - priority[a.type];
+                        }
+                        return b.rowCount - a.rowCount; // Prefer sheets with more data
+                    });
+                
+                return sortedSheets.length > 0 ? sortedSheets[0] : null;
             },
             
             analyzeData(data) {
@@ -643,7 +956,7 @@
                     totalRecords: data.length,
                     categories: {},
                     dateRange: null,
-                    complianceRate: 0
+                    qualityMetrics: this.calculateDataQuality(data)
                 };
                 
                 // Analyze categories
@@ -652,40 +965,193 @@
                     analysis.categories[category] = (analysis.categories[category] || 0) + 1;
                 });
                 
-                // Calculate compliance rate (assuming a 'status' or 'compliance' column)
-                const complianceFields = ['status', 'Status', 'compliance', 'Compliance', 'state', 'State'];
-                let compliantCount = 0;
-                let totalWithStatus = 0;
+                // Enhanced date detection for Excel files
+                analysis.dateRange = this.findDateRange(data);
+                
+                return analysis;
+            },
+            
+            calculateDataQuality(data) {
+                if (data.length === 0) return { completeness: 0, consistency: 0, accuracy: 0 };
+                
+                const headers = Object.keys(data[0]);
+                let totalFields = 0;
+                let filledFields = 0;
+                let consistentFields = 0;
+                let accurateFields = 0;
+                
+                // Calculate completeness
+                data.forEach(row => {
+                    headers.forEach(header => {
+                        totalFields++;
+                        if (row[header] && row[header].toString().trim() !== '') {
+                            filledFields++;
+                        }
+                    });
+                });
+                
+                const completeness = (filledFields / totalFields) * 100;
+                
+                // Calculate consistency (check for consistent data types)
+                headers.forEach(header => {
+                    const values = data.map(row => row[header]).filter(val => val && val.toString().trim() !== '');
+                    if (values.length > 0) {
+                        const dataType = this.detectColumnType(values, header);
+                        const consistentType = values.every(val => {
+                            if (dataType === 'number') {
+                                return !isNaN(parseFloat(val));
+                            }
+                            if (dataType === 'date') {
+                                const date = new Date(val);
+                                return !isNaN(date.getTime());
+                            }
+                            return true;
+                        });
+                        if (consistentType) consistentFields++;
+                    }
+                });
+                
+                const consistency = (consistentFields / headers.length) * 100;
+                
+                // Calculate accuracy (basic validation)
+                headers.forEach(header => {
+                    const values = data.map(row => row[header]).filter(val => val && val.toString().trim() !== '');
+                    if (values.length > 0) {
+                        const hasValidData = values.some(val => {
+                            if (header.toLowerCase().includes('email')) {
+                                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+                            }
+                            if (header.toLowerCase().includes('phone')) {
+                                return /^[\+]?[1-9][\d]{0,15}$/.test(val.replace(/[\s\-\(\)]/g, ''));
+                            }
+                            return val.toString().length > 0;
+                        });
+                        if (hasValidData) accurateFields++;
+                    }
+                });
+                
+                const accuracy = (accurateFields / headers.length) * 100;
+                
+                return {
+                    completeness: Math.round(completeness),
+                    consistency: Math.round(consistency),
+                    accuracy: Math.round(accuracy)
+                };
+            },
+            
+            findDateRange(data) {
+                const dateFields = ['date', 'Date', 'created', 'Created', 'updated', 'Updated', 'timestamp', 'Timestamp', 'created_date', 'updated_date', 'createdDate', 'updatedDate'];
+                let dates = [];
                 
                 data.forEach(row => {
-                    for (const field of complianceFields) {
+                    for (const field of dateFields) {
                         if (row[field]) {
-                            totalWithStatus++;
-                            if (row[field].toLowerCase().includes('compliant') || 
-                                row[field].toLowerCase().includes('active') ||
-                                row[field].toLowerCase().includes('good')) {
-                                compliantCount++;
+                            let dateValue = row[field];
+                            
+                            // Handle Excel date serial numbers
+                            if (typeof dateValue === 'number') {
+                                // Excel dates are serial numbers starting from 1900-01-01
+                                const excelEpoch = new Date(1900, 0, 1);
+                                const date = new Date(excelEpoch.getTime() + (dateValue - 2) * 24 * 60 * 60 * 1000);
+                                if (!isNaN(date.getTime())) {
+                                    dates.push(date);
+                                    break;
+                                }
+                            } else if (typeof dateValue === 'string') {
+                                // Try parsing various date formats
+                                const date = new Date(dateValue);
+                                if (!isNaN(date.getTime())) {
+                                    dates.push(date);
+                                    break;
+                                }
                             }
-                            break;
                         }
                     }
                 });
                 
-                analysis.complianceRate = totalWithStatus > 0 ? 
-                    Math.round((compliantCount / totalWithStatus) * 100) : 0;
+                if (dates.length === 0) return null;
                 
-                return analysis;
+                dates.sort((a, b) => a - b);
+                return {
+                    start: dates[0].toISOString().split('T')[0],
+                    end: dates[dates.length - 1].toISOString().split('T')[0],
+                    count: dates.length
+                };
             }
         };
 
         // UI Module
         const UI = {
-            updateStats(analysis) {
+            updateStats(analysis, sheetInfo = null) {
                 document.getElementById('totalRecords').textContent = analysis.totalRecords;
                 document.getElementById('uniqueCategories').textContent = Object.keys(analysis.categories).length;
-                document.getElementById('complianceRate').textContent = analysis.complianceRate + '%';
+                
+                if (analysis.dateRange) {
+                    document.getElementById('dateRange').textContent = `${analysis.dateRange.start} to ${analysis.dateRange.end}`;
+                } else {
+                    document.getElementById('dateRange').textContent = 'N/A';
+                }
+                
+                // Update sheet information if available
+                if (sheetInfo) {
+                    document.getElementById('selectedSheet').textContent = sheetInfo.sheetName || '-';
+                    document.getElementById('sheetType').textContent = sheetInfo.sheetType || '-';
+                    document.getElementById('totalSheets').textContent = sheetInfo.allSheets ? sheetInfo.allSheets.length : '-';
+                    document.getElementById('dataRows').textContent = analysis.totalRecords;
+                    document.getElementById('dataColumns').textContent = sheetInfo.headers ? sheetInfo.headers.length : '-';
+                    
+                    const analysisText = this.getSheetAnalysisText(sheetInfo.sheetType);
+                    document.getElementById('sheetAnalysis').textContent = analysisText;
+                    
+                    document.getElementById('sheetInfoSection').classList.remove('hidden');
+                }
+                
+                // Update data quality metrics
+                if (analysis.qualityMetrics) {
+                    this.updateQualityMetrics(analysis.qualityMetrics);
+                    document.getElementById('qualitySection').classList.remove('hidden');
+                }
                 
                 document.getElementById('statsSection').classList.remove('hidden');
+            },
+            
+            getSheetAnalysisText(sheetType) {
+                switch(sheetType) {
+                    case 'transaction':
+                        return 'Transaction data with dates and categories';
+                    case 'summary':
+                        return 'Summary data with categories';
+                    case 'analytics':
+                        return 'Analytics data with numeric values';
+                    case 'data':
+                        return 'General data sheet';
+                    default:
+                        return 'Unknown sheet type';
+                }
+            },
+            
+            updateQualityMetrics(metrics) {
+                const completenessEl = document.getElementById('completenessScore');
+                const consistencyEl = document.getElementById('consistencyScore');
+                const accuracyEl = document.getElementById('accuracyScore');
+                
+                // Update completeness
+                completenessEl.textContent = `${metrics.completeness}%`;
+                completenessEl.className = `quality-score ${this.getQualityClass(metrics.completeness)}`;
+                
+                // Update consistency
+                consistencyEl.textContent = `${metrics.consistency}%`;
+                consistencyEl.className = `quality-score ${this.getQualityClass(metrics.consistency)}`;
+                
+                // Update accuracy
+                accuracyEl.textContent = `${metrics.accuracy}%`;
+                accuracyEl.className = `quality-score ${this.getQualityClass(metrics.accuracy)}`;
+            },
+            
+            getQualityClass(score) {
+                if (score >= 80) return 'excellent';
+                if (score >= 60) return 'good';
+                return 'poor';
             },
             
             updateSummaryTable(analysis) {
@@ -700,8 +1166,8 @@
                         <td>${count}</td>
                         <td>${percentage}%</td>
                         <td>
-                            <span class="badge ${this.getStatusClass(percentage)}">
-                                ${this.getStatusText(percentage)}
+                            <span class="badge ${this.getTrendClass(percentage)}">
+                                ${this.getTrendText(percentage)}
                             </span>
                         </td>
                     `;
@@ -744,13 +1210,13 @@
                 }
             },
             
-            getStatusClass(percentage) {
+            getTrendClass(percentage) {
                 if (percentage >= 50) return 'success';
                 if (percentage >= 25) return 'warning';
                 return 'danger';
             },
             
-            getStatusText(percentage) {
+            getTrendText(percentage) {
                 if (percentage >= 50) return 'High';
                 if (percentage >= 25) return 'Medium';
                 return 'Low';
@@ -789,7 +1255,7 @@
                 const stats = {
                     'Total Records': document.getElementById('totalRecords').textContent,
                     'Categories': document.getElementById('uniqueCategories').textContent,
-                    'Compliance Rate': document.getElementById('complianceRate').textContent
+                    'Date Range': document.getElementById('dateRange').textContent
                 };
                 
                 let yPos = 70;
@@ -874,8 +1340,8 @@
                                 <div class="stat-label">Categories</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">${document.getElementById('complianceRate').textContent}</div>
-                                <div class="stat-label">Compliance Rate</div>
+                                <div class="stat-number">${document.getElementById('dateRange').textContent}</div>
+                                <div class="stat-label">Date Range</div>
                             </div>
                         </div>
                         
@@ -910,21 +1376,44 @@
             }
             
             try {
-                // Show loading state
+                // Show loading state with progress
+                const progressSection = document.getElementById('progressSection');
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                
                 document.getElementById('processBtn').textContent = 'Processing...';
                 document.getElementById('processBtn').disabled = true;
+                progressSection.classList.remove('hidden');
+                
+                // Update progress
+                progressFill.style.width = '25%';
+                progressText.textContent = 'Reading file...';
                 
                 // Process the file
                 const result = await DataProcessor.processFile(file);
+                
+                progressFill.style.width = '50%';
+                progressText.textContent = 'Analyzing data...';
+                
                 DataProcessor.data = result.data;
                 DataProcessor.processedData = DataProcessor.analyzeData(result.data);
                 
+                progressFill.style.width = '75%';
+                progressText.textContent = 'Generating report...';
+                
                 // Update UI
-                UI.updateStats(DataProcessor.processedData);
+                UI.updateStats(DataProcessor.processedData, result);
                 UI.updateSummaryTable(DataProcessor.processedData);
                 UI.updateDetailedTable(result.data, result.headers);
                 UI.showTables();
                 UI.enableExportButtons();
+                
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                
+                setTimeout(() => {
+                    progressSection.classList.add('hidden');
+                }, 1000);
                 
             } catch (error) {
                 alert('Error processing file: ' + error.message);
