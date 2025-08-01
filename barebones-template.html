@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barebones Template</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== MY REPORT GENERATOR ===== */
+        
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            /* Color Palette */
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --primary-light: #8b5cf6;
+            --secondary: #64748b;
+            --success: #059669;
+            --success-light: #10b981;
+            --warning: #d97706;
+            --warning-light: #f59e0b;
+            --danger: #dc2626;
+            --danger-light: #ef4444;
+            --info: #0891b2;
+            --info-light: #06b6d4;
+            
+            /* Neutral Colors */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* Spacing System */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            --space-20: 5rem;
+            
+            /* Typography */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            
+            /* Line Heights */
+            --leading-none: 1;
+            --leading-tight: 1.25;
+            --leading-snug: 1.375;
+            --leading-normal: 1.5;
+            --leading-relaxed: 1.625;
+            --leading-loose: 2;
+            
+            /* Font Weights */
+            --font-light: 300;
+            --font-normal: 400;
+            --font-medium: 500;
+            --font-semibold: 600;
+            --font-bold: 700;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            
+            /* Border Radius */
+            --radius-sm: 0.25rem;
+            --radius: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Z-Index */
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal-backdrop: 1040;
+            --z-modal: 1050;
+            --z-popover: 1060;
+            --z-tooltip: 1070;
+        }
+
+        /* ===== RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--gray-900);
+            background-color: var(--gray-50);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== LAYOUT COMPONENTS ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: var(--space-8) 0;
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-lg);
+            border-bottom: 4px solid var(--primary-light);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+
+        .header p {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+        }
+
+        /* ===== CARD COMPONENTS ===== */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--gray-200);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* ===== GRID LAYOUTS ===== */
+        .grid {
+            display: grid;
+            gap: var(--space-6);
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        /* ===== STATISTIC CARDS ===== */
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* ===== TABLE STYLES ===== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .table th,
+        .table td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            background-color: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: var(--text-sm);
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--gray-50);
+        }
+
+        /* ===== BUTTON COMPONENTS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: var(--space-2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-200);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #047857;
+        }
+
+        /* ===== FORM COMPONENTS ===== */
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: var(--text-base);
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        
+        .mb-2 { margin-bottom: var(--space-2); }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mb-6 { margin-bottom: var(--space-6); }
+        
+        .mt-2 { margin-top: var(--space-2); }
+        .mt-4 { margin-top: var(--space-4); }
+        .mt-6 { margin-top: var(--space-6); }
+        
+        .p-4 { padding: var(--space-4); }
+        .p-6 { padding: var(--space-6); }
+        
+        .hidden { display: none; }
+        .block { display: block; }
+        .flex { display: flex; }
+        .inline-flex { display: inline-flex; }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .header {
+                background: #2563eb !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            
+            .btn {
+                display: none;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--space-4);
+            }
+            
+            .header {
+                padding: var(--space-6) 0;
+            }
+            
+            .header h1 {
+                font-size: var(--text-2xl);
+            }
+            
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: var(--space-4);
+            }
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--gray-100);
+            border-top: 1px solid var(--gray-200);
+            padding: var(--space-8) 0;
+            margin-top: var(--space-12);
+        }
+        
+        .footer p {
+            margin-bottom: var(--space-2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-content">
+            <h1>Barebones Template</h1>
+            <p>HTML-to-PDF report generation system</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- File Upload Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Data Input</h2>
+            </div>
+            <div class="form-group">
+                <label for="fileInput" class="form-label">Upload Data File (CSV, Excel)</label>
+                <input type="file" id="fileInput" class="form-input" accept=".csv,.xlsx,.xls">
+            </div>
+            <div class="flex gap-4">
+                <button id="processBtn" class="btn btn-primary">Process Data</button>
+                <button id="generatePdfBtn" class="btn btn-success" disabled>Generate PDF</button>
+                <button id="exportHtmlBtn" class="btn btn-secondary" disabled>Export HTML</button>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div id="statsSection" class="grid grid-4 hidden">
+            <div class="stat-card">
+                <div class="stat-number" id="totalRecords">0</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="uniqueCategories">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="dateRange">-</div>
+                <div class="stat-label">Date Range</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="complianceRate">0%</div>
+                <div class="stat-label">Compliance Rate</div>
+            </div>
+        </div>
+
+        <!-- Data Tables Section -->
+        <div id="tablesSection" class="hidden">
+            <!-- Summary Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Data Summary</h2>
+                </div>
+                <div class="table-container">
+                    <table class="table" id="summaryTable">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Detailed Data Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Detailed Data</h2>
+                </div>
+                <div class="table-container">
+                    <table class="table" id="detailedTable">
+                        <thead id="detailedTableHead">
+                        </thead>
+                        <tbody id="detailedTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Configuration -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Customize Your Report</h2>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label for="reportTitle" class="form-label">Report Title</label>
+                    <input type="text" id="reportTitle" class="form-input" value="My Custom Report">
+                </div>
+                <div class="form-group">
+                    <label for="reportDate" class="form-label">Report Date</label>
+                    <input type="date" id="reportDate" class="form-input">
+                </div>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label for="includeCharts" class="form-label">
+                        <input type="checkbox" id="includeCharts" checked> Include Charts
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="includeTables" class="form-label">
+                        <input type="checkbox" id="includeTables" checked> Include Tables
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Signature -->
+    <footer class="footer">
+        <div class="container">
+            <div class="text-center">
+                <p>Built by M.S</p>
+                <p class="text-sm text-gray-500">Report Generation System</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Modules -->
+    <script>
+        // ===== CORE MODULES =====
+        
+        // Data Processing Module
+        const DataProcessor = {
+            data: null,
+            processedData: null,
+            
+            async processFile(file) {
+                try {
+                    if (file.name.endsWith('.csv')) {
+                        return await this.processCSV(file);
+                    } else if (file.name.match(/\.xlsx?$/)) {
+                        return await this.processExcel(file);
+                    } else {
+                        throw new Error('Unsupported file format');
+                    }
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    throw error;
+                }
+            },
+            
+            async processCSV(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const csv = e.target.result;
+                            const lines = csv.split('\n');
+                            const headers = lines[0].split(',').map(h => h.trim());
+                            const data = lines.slice(1)
+                                .filter(line => line.trim())
+                                .map(line => {
+                                    const values = line.split(',');
+                                    const row = {};
+                                    headers.forEach((header, index) => {
+                                        row[header] = values[index] ? values[index].trim() : '';
+                                    });
+                                    return row;
+                                });
+                            resolve({ headers, data });
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+            },
+            
+            async processExcel(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const sheetName = workbook.SheetNames[0];
+                            const worksheet = workbook.Sheets[sheetName];
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                            
+                            const headers = jsonData[0];
+                            const dataRows = jsonData.slice(1).map(row => {
+                                const obj = {};
+                                headers.forEach((header, index) => {
+                                    obj[header] = row[index] || '';
+                                });
+                                return obj;
+                            });
+                            
+                            resolve({ headers, data: dataRows });
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    reader.onerror = reject;
+                    reader.readAsArrayBuffer(file);
+                });
+            },
+            
+            analyzeData(data) {
+                const analysis = {
+                    totalRecords: data.length,
+                    categories: {},
+                    dateRange: null,
+                    complianceRate: 0
+                };
+                
+                // Analyze categories
+                data.forEach(row => {
+                    const category = row.category || row.Category || row.type || row.Type || 'Unknown';
+                    analysis.categories[category] = (analysis.categories[category] || 0) + 1;
+                });
+                
+                // Calculate compliance rate (assuming a 'status' or 'compliance' column)
+                const complianceFields = ['status', 'Status', 'compliance', 'Compliance', 'state', 'State'];
+                let compliantCount = 0;
+                let totalWithStatus = 0;
+                
+                data.forEach(row => {
+                    for (const field of complianceFields) {
+                        if (row[field]) {
+                            totalWithStatus++;
+                            if (row[field].toLowerCase().includes('compliant') || 
+                                row[field].toLowerCase().includes('active') ||
+                                row[field].toLowerCase().includes('good')) {
+                                compliantCount++;
+                            }
+                            break;
+                        }
+                    }
+                });
+                
+                analysis.complianceRate = totalWithStatus > 0 ? 
+                    Math.round((compliantCount / totalWithStatus) * 100) : 0;
+                
+                return analysis;
+            }
+        };
+
+        // UI Module
+        const UI = {
+            updateStats(analysis) {
+                document.getElementById('totalRecords').textContent = analysis.totalRecords;
+                document.getElementById('uniqueCategories').textContent = Object.keys(analysis.categories).length;
+                document.getElementById('complianceRate').textContent = analysis.complianceRate + '%';
+                
+                document.getElementById('statsSection').classList.remove('hidden');
+            },
+            
+            updateSummaryTable(analysis) {
+                const tbody = document.getElementById('summaryTableBody');
+                tbody.innerHTML = '';
+                
+                Object.entries(analysis.categories).forEach(([category, count]) => {
+                    const percentage = ((count / analysis.totalRecords) * 100).toFixed(1);
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${category}</td>
+                        <td>${count}</td>
+                        <td>${percentage}%</td>
+                        <td>
+                            <span class="badge ${this.getStatusClass(percentage)}">
+                                ${this.getStatusText(percentage)}
+                            </span>
+                        </td>
+                    `;
+                });
+            },
+            
+            updateDetailedTable(data, headers) {
+                const thead = document.getElementById('detailedTableHead');
+                const tbody = document.getElementById('detailedTableBody');
+                
+                // Clear existing content
+                thead.innerHTML = '';
+                tbody.innerHTML = '';
+                
+                // Create header row
+                const headerRow = thead.insertRow();
+                headers.forEach(header => {
+                    const th = headerRow.insertCell();
+                    th.textContent = header;
+                });
+                
+                // Create data rows (limit to first 100 for performance)
+                const displayData = data.slice(0, 100);
+                displayData.forEach(row => {
+                    const dataRow = tbody.insertRow();
+                    headers.forEach(header => {
+                        const cell = dataRow.insertCell();
+                        cell.textContent = row[header] || '';
+                    });
+                });
+                
+                if (data.length > 100) {
+                    const infoRow = tbody.insertRow();
+                    const infoCell = infoRow.insertCell();
+                    infoCell.colSpan = headers.length;
+                    infoCell.textContent = `Showing first 100 of ${data.length} records`;
+                    infoCell.style.textAlign = 'center';
+                    infoCell.style.fontStyle = 'italic';
+                    infoCell.style.color = 'var(--gray-500)';
+                }
+            },
+            
+            getStatusClass(percentage) {
+                if (percentage >= 50) return 'success';
+                if (percentage >= 25) return 'warning';
+                return 'danger';
+            },
+            
+            getStatusText(percentage) {
+                if (percentage >= 50) return 'High';
+                if (percentage >= 25) return 'Medium';
+                return 'Low';
+            },
+            
+            showTables() {
+                document.getElementById('tablesSection').classList.remove('hidden');
+            },
+            
+            enableExportButtons() {
+                document.getElementById('generatePdfBtn').disabled = false;
+                document.getElementById('exportHtmlBtn').disabled = false;
+            }
+        };
+
+        // PDF Generation Module
+        const PDFGenerator = {
+            async generatePDF() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                const title = document.getElementById('reportTitle').value;
+                doc.setFontSize(20);
+                doc.text(title, 20, 20);
+                
+                // Add date
+                const date = document.getElementById('reportDate').value || new Date().toISOString().split('T')[0];
+                doc.setFontSize(12);
+                doc.text(`Generated on: ${date}`, 20, 30);
+                
+                // Add statistics
+                doc.setFontSize(16);
+                doc.text('Summary Statistics', 20, 50);
+                
+                const stats = {
+                    'Total Records': document.getElementById('totalRecords').textContent,
+                    'Categories': document.getElementById('uniqueCategories').textContent,
+                    'Compliance Rate': document.getElementById('complianceRate').textContent
+                };
+                
+                let yPos = 70;
+                Object.entries(stats).forEach(([label, value]) => {
+                    doc.setFontSize(12);
+                    doc.text(`${label}: ${value}`, 20, yPos);
+                    yPos += 10;
+                });
+                
+                // Add table data
+                if (document.getElementById('includeTables').checked) {
+                    yPos += 20;
+                    doc.setFontSize(16);
+                    doc.text('Data Summary', 20, yPos);
+                    yPos += 10;
+                    
+                    const table = document.getElementById('summaryTable');
+                    const rows = table.querySelectorAll('tbody tr');
+                    
+                    rows.forEach((row, index) => {
+                        if (yPos > 250) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        
+                        const cells = row.querySelectorAll('td');
+                        const category = cells[0].textContent;
+                        const count = cells[1].textContent;
+                        const percentage = cells[2].textContent;
+                        
+                        doc.setFontSize(10);
+                        doc.text(`${category}: ${count} (${percentage})`, 20, yPos);
+                        yPos += 8;
+                    });
+                }
+                
+                // Save the PDF
+                const filename = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${date}.pdf`;
+                doc.save(filename);
+            }
+        };
+
+        // HTML Export Module
+        const HTMLExporter = {
+            exportHTML() {
+                const title = document.getElementById('reportTitle').value;
+                const date = document.getElementById('reportDate').value || new Date().toISOString().split('T')[0];
+                
+                // Create a clean HTML version for export
+                const exportContent = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>${title}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .header { text-align: center; margin-bottom: 30px; }
+                            .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+                            .stat { background: #f8f9fa; padding: 20px; text-align: center; border-radius: 8px; }
+                            .stat-number { font-size: 24px; font-weight: bold; color: #2563eb; }
+                            .stat-label { font-size: 14px; color: #666; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                            th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+                            th { background-color: #f8f9fa; font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>${title}</h1>
+                            <p>Generated on: ${date}</p>
+                        </div>
+                        
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-number">${document.getElementById('totalRecords').textContent}</div>
+                                <div class="stat-label">Total Records</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${document.getElementById('uniqueCategories').textContent}</div>
+                                <div class="stat-label">Categories</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${document.getElementById('complianceRate').textContent}</div>
+                                <div class="stat-label">Compliance Rate</div>
+                            </div>
+                        </div>
+                        
+                        ${document.getElementById('summaryTable').outerHTML}
+                    </body>
+                    </html>
+                `;
+                
+                // Create and download the file
+                const blob = new Blob([exportContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${date}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        };
+
+        // ===== EVENT HANDLERS =====
+        
+        // File processing
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file first.');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                document.getElementById('processBtn').textContent = 'Processing...';
+                document.getElementById('processBtn').disabled = true;
+                
+                // Process the file
+                const result = await DataProcessor.processFile(file);
+                DataProcessor.data = result.data;
+                DataProcessor.processedData = DataProcessor.analyzeData(result.data);
+                
+                // Update UI
+                UI.updateStats(DataProcessor.processedData);
+                UI.updateSummaryTable(DataProcessor.processedData);
+                UI.updateDetailedTable(result.data, result.headers);
+                UI.showTables();
+                UI.enableExportButtons();
+                
+            } catch (error) {
+                alert('Error processing file: ' + error.message);
+            } finally {
+                document.getElementById('processBtn').textContent = 'Process Data';
+                document.getElementById('processBtn').disabled = false;
+            }
+        });
+        
+        // PDF generation
+        document.getElementById('generatePdfBtn').addEventListener('click', async () => {
+            try {
+                await PDFGenerator.generatePDF();
+            } catch (error) {
+                alert('Error generating PDF: ' + error.message);
+            }
+        });
+        
+        // HTML export
+        document.getElementById('exportHtmlBtn').addEventListener('click', () => {
+            try {
+                HTMLExporter.exportHTML();
+            } catch (error) {
+                alert('Error exporting HTML: ' + error.message);
+            }
+        });
+        
+        // Set default date
+        document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html> 
