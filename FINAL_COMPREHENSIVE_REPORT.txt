@@ -1,0 +1,322 @@
+================================================================================
+              ADOBE LICENSE COMPREHENSIVE ANALYSIS - FINAL REPORT
+================================================================================
+
+Date: December 9, 2025
+Total People Reached Out To: 29
+Analysis includes: User database, Provisioning logs, Support tickets, Email threads
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+People with licenses:         6  (21%)
+People without licenses:      1  ( 3%)
+Not found in Adobe system:  22  (76%)
+
+**KEY FINDINGS:**
+- Original outreach email sent September 16, 2025 by Michael Sanchez
+- Deadline for license requests was October 1, 2025
+- License cost: ~$254-$255 per year per user
+- Multiple people actively followed up requesting access
+- Several people submitted hardware/software purchase forms
+
+================================================================================
+SECTION 1: PEOPLE WHO HAVE ADOBE LICENSES (6)
+================================================================================
+
+1. Ayanna Leonard
+   Email: Ayanna.Leonard@tmh.org
+   Enterprise: Acrobat Pro (VIPMP - 5DD9179E7C746789DD4A)
+   Configurations: 8316 - Medical Staff Office(1) - P.O. 836007
+   Recent Activity:
+      - PROVISIONED on 2025-11-18
+   Communication Activity:
+      - ACTIVELY communicated with Michael Sanchez multiple times
+      - Reported license issues and requested support
+      - Confirmed in October 1st deadline email
+   Status: Has active license ✓
+
+2. David Adkins
+   Email: David.Adkins@TMH.ORG
+   Enterprise: Acrobat Pro (VIPMP - 5DD9179E7C746789DD4A)
+   Configurations: Enterprise Acrobat Pro DC configuration
+   Communication Activity:
+      - Included in September 16 outreach email
+      - Asked about license cost (~$214)
+      - Inquired about submitting ticket before October 1 deadline
+   Status: Has active license ✓
+
+3. Bill Rich
+   Email: bill.rich@tmh.org
+   Enterprise: Acrobat Pro (VIPMP - 5DD9179E7C746789DD4A)
+   Configurations: 8232 - IT/Infrastructure Services
+   Recent Activity:
+      - PROVISIONED on 2025-09-26
+   Communication Activity:
+      - Service Request: 7010460 created for Adobe license
+      - Actively engaged with licensing process
+   Status: Has active license ✓
+
+4. Arthur Wai
+   Email: Arthur.Wai@tmh.org
+   Enterprise: Acrobat Pro (VIPMP - 5DD9179E7C746789DD4A)
+   Configurations: 8232 - IT/Infrastructure Services
+   Recent Activity:
+      - PROVISIONED on 2025-09-26
+   Communication Activity:
+      - Included in September 16 outreach email
+      - Requested usage report for IT team members
+      - Asked about: Sherry Gatlin, Edward Garcia, Angel Lluveras, Carrie Roberts
+   Status: Has active license ✓
+
+5. Robbie King
+   Email: ROBBIE.KING@TMH.ORG
+   Enterprise: Acrobat Pro (VIPMP - 5DD9179E7C746789DD4A)
+   Configurations: 7005 - Lab Administrative (11)
+   Communication Activity:
+      - Included in September 16 outreach email
+      - Actively contacted Michael Sanchez
+      - Reported needing to edit PDF for SPARK submission
+      - License transferred from Sheila Thomas (Service Request 7012385)
+   Status: Has active license ✓
+
+6. Johann Hautea
+   Email: Johann.Hautea@tmh.org
+   Enterprise: Acrobat Pro (VIPMP - 5DD9179E7C746789DD4A)
+   Configurations: 8212 - General Accounting
+   Recent Activity:
+      - PROVISIONED on 2025-11-12
+      - PROVISIONED on 2025-11-12
+      - UNPROVISIONED on 2025-11-12
+   Communication Activity:
+      - Included in September 16 outreach email
+   Status: Has active license ✓
+
+================================================================================
+SECTION 2: PEOPLE WITHOUT LICENSES (1)
+================================================================================
+
+1. Derek Hillison
+   Email: derek.hillison@tmh.org
+   Status: In Adobe system but NO licenses assigned ⚠️
+   Communication Activity:
+      - Included in September 16 outreach email to Michael Sanchez
+      - Was notified of October 1 deadline
+      - No follow-up communication found
+   URGENT: Needs license provisioned or confirmation that license not needed
+
+
+================================================================================
+SECTION 3: PEOPLE NOT FOUND IN ADOBE SYSTEM (22)
+================================================================================
+
+HIGH PRIORITY (Submitted purchase requests or actively communicated):
+
+1. Angel Lluveras ★★★ URGENT
+   Email: angel.lluveras@tmh.org
+   - MULTIPLE follow-up emails to Michael Sanchez
+   - Submitted hardware/software purchase request via Catherine Hanks
+   - Service Request: 7017992 (In Procurement)
+   - Uses Adobe daily for cardiology applications
+   - Still awaiting license as of November 24, 2025
+   - Included in September 16 outreach email
+
+2. Carrie Roberts ★★★ URGENT  
+   Email: Carrie.Roberts@tmh.org
+   - Purchase request submitted via Catherine Hanks
+   - Service Request: 7017992 (In Procurement)
+   - Uses Adobe daily for cardiology applications
+   - Included in September 16 outreach email
+
+3. Catherine Hanks ★★
+   Email: Catherine.Hanks@tmh.org
+   - Submitted purchase requests for Angel Lluveras and Carrie Roberts
+   - Asked about service request process
+   - Included in September 16 outreach email (forwarded)
+
+4. Mary Everidge ★★
+   Email: Mary.Everidge@tmh.org
+   - Service Request: 7010460 (Waiting On Delivery)
+   - Submitted signed hardware/software form
+   - Needs 1 Adobe Pro License for Surgery department
+   - Included in September 16 outreach email
+
+5. Denise Witherspoon ★★
+   Email: Denise.Witherspoon@tmh.org
+   - Executive Assistant to VP/Chief HR Officer
+   - Actively communicated with Michael Sanchez
+   - Committed to submitting via Merlin
+   - Forwarded from Lora Vitali
+   - Included in outreach chain
+
+6. Melissa Salisbury ★★
+   Email: Melissa.Salisbury@TMH.ORG
+   - PMO - Asked about bulk licensing and cost
+   - Service Request: 7001316 for 13 Adobe Pro Enterprise Licenses
+   - Included in September 16 outreach email
+
+MEDIUM PRIORITY (In original outreach email):
+
+7. Domingo Tuckler
+   Email: Domingo.Tuckler@tmh.org
+   - Included in September 16 outreach email
+
+8. Sherry Gatlin
+   Email: Sherry.Gatlin@tmh.org
+   - Included in September 16 outreach email
+   - Mentioned by Arthur Wai in usage report request
+
+9. Edward Garcia
+   Email: Edward.Garcia@tmh.org
+   - Included in September 16 outreach email
+   - Mentioned by Arthur Wai in usage report request
+
+10. Lisa Dyson
+    Email: Lisa.Dyson@tmh.org
+    - Included in September 16 outreach email
+
+11. Christopher Buzzard
+    Email: Christopher.Buzzard@tmh.org
+    - Included in September 16 outreach email
+
+12. Corinth Bradley
+    Email: Corinth.Bradley@tmh.org (also N705407@tmh.org)
+    - Included in September 16 outreach email
+
+13. Wendie Najdowski
+    Email: Wendie.Najdowski@tmh.org
+    - Included in September 16 outreach email
+
+14. Kevin Gaines
+    Email: Kevin.Gaines@tmh.org
+    - Included in September 16 outreach email
+
+15. Lora Vitali
+    Email: Lora.Vitali@tmh.org
+    - Forwarded Adobe license requirement email to Denise Witherspoon
+    - Included in September 16 outreach email
+
+16. Mattie DuPayne
+    Email: Mattie.DuPayne@tmh.org
+    - Included in September 16 outreach email
+
+LOW PRIORITY (Not in email chain - may need verification):
+
+17. Nell Owens
+    Email: Nell.Owens@tmh.org
+    - In September 16 email list but not in your contact list
+
+18. Wendy Wyche
+    Email: Wendy.Wyche@tmh.org
+    - In September 16 email list but not in your contact list
+
+19. Carol Young
+    Email: Carol.Young@tmh.org
+    - In September 16 email list but not in your contact list
+
+20. Ashley Holland
+    Email: Ashley.Holland2@tmh.org
+    - In September 16 email list but not in your contact list
+
+21. Rebecca Smelt
+    Email: Rebecca.Smelt@tmh.org
+    - In September 16 email list but not in your contact list
+
+22. Ashtyn Knight
+    Email: E027181@TMH.ORG
+    - In September 16 email list but not in your contact list
+
+
+================================================================================
+KEY COMMUNICATIONS TIMELINE
+================================================================================
+
+September 16, 2025:
+- Michael Sanchez sent Adobe license requirement email to 29 people
+- Deadline announced: October 1, 2025
+- Cost mentioned: $254-255 per license annually
+
+August-November 2025:
+- Multiple follow-ups from Angel Lluveras (still no access as of Nov 24)
+- Ayanna Leonard reported multiple license issues, eventually resolved
+- David Adkins inquired about cost and process
+- Catherine Hanks submitted purchase requests for Angel & Carrie
+- Mary Everidge submitted hardware/software form
+- Melissa Salisbury inquired about bulk licensing for PMO
+
+December 2025:
+- Timothy Osborne and Scot Sherren received new license provisions
+
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. IMMEDIATE ACTION REQUIRED:
+
+   A. Derek Hillison (derek.hillison@tmh.org)
+      - In Adobe system but NO license assigned
+      - Was notified but no follow-up found
+      - ACTION: Contact to confirm license needed, then provision
+
+   B. Angel Lluveras (angel.lluveras@tmh.org) ★★★ URGENT
+      - Service Request 7017992 in procurement since November 24
+      - Multiple follow-ups, still no access
+      - Critical need - uses Adobe daily
+      - ACTION: Expedite license purchase and provision immediately
+
+   C. Carrie Roberts (Carrie.Roberts@tmh.org) ★★★ URGENT
+      - Part of same Service Request 7017992
+      - Works with Angel on cardiology applications
+      - ACTION: Expedite license purchase and provision immediately
+
+2. HIGH PRIORITY FOLLOW-UP:
+
+   The following people submitted requests or actively communicated:
+   - Catherine Hanks (submitted requests for others)
+   - Mary Everidge (Service Request 7010460 - Waiting On Delivery)
+   - Denise Witherspoon (committed to submitting via Merlin)
+   - Melissa Salisbury (PMO - requested 13 licenses)
+
+   ACTION: Check status of all pending purchase orders and service requests
+
+3. MEDIUM PRIORITY:
+
+   People in original September 16 email who have not followed up:
+   - Domingo Tuckler, Sherry Gatlin, Edward Garcia, Lisa Dyson
+   - Christopher Buzzard, Corinth Bradley, Wendie Najdowski, Kevin Gaines
+   - Lora Vitali, Mattie DuPayne
+
+   ACTION: Follow up to confirm if they still need licenses
+
+4. VERIFICATION NEEDED:
+
+   People in contact list but communication history unclear:
+   - Nell Owens, Wendy Wyche, Carol Young, Ashley Holland
+   - Rebecca Smelt, Ashtyn Knight
+
+   ACTION: Verify names and email addresses, confirm license needs
+
+5. PROCESS IMPROVEMENTS:
+
+   - Track all hardware/software purchase requests with expected completion dates
+   - Set up automated follow-up for pending license provisions
+   - Create dashboard showing license request status
+   - Establish SLA for license provisioning after purchase approval
+
+
+================================================================================
+COST SUMMARY
+================================================================================
+
+Estimated Annual Cost per License: $254-255
+- 6 people currently have licenses: $1,524-1,530/year
+- 1 person needs provision (in system): $254-255/year
+- ~6-8 high priority pending: $1,524-2,040/year
+- Total potential if all 29 get licenses: $7,366-7,395/year
+
+
+================================================================================
+END OF REPORT
+================================================================================
