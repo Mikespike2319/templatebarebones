@@ -508,7 +508,8 @@
         let state = {
             version: 1,
             selectedDeviceIds: [],
-            devices: {}
+            devices: {},
+            previouslySelectedIds: [] // Track devices that have been selected before
         };
 
         let workbook = null;
@@ -533,8 +534,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadState();
             setupEventListeners();
+            // If we have saved checklist data, show it immediately
             if (state.selectedDeviceIds.length === 10 && Object.keys(state.devices).length > 0) {
-                loadSavedChecklist();
+                // Check if all devices have data
+                const allHaveData = state.selectedDeviceIds.every(id => state.devices[id]);
+                if (allHaveData) {
+                    loadSavedChecklist();
+                }
             }
         });
 
@@ -589,7 +595,8 @@
                 renderTable();
             });
 
-            generateChecklistBtn.addEventListener('click', () => {
+            generateChecklistBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 generateChecklist();
             });
 
@@ -724,11 +731,101 @@
                 }
 
                 detectColumns();
+                
+                // Auto-select 10 devices if not already selected
+                autoSelectDevices();
+                
                 renderTable();
                 document.getElementById('selectionSection').classList.remove('hidden');
+                
+                // If we now have 10 devices selected, automatically generate the checklist
+                if (state.selectedDeviceIds.length === 10) {
+                    // Small delay to ensure UI is updated
+                    setTimeout(() => {
+                        generateChecklist();
+                    }, 100);
+                }
             } catch (error) {
                 showMessage('uploadMessages', 'Error parsing sheet: ' + error.message, 'error');
             }
+        }
+
+        function autoSelectDevices() {
+            if (rows.length < 2) return; // Need at least header + 1 row
+            
+            // If we already have 10 selected and they're all in the current file, don't auto-select
+            if (state.selectedDeviceIds.length === 10) {
+                const allSelectedInFile = state.selectedDeviceIds.every(id => {
+                    return rows.slice(1).some((row, rowIdx) => {
+                        const deviceName = String(row[columns.deviceName] || '').trim();
+                        const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
+                        const model = columns.model !== null ? String(row[columns.model] || '').trim() : '';
+                        const uniqueId = deviceId || `${deviceName}_${model}` || `row_${rowIdx}`;
+                        return uniqueId === id;
+                    });
+                });
+                if (allSelectedInFile) {
+                    updateSelectCounter();
+                    document.getElementById('generateChecklistBtn').disabled = false;
+                    return;
+                }
+            }
+            
+            // Build list of available devices with their IDs
+            const availableDevices = [];
+            rows.slice(1).forEach((row, rowIdx) => {
+                const deviceName = String(row[columns.deviceName] || '').trim();
+                const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
+                const model = columns.model !== null ? String(row[columns.model] || '').trim() : '';
+                const uniqueId = deviceId || `${deviceName}_${model}` || `row_${rowIdx}`;
+                
+                if (deviceName || deviceId) {
+                    availableDevices.push({
+                        id: uniqueId,
+                        row: row,
+                        previouslySelected: state.previouslySelectedIds.includes(uniqueId),
+                        alreadyCompleted: state.devices[uniqueId] && state.devices[uniqueId].completedAt !== null
+                    });
+                }
+            });
+            
+            // Separate into unselected and previously selected
+            const unselected = availableDevices.filter(d => !d.previouslySelected && !d.alreadyCompleted);
+            const previouslySelected = availableDevices.filter(d => d.previouslySelected && !d.alreadyCompleted);
+            const completed = availableDevices.filter(d => d.alreadyCompleted);
+            
+            // Select up to 10 devices, prioritizing unselected ones
+            state.selectedDeviceIds = [];
+            
+            // First, add unselected devices (up to 10)
+            for (let i = 0; i < Math.min(10, unselected.length); i++) {
+                state.selectedDeviceIds.push(unselected[i].id);
+            }
+            
+            // If we need more, add previously selected (but not completed) devices
+            if (state.selectedDeviceIds.length < 10) {
+                for (let i = 0; i < Math.min(10 - state.selectedDeviceIds.length, previouslySelected.length); i++) {
+                    state.selectedDeviceIds.push(previouslySelected[i].id);
+                }
+            }
+            
+            // If still need more, add completed devices
+            if (state.selectedDeviceIds.length < 10) {
+                for (let i = 0; i < Math.min(10 - state.selectedDeviceIds.length, completed.length); i++) {
+                    state.selectedDeviceIds.push(completed[i].id);
+                }
+            }
+            
+            // Update tracking
+            state.selectedDeviceIds.forEach(id => {
+                if (!state.previouslySelectedIds.includes(id)) {
+                    state.previouslySelectedIds.push(id);
+                }
+            });
+            
+            updateSelectCounter();
+            document.getElementById('generateChecklistBtn').disabled = state.selectedDeviceIds.length !== 10;
+            saveState();
         }
 
         function detectColumns() {
@@ -932,6 +1029,16 @@
                 showMessage('uploadMessages', 'Please select exactly 10 devices', 'error');
                 return;
             }
+            
+            if (!rows || rows.length === 0) {
+                showMessage('uploadMessages', 'No data available. Please upload a file first.', 'error');
+                return;
+            }
+            
+            if (columns.deviceName === undefined) {
+                showMessage('uploadMessages', 'Device name column not detected. Please select it manually.', 'error');
+                return;
+            }
 
             // Match devices from current Excel with saved state
             const deviceMap = {};
@@ -943,6 +1050,13 @@
                 
                 if (state.selectedDeviceIds.includes(uniqueId)) {
                     deviceMap[uniqueId] = row;
+                }
+            });
+            
+            // Track that these devices have been selected
+            state.selectedDeviceIds.forEach(id => {
+                if (!state.previouslySelectedIds.includes(id)) {
+                    state.previouslySelectedIds.push(id);
                 }
             });
 
@@ -1267,7 +1381,8 @@
             state = {
                 version: 1,
                 selectedDeviceIds: [],
-                devices: {}
+                devices: {},
+                previouslySelectedIds: []
             };
             document.getElementById('checklistSection').classList.add('hidden');
             document.getElementById('selectionSection').classList.add('hidden');
@@ -1283,7 +1398,8 @@
                     state = {
                         version: parsed.version || 1,
                         selectedDeviceIds: parsed.selectedDeviceIds || [],
-                        devices: parsed.devices || {}
+                        devices: parsed.devices || {},
+                        previouslySelectedIds: parsed.previouslySelectedIds || []
                     };
                     updateSelectCounter();
                 }
