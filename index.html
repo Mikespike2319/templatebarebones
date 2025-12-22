@@ -617,13 +617,28 @@
                     const fileName = file.name.toLowerCase();
                     
                     if (fileName.endsWith('.csv')) {
-                        // Handle CSV files
+                        // Handle CSV files - use FS option and preserve as strings
                         const text = e.target.result;
-                        workbook = XLSX.read(text, { type: 'string', cellText: false, cellDates: false });
+                        workbook = XLSX.read(text, { 
+                            type: 'string',
+                            FS: ',',
+                            cellText: false, 
+                            cellDates: false,
+                            cellNF: false,
+                            cellStyles: false,
+                            // Force all cells to be treated as text to preserve serial numbers
+                            raw: true
+                        });
                     } else {
-                        // Handle Excel files
+                        // Handle Excel files - preserve formatted text
                         data = new Uint8Array(e.target.result);
-                        workbook = XLSX.read(data, { type: 'array', cellText: false, cellDates: false });
+                        workbook = XLSX.read(data, { 
+                            type: 'array', 
+                            cellText: false, 
+                            cellDates: false,
+                            cellNF: false,
+                            cellStyles: false
+                        });
                     }
                     
                     const worksheetSelect = document.getElementById('worksheetSelect');
@@ -659,11 +674,49 @@
             if (!currentSheet) return;
 
             try {
-                rows = XLSX.utils.sheet_to_json(currentSheet, { 
-                    header: 1, 
-                    defval: '',
-                    raw: false 
-                });
+                // Read cells directly to preserve formatted text and avoid scientific notation
+                const range = XLSX.utils.decode_range(currentSheet['!ref'] || 'A1');
+                rows = [];
+                
+                // Helper function to format numbers without scientific notation
+                function formatNumber(num) {
+                    if (num % 1 === 0) {
+                        // Integer - use toFixed(0) to avoid scientific notation
+                        // For very large numbers, ensure no scientific notation
+                        if (Math.abs(num) >= 1e15) {
+                            // Use string manipulation to avoid scientific notation
+                            return num.toString();
+                        }
+                        return num.toFixed(0);
+                    } else {
+                        return String(num);
+                    }
+                }
+                
+                // Read each cell and preserve its formatted text (w property)
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    const row = [];
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                        const cell = currentSheet[cellAddress];
+                        if (cell) {
+                            // Priority: use formatted text (w), then formatted number, then raw value as string
+                            if (cell.w !== undefined && cell.w !== null && cell.w !== '') {
+                                // Use the formatted text as it appears in Excel/CSV
+                                row.push(String(cell.w));
+                            } else if (cell.t === 'n') {
+                                // It's a number - convert to string without scientific notation
+                                row.push(formatNumber(cell.v));
+                            } else {
+                                // String or other type
+                                row.push(cell.v != null ? String(cell.v) : '');
+                            }
+                        } else {
+                            row.push('');
+                        }
+                    }
+                    rows.push(row);
+                }
 
                 if (rows.length === 0) {
                     showMessage('uploadMessages', 'Sheet is empty', 'error');
