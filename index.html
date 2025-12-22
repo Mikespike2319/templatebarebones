@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Turn-On Checklist Manager</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .section h2 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            background: #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            background: #d5dbdb;
+            border-color: #2980b9;
+        }
+
+        .file-upload-area.dragover {
+            background: #d5e8f7;
+            border-color: #2980b9;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #2980b9;
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #7f8c8d;
+        }
+
+        .select-counter {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 15px 0;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+
+        .select-counter.limit-reached {
+            background: #ffe6e6;
+            color: #c0392b;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .worksheet-selector, .column-selector {
+            margin: 15px 0;
+        }
+
+        .worksheet-selector select, .column-selector select {
+            padding: 8px 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: #2c3e50;
+        }
+
+        th.sort-asc::after {
+            content: " ▲";
+            font-size: 10px;
+        }
+
+        th.sort-desc::after {
+            content: " ▼";
+            font-size: 10px;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr.selected {
+            background: #e8f5e9;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .device-card {
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .device-card.complete {
+            border-color: #27ae60;
+            background: #f0fdf4;
+        }
+
+        .device-card.not-in-file {
+            border-color: #e74c3c;
+            background: #fef2f2;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .device-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .device-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .device-meta span {
+            padding: 5px;
+        }
+
+        .device-meta strong {
+            color: #34495e;
+        }
+
+        .progress-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .progress-badge.in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .progress-badge.complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .checklist-items {
+            margin-top: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: #e9ecef;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-right: 12px;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .checklist-item.completed {
+            background: #d4edda;
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .global-progress {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .global-progress h3 {
+            margin-bottom: 10px;
+        }
+
+        .global-progress .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #2c3e50;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .global-progress .progress-fill {
+            height: 100%;
+            background: #27ae60;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #27ae60;
+        }
+
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .device-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .device-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Device Turn-On Checklist Manager</h1>
+        <p class="subtitle">Upload Excel device list, select 10 devices, and manage persistent checklists</p>
+
+        <!-- File Upload Section -->
+        <div class="section" id="uploadSection">
+            <h2>1. Upload Device List</h2>
+            <div class="file-upload-area" id="fileUploadArea">
+                <p>📁 Drag & drop Excel file here or click to browse</p>
+                <input type="file" id="fileInput" accept=".xlsx,.xls" />
+            </div>
+            <div id="worksheetSelector" class="worksheet-selector hidden">
+                <label>Select Worksheet:</label>
+                <select id="worksheetSelect"></select>
+            </div>
+            <div id="columnSelector" class="column-selector hidden">
+                <label>Device Name Column:</label>
+                <select id="deviceNameColumn"></select>
+            </div>
+            <div id="uploadMessages"></div>
+        </div>
+
+        <!-- Device Selection Section -->
+        <div class="section hidden" id="selectionSection">
+            <h2>2. Select Devices (Exactly 10)</h2>
+            <div class="select-counter" id="selectCounter">Selected: 0 / 10</div>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search devices...">
+            <div style="overflow-x: auto;">
+                <table id="deviceTable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-success" id="generateChecklistBtn" disabled>Generate / Load Checklist</button>
+                <button class="btn btn-secondary" id="replaceSelectionBtn">Replace Selection</button>
+            </div>
+        </div>
+
+        <!-- Checklist Section -->
+        <div class="section hidden" id="checklistSection">
+            <h2>3. Device Checklists</h2>
+            <div class="global-progress" id="globalProgress">
+                <h3>Total Progress</h3>
+                <div id="globalProgressText">0 / 0 steps completed</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+                </div>
+            </div>
+            <div class="controls-bar">
+                <button class="btn" id="copyMarkdownBtn">Copy Markdown</button>
+                <button class="btn" id="exportHtmlBtn">Export HTML</button>
+                <button class="btn btn-danger" id="clearAllBtn">Clear All Data</button>
+                <button class="btn btn-secondary" id="backToSelectionBtn">Back to Selection</button>
+            </div>
+            <div id="checklistContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            version: 1,
+            selectedDeviceIds: [],
+            devices: {}
+        };
+
+        let workbook = null;
+        let currentSheet = null;
+        let rows = [];
+        let columns = {};
+        let sortConfig = { column: null, direction: 'asc' };
+
+        // Default checklist items
+        const CHECKLIST_ITEMS = [
+            { key: 'powerOn', label: 'Power on device' },
+            { key: 'network', label: 'Confirm network connectivity (Wi-Fi/Ethernet)' },
+            { key: 'reachable', label: 'Confirm reachable (DNS/ping if applicable)' },
+            { key: 'intuneSync', label: 'Trigger Intune/MDM sync' },
+            { key: 'checkIn', label: 'Confirm Last check-in updates' },
+            { key: 'compliance', label: 'Confirm compliance status / note reason' },
+            { key: 'updates', label: 'Apply OS/security updates / confirm patch level' },
+            { key: 'document', label: 'Document outcome / escalate if still offline' }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            setupEventListeners();
+            if (state.selectedDeviceIds.length === 10 && Object.keys(state.devices).length > 0) {
+                loadSavedChecklist();
+            }
+        });
+
+        function setupEventListeners() {
+            const fileInput = document.getElementById('fileInput');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const worksheetSelect = document.getElementById('worksheetSelect');
+            const deviceNameColumn = document.getElementById('deviceNameColumn');
+            const searchBox = document.getElementById('searchBox');
+            const generateChecklistBtn = document.getElementById('generateChecklistBtn');
+            const replaceSelectionBtn = document.getElementById('replaceSelectionBtn');
+            const copyMarkdownBtn = document.getElementById('copyMarkdownBtn');
+            const exportHtmlBtn = document.getElementById('exportHtmlBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            const backToSelectionBtn = document.getElementById('backToSelectionBtn');
+
+            fileUploadArea.addEventListener('click', () => fileInput.click());
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            worksheetSelect.addEventListener('change', () => {
+                const sheetName = worksheetSelect.value;
+                if (workbook && workbook.Sheets[sheetName]) {
+                    currentSheet = workbook.Sheets[sheetName];
+                    parseSheet();
+                }
+            });
+
+            deviceNameColumn.addEventListener('change', () => {
+                parseSheet();
+            });
+
+            searchBox.addEventListener('input', () => {
+                renderTable();
+            });
+
+            generateChecklistBtn.addEventListener('click', () => {
+                generateChecklist();
+            });
+
+            replaceSelectionBtn.addEventListener('click', () => {
+                state.selectedDeviceIds = [];
+                updateSelectCounter();
+                renderTable();
+                document.getElementById('generateChecklistBtn').disabled = true;
+            });
+
+            copyMarkdownBtn.addEventListener('click', copyMarkdown);
+            exportHtmlBtn.addEventListener('click', exportChecklistHtml);
+            clearAllBtn.addEventListener('click', clearAllData);
+            backToSelectionBtn.addEventListener('click', () => {
+                document.getElementById('checklistSection').classList.add('hidden');
+                document.getElementById('selectionSection').classList.remove('hidden');
+            });
+        }
+
+        function handleFileUpload(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    workbook = XLSX.read(data, { type: 'array', cellText: false, cellDates: false });
+                    
+                    const worksheetSelect = document.getElementById('worksheetSelect');
+                    worksheetSelect.innerHTML = '';
+                    
+                    workbook.SheetNames.forEach(name => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        worksheetSelect.appendChild(option);
+                    });
+
+                    if (workbook.SheetNames.length > 0) {
+                        worksheetSelect.value = workbook.SheetNames[0];
+                        currentSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        document.getElementById('worksheetSelector').classList.remove('hidden');
+                        parseSheet();
+                    }
+                } catch (error) {
+                    showMessage('uploadMessages', 'Error reading Excel file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseSheet() {
+            if (!currentSheet) return;
+
+            try {
+                rows = XLSX.utils.sheet_to_json(currentSheet, { 
+                    header: 1, 
+                    defval: '',
+                    raw: false 
+                });
+
+                if (rows.length === 0) {
+                    showMessage('uploadMessages', 'Sheet is empty', 'error');
+                    return;
+                }
+
+                detectColumns();
+                renderTable();
+                document.getElementById('selectionSection').classList.remove('hidden');
+            } catch (error) {
+                showMessage('uploadMessages', 'Error parsing sheet: ' + error.message, 'error');
+            }
+        }
+
+        function detectColumns() {
+            if (rows.length === 0) return;
+
+            const headerRow = rows[0];
+            const columnSelect = document.getElementById('deviceNameColumn');
+            columnSelect.innerHTML = '';
+
+            // Common column name patterns
+            const deviceNamePatterns = ['device name', 'name', 'device', 'computer name', 'hostname', 'display name'];
+            let autoSelected = false;
+
+            headerRow.forEach((col, idx) => {
+                const option = document.createElement('option');
+                option.value = idx;
+                option.textContent = `${idx}: ${col || '(empty)'}`;
+                columnSelect.appendChild(option);
+
+                if (!autoSelected && col) {
+                    const colLower = col.toLowerCase();
+                    if (deviceNamePatterns.some(pattern => colLower.includes(pattern))) {
+                        columnSelect.value = idx;
+                        autoSelected = true;
+                    }
+                }
+            });
+
+            if (!autoSelected && headerRow.length > 0) {
+                columnSelect.value = 0;
+            }
+
+            // Detect common columns
+            columns = {
+                deviceName: parseInt(columnSelect.value),
+                deviceId: null,
+                model: null,
+                category: null,
+                compliance: null,
+                osVersion: null,
+                lastCheckIn: null,
+                patchLevel: null,
+                managedBy: null,
+                ownership: null
+            };
+
+            headerRow.forEach((col, idx) => {
+                if (!col) return;
+                const colLower = col.toLowerCase();
+                if (colLower.includes('device id') || colLower.includes('id')) {
+                    columns.deviceId = idx;
+                } else if (colLower.includes('model')) {
+                    columns.model = idx;
+                } else if (colLower.includes('category') || colLower.includes('type')) {
+                    columns.category = idx;
+                } else if (colLower.includes('compliance')) {
+                    columns.compliance = idx;
+                } else if (colLower.includes('os version') || colLower.includes('operating system')) {
+                    columns.osVersion = idx;
+                } else if (colLower.includes('last check') || colLower.includes('last sync')) {
+                    columns.lastCheckIn = idx;
+                } else if (colLower.includes('patch') || colLower.includes('update')) {
+                    columns.patchLevel = idx;
+                } else if (colLower.includes('managed by') || colLower.includes('management')) {
+                    columns.managedBy = idx;
+                } else if (colLower.includes('ownership')) {
+                    columns.ownership = idx;
+                }
+            });
+
+            document.getElementById('columnSelector').classList.remove('hidden');
+        }
+
+        function renderTable() {
+            const tableHead = document.getElementById('tableHead');
+            const tableBody = document.getElementById('tableBody');
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+
+            if (rows.length === 0) return;
+
+            // Header
+            const headerRow = rows[0];
+            tableHead.innerHTML = '<tr><th>Select</th></tr>';
+            const headerCells = tableHead.querySelector('tr');
+            
+            headerRow.forEach((col, idx) => {
+                const th = document.createElement('th');
+                th.textContent = col || `Column ${idx}`;
+                th.onclick = () => sortTable(idx);
+                if (sortConfig.column === idx) {
+                    th.classList.add(sortConfig.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+                headerCells.appendChild(th);
+            });
+
+            // Body
+            tableBody.innerHTML = '';
+            let filteredRows = rows.slice(1);
+
+            // Apply search filter
+            if (searchTerm) {
+                filteredRows = filteredRows.filter(row => {
+                    return row.some(cell => String(cell).toLowerCase().includes(searchTerm));
+                });
+            }
+
+            // Apply sorting
+            if (sortConfig.column !== null) {
+                filteredRows.sort((a, b) => {
+                    const aVal = String(a[sortConfig.column] || '');
+                    const bVal = String(b[sortConfig.column] || '');
+                    const comparison = aVal.localeCompare(bVal, undefined, { numeric: true, sensitivity: 'base' });
+                    return sortConfig.direction === 'asc' ? comparison : -comparison;
+                });
+            }
+
+            filteredRows.forEach((row, rowIdx) => {
+                const tr = document.createElement('tr');
+                
+                // Get device identifier
+                const deviceName = String(row[columns.deviceName] || '').trim();
+                const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
+                const model = columns.model !== null ? String(row[columns.model] || '').trim() : '';
+                const uniqueId = deviceId || `${deviceName}_${model}` || `row_${rowIdx}`;
+
+                const isSelected = state.selectedDeviceIds.includes(uniqueId);
+                if (isSelected) {
+                    tr.classList.add('selected');
+                }
+
+                // Select checkbox
+                const tdCheck = document.createElement('td');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = isSelected;
+                checkbox.onchange = () => handleDeviceSelect(uniqueId, checkbox.checked);
+                checkbox.disabled = !isSelected && state.selectedDeviceIds.length >= 10;
+                tdCheck.appendChild(checkbox);
+                tr.appendChild(tdCheck);
+
+                // Data cells
+                row.forEach((cell, colIdx) => {
+                    const td = document.createElement('td');
+                    td.textContent = String(cell || '');
+                    tr.appendChild(td);
+                });
+
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function sortTable(columnIdx) {
+            if (sortConfig.column === columnIdx) {
+                sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortConfig.column = columnIdx;
+                sortConfig.direction = 'asc';
+            }
+            renderTable();
+        }
+
+        function handleDeviceSelect(deviceId, isSelected) {
+            if (isSelected) {
+                if (state.selectedDeviceIds.length >= 10) {
+                    showMessage('uploadMessages', 'Maximum 10 devices allowed. Please deselect a device first.', 'error');
+                    renderTable();
+                    return;
+                }
+                state.selectedDeviceIds.push(deviceId);
+            } else {
+                state.selectedDeviceIds = state.selectedDeviceIds.filter(id => id !== deviceId);
+            }
+            updateSelectCounter();
+            renderTable();
+            document.getElementById('generateChecklistBtn').disabled = state.selectedDeviceIds.length !== 10;
+            saveState();
+        }
+
+        function updateSelectCounter() {
+            const counter = document.getElementById('selectCounter');
+            const count = state.selectedDeviceIds.length;
+            counter.textContent = `Selected: ${count} / 10`;
+            counter.classList.toggle('limit-reached', count >= 10);
+        }
+
+        function generateChecklist() {
+            if (state.selectedDeviceIds.length !== 10) {
+                showMessage('uploadMessages', 'Please select exactly 10 devices', 'error');
+                return;
+            }
+
+            // Match devices from current Excel with saved state
+            const deviceMap = {};
+            rows.slice(1).forEach((row, rowIdx) => {
+                const deviceName = String(row[columns.deviceName] || '').trim();
+                const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
+                const model = columns.model !== null ? String(row[columns.model] || '').trim() : '';
+                const uniqueId = deviceId || `${deviceName}_${model}` || `row_${rowIdx}`;
+                
+                if (state.selectedDeviceIds.includes(uniqueId)) {
+                    deviceMap[uniqueId] = row;
+                }
+            });
+
+            // Initialize or update device data
+            state.selectedDeviceIds.forEach(id => {
+                if (!state.devices[id]) {
+                    state.devices[id] = {
+                        meta: {},
+                        checklist: {},
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                        completedAt: null,
+                        notInFile: false
+                    };
+                }
+
+                // Update meta from current Excel if available
+                if (deviceMap[id]) {
+                    const row = deviceMap[id];
+                    state.devices[id].meta = {
+                        deviceName: String(row[columns.deviceName] || '').trim(),
+                        model: columns.model !== null ? String(row[columns.model] || '').trim() : '',
+                        category: columns.category !== null ? String(row[columns.category] || '').trim() : '',
+                        lastCheckIn: columns.lastCheckIn !== null ? String(row[columns.lastCheckIn] || '').trim() : '',
+                        compliance: columns.compliance !== null ? String(row[columns.compliance] || '').trim() : '',
+                        osVersion: columns.osVersion !== null ? String(row[columns.osVersion] || '').trim() : '',
+                        patchLevel: columns.patchLevel !== null ? String(row[columns.patchLevel] || '').trim() : '',
+                        managedBy: columns.managedBy !== null ? String(row[columns.managedBy] || '').trim() : '',
+                        ownership: columns.ownership !== null ? String(row[columns.ownership] || '').trim() : ''
+                    };
+                    state.devices[id].notInFile = false;
+                } else {
+                    state.devices[id].notInFile = true;
+                }
+
+                // Initialize checklist items if not present
+                CHECKLIST_ITEMS.forEach(item => {
+                    if (state.devices[id].checklist[item.key] === undefined) {
+                        state.devices[id].checklist[item.key] = false;
+                    }
+                });
+            });
+
+            saveState();
+            renderChecklist();
+            document.getElementById('selectionSection').classList.add('hidden');
+            document.getElementById('checklistSection').classList.remove('hidden');
+        }
+
+        function loadSavedChecklist() {
+            if (state.selectedDeviceIds.length === 10 && Object.keys(state.devices).length > 0) {
+                renderChecklist();
+                document.getElementById('selectionSection').classList.add('hidden');
+                document.getElementById('checklistSection').classList.remove('hidden');
+                document.getElementById('generateChecklistBtn').disabled = false;
+            }
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+
+            state.selectedDeviceIds.forEach(deviceId => {
+                const device = state.devices[deviceId];
+                if (!device) return;
+
+                const card = document.createElement('div');
+                card.className = 'device-card';
+                if (device.completedAt) {
+                    card.classList.add('complete');
+                }
+                if (device.notInFile) {
+                    card.classList.add('not-in-file');
+                }
+
+                const completedCount = Object.values(device.checklist).filter(v => v).length;
+                const totalCount = CHECKLIST_ITEMS.length;
+                const isComplete = completedCount === totalCount;
+
+                // Header
+                const header = document.createElement('div');
+                header.className = 'device-header';
+                header.innerHTML = `
+                    <div>
+                        <div class="device-name">${device.meta.deviceName || deviceId}</div>
+                        ${device.notInFile ? '<div style="color: #e74c3c; font-size: 12px; margin-top: 5px;">⚠ Not in current file</div>' : ''}
+                    </div>
+                    <div class="progress-badge ${isComplete ? 'complete' : 'in-progress'}">
+                        ${completedCount} / ${totalCount} done ${isComplete ? '✓' : ''}
+                    </div>
+                `;
+                card.appendChild(header);
+
+                // Meta info
+                const meta = document.createElement('div');
+                meta.className = 'device-meta';
+                const metaFields = [
+                    { key: 'model', label: 'Model' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'compliance', label: 'Compliance' },
+                    { key: 'osVersion', label: 'OS Version' },
+                    { key: 'lastCheckIn', label: 'Last Check-in' },
+                    { key: 'patchLevel', label: 'Patch Level' },
+                    { key: 'managedBy', label: 'Managed By' },
+                    { key: 'ownership', label: 'Ownership' }
+                ];
+                metaFields.forEach(field => {
+                    if (device.meta[field.key]) {
+                        const span = document.createElement('span');
+                        span.innerHTML = `<strong>${field.label}:</strong> ${device.meta[field.key]}`;
+                        meta.appendChild(span);
+                    }
+                });
+                card.appendChild(meta);
+
+                // Checklist items
+                const checklistDiv = document.createElement('div');
+                checklistDiv.className = 'checklist-items';
+                CHECKLIST_ITEMS.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'checklist-item';
+                    if (device.checklist[item.key]) {
+                        itemDiv.classList.add('completed');
+                    }
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = device.checklist[item.key] || false;
+                    checkbox.onchange = () => toggleChecklistItem(deviceId, item.key);
+
+                    const label = document.createElement('label');
+                    label.textContent = item.label;
+                    label.onclick = () => checkbox.click();
+
+                    itemDiv.appendChild(checkbox);
+                    itemDiv.appendChild(label);
+                    checklistDiv.appendChild(itemDiv);
+                });
+                card.appendChild(checklistDiv);
+
+                container.appendChild(card);
+            });
+
+            updateGlobalProgress();
+        }
+
+        function toggleChecklistItem(deviceId, itemKey) {
+            const device = state.devices[deviceId];
+            if (!device) return;
+
+            device.checklist[itemKey] = !device.checklist[itemKey];
+            device.updatedAt = new Date().toISOString();
+
+            // Check if all items are complete
+            const allComplete = CHECKLIST_ITEMS.every(item => device.checklist[item.key]);
+            if (allComplete && !device.completedAt) {
+                device.completedAt = new Date().toISOString();
+            } else if (!allComplete && device.completedAt) {
+                device.completedAt = null;
+            }
+
+            saveState();
+            renderChecklist();
+        }
+
+        function updateGlobalProgress() {
+            let totalSteps = 0;
+            let completedSteps = 0;
+
+            state.selectedDeviceIds.forEach(deviceId => {
+                const device = state.devices[deviceId];
+                if (!device) return;
+                totalSteps += CHECKLIST_ITEMS.length;
+                completedSteps += Object.values(device.checklist).filter(v => v).length;
+            });
+
+            const percentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+            document.getElementById('globalProgressText').textContent = 
+                `Total steps completed: ${completedSteps} / ${totalSteps}`;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressFill').textContent = `${percentage}%`;
+        }
+
+        function copyMarkdown() {
+            let markdown = '# Device Turn-On Checklist\n\n';
+            markdown += `**Generated:** ${new Date().toLocaleString()}\n\n`;
+            markdown += `**Total Progress:** ${computeProgress().completed} / ${computeProgress().total} steps\n\n`;
+
+            state.selectedDeviceIds.forEach((deviceId, idx) => {
+                const device = state.devices[deviceId];
+                if (!device) return;
+
+                const completedCount = Object.values(device.checklist).filter(v => v).length;
+                const totalCount = CHECKLIST_ITEMS.length;
+                const status = completedCount === totalCount ? '✅ Complete' : `⏳ ${completedCount}/${totalCount}`;
+
+                markdown += `## ${idx + 1}. ${device.meta.deviceName || deviceId} ${status}\n\n`;
+                if (device.notInFile) {
+                    markdown += '⚠️ **Not in current file**\n\n';
+                }
+                
+                if (device.meta.model) markdown += `- **Model:** ${device.meta.model}\n`;
+                if (device.meta.category) markdown += `- **Category:** ${device.meta.category}\n`;
+                if (device.meta.compliance) markdown += `- **Compliance:** ${device.meta.compliance}\n`;
+                if (device.meta.osVersion) markdown += `- **OS Version:** ${device.meta.osVersion}\n`;
+                markdown += '\n';
+
+                CHECKLIST_ITEMS.forEach(item => {
+                    const checked = device.checklist[item.key] ? 'x' : ' ';
+                    markdown += `- [${checked}] ${item.label}\n`;
+                });
+
+                markdown += '\n';
+            });
+
+            navigator.clipboard.writeText(markdown).then(() => {
+                showMessage('checklistSection', 'Markdown copied to clipboard!', 'success');
+            }).catch(err => {
+                alert('Failed to copy: ' + err.message);
+            });
+        }
+
+        function exportChecklistHtml() {
+            let html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Checklist Export</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .device { page-break-after: always; margin-bottom: 30px; border: 1px solid #ccc; padding: 20px; }
+        .device:last-child { page-break-after: auto; }
+        h1 { color: #333; }
+        h2 { color: #555; border-bottom: 2px solid #333; padding-bottom: 5px; }
+        .meta { margin: 10px 0; font-size: 14px; color: #666; }
+        .checklist-item { margin: 5px 0; }
+        .completed { text-decoration: line-through; color: #999; }
+        .progress { font-weight: bold; color: #27ae60; }
+    </style>
+</head>
+<body>
+    <h1>Device Turn-On Checklist</h1>
+    <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+    <p class="progress">Total Progress: ${computeProgress().completed} / ${computeProgress().total} steps</p>
+`;
+
+            state.selectedDeviceIds.forEach((deviceId, idx) => {
+                const device = state.devices[deviceId];
+                if (!device) return;
+
+                const completedCount = Object.values(device.checklist).filter(v => v).length;
+                const totalCount = CHECKLIST_ITEMS.length;
+                const status = completedCount === totalCount ? '✅ Complete' : `⏳ ${completedCount}/${totalCount}`;
+
+                html += `    <div class="device">
+        <h2>${idx + 1}. ${device.meta.deviceName || deviceId} ${status}</h2>
+`;
+                if (device.notInFile) {
+                    html += '        <p style="color: #e74c3c;">⚠️ <strong>Not in current file</strong></p>\n';
+                }
+                html += '        <div class="meta">\n';
+                if (device.meta.model) html += `            <p><strong>Model:</strong> ${device.meta.model}</p>\n`;
+                if (device.meta.category) html += `            <p><strong>Category:</strong> ${device.meta.category}</p>\n`;
+                if (device.meta.compliance) html += `            <p><strong>Compliance:</strong> ${device.meta.compliance}</p>\n`;
+                if (device.meta.osVersion) html += `            <p><strong>OS Version:</strong> ${device.meta.osVersion}</p>\n`;
+                html += '        </div>\n        <h3>Checklist:</h3>\n        <ul>\n';
+
+                CHECKLIST_ITEMS.forEach(item => {
+                    const checked = device.checklist[item.key];
+                    const classAttr = checked ? ' class="completed"' : '';
+                    const checkmark = checked ? '✓' : '☐';
+                    html += `            <li class="checklist-item${classAttr}">${checkmark} ${item.label}</li>\n`;
+                });
+
+                html += '        </ul>\n    </div>\n';
+            });
+
+            html += `</body>
+</html>`;
+
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `device-checklist-${new Date().toISOString().split('T')[0]}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function computeProgress() {
+            let total = 0;
+            let completed = 0;
+            state.selectedDeviceIds.forEach(deviceId => {
+                const device = state.devices[deviceId];
+                if (!device) return;
+                total += CHECKLIST_ITEMS.length;
+                completed += Object.values(device.checklist).filter(v => v).length;
+            });
+            return { total, completed };
+        }
+
+        function clearAllData() {
+            if (!confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                return;
+            }
+            localStorage.removeItem('deviceChecklistState');
+            state = {
+                version: 1,
+                selectedDeviceIds: [],
+                devices: {}
+            };
+            document.getElementById('checklistSection').classList.add('hidden');
+            document.getElementById('selectionSection').classList.add('hidden');
+            document.getElementById('uploadSection').classList.remove('hidden');
+            showMessage('uploadMessages', 'All data cleared', 'success');
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('deviceChecklistState');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state = {
+                        version: parsed.version || 1,
+                        selectedDeviceIds: parsed.selectedDeviceIds || [],
+                        devices: parsed.devices || {}
+                    };
+                    updateSelectCounter();
+                }
+            } catch (error) {
+                console.error('Error loading state:', error);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('deviceChecklistState', JSON.stringify(state));
+            } catch (error) {
+                console.error('Error saving state:', error);
+                showMessage('checklistSection', 'Warning: Could not save to localStorage. Data may be lost on page reload.', 'warning');
+            }
+        }
+
+        function showMessage(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const msgDiv = document.createElement('div');
+            msgDiv.className = type === 'error' ? 'error-message' : 
+                              type === 'success' ? 'success-message' : 'warning-message';
+            msgDiv.textContent = message;
+            container.appendChild(msgDiv);
+            setTimeout(() => msgDiv.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
