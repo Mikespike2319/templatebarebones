@@ -248,6 +248,34 @@
             color: #2c3e50;
         }
 
+        .device-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 10px;
+            display: inline-block;
+            min-width: 40px;
+        }
+
+        .serial-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .device-id-display {
+            font-size: 11px;
+            color: #7f8c8d;
+            font-family: 'Courier New', monospace;
+            margin-top: 5px;
+        }
+
         .device-meta {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -424,8 +452,8 @@
         <div class="section" id="uploadSection">
             <h2>1. Upload Device List</h2>
             <div class="file-upload-area" id="fileUploadArea">
-                <p>📁 Drag & drop Excel file here or click to browse</p>
-                <input type="file" id="fileInput" accept=".xlsx,.xls" />
+                <p>📁 Drag & drop Excel/CSV file here or click to browse</p>
+                <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
             </div>
             <div id="worksheetSelector" class="worksheet-selector hidden">
                 <label>Select Worksheet:</label>
@@ -585,8 +613,18 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const data = new Uint8Array(e.target.result);
-                    workbook = XLSX.read(data, { type: 'array', cellText: false, cellDates: false });
+                    let data;
+                    const fileName = file.name.toLowerCase();
+                    
+                    if (fileName.endsWith('.csv')) {
+                        // Handle CSV files
+                        const text = e.target.result;
+                        workbook = XLSX.read(text, { type: 'string', cellText: false, cellDates: false });
+                    } else {
+                        // Handle Excel files
+                        data = new Uint8Array(e.target.result);
+                        workbook = XLSX.read(data, { type: 'array', cellText: false, cellDates: false });
+                    }
                     
                     const worksheetSelect = document.getElementById('worksheetSelect');
                     worksheetSelect.innerHTML = '';
@@ -605,10 +643,16 @@
                         parseSheet();
                     }
                 } catch (error) {
-                    showMessage('uploadMessages', 'Error reading Excel file: ' + error.message, 'error');
+                    showMessage('uploadMessages', 'Error reading file: ' + error.message, 'error');
                 }
             };
-            reader.readAsArrayBuffer(file);
+            
+            const fileName = file.name.toLowerCase();
+            if (fileName.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
         }
 
         function parseSheet() {
@@ -714,7 +758,7 @@
 
             // Header
             const headerRow = rows[0];
-            tableHead.innerHTML = '<tr><th>Select</th></tr>';
+            tableHead.innerHTML = '<tr><th>#</th><th>Select</th></tr>';
             const headerCells = tableHead.querySelector('tr');
             
             headerRow.forEach((col, idx) => {
@@ -762,6 +806,13 @@
                     tr.classList.add('selected');
                 }
 
+                // Row number
+                const tdNum = document.createElement('td');
+                tdNum.textContent = rowIdx + 1;
+                tdNum.style.fontWeight = 'bold';
+                tdNum.style.color = '#3498db';
+                tr.appendChild(tdNum);
+
                 // Select checkbox
                 const tdCheck = document.createElement('td');
                 const checkbox = document.createElement('input');
@@ -775,6 +826,12 @@
                 // Data cells
                 row.forEach((cell, colIdx) => {
                     const td = document.createElement('td');
+                    // Highlight device name column
+                    if (colIdx === columns.deviceName) {
+                        td.style.fontWeight = 'bold';
+                        td.style.fontFamily = 'Courier New, monospace';
+                        td.style.color = '#2c3e50';
+                    }
                     td.textContent = String(cell || '');
                     tr.appendChild(td);
                 });
@@ -915,9 +972,17 @@
                 // Header
                 const header = document.createElement('div');
                 header.className = 'device-header';
+                const deviceNumber = idx + 1;
+                const serialNumber = device.meta.deviceName || deviceId;
                 header.innerHTML = `
-                    <div>
-                        <div class="device-name">${device.meta.deviceName || deviceId}</div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <span class="device-number">${deviceNumber}.</span>
+                            <div>
+                                <div class="serial-number">${serialNumber}</div>
+                                <div class="device-id-display">Device ID: ${deviceId}</div>
+                            </div>
+                        </div>
                         ${device.notInFile ? '<div style="color: #e74c3c; font-size: 12px; margin-top: 5px;">⚠ Not in current file</div>' : ''}
                     </div>
                     <div class="progress-badge ${isComplete ? 'complete' : 'in-progress'}">
@@ -1029,7 +1094,10 @@
                 const totalCount = CHECKLIST_ITEMS.length;
                 const status = completedCount === totalCount ? '✅ Complete' : `⏳ ${completedCount}/${totalCount}`;
 
-                markdown += `## ${idx + 1}. ${device.meta.deviceName || deviceId} ${status}\n\n`;
+                const deviceNumber = idx + 1;
+                const serialNumber = device.meta.deviceName || deviceId;
+                markdown += `## ${deviceNumber}. ${serialNumber} ${status}\n\n`;
+                markdown += `**Device ID:** \`${deviceId}\`\n\n`;
                 if (device.notInFile) {
                     markdown += '⚠️ **Not in current file**\n\n';
                 }
@@ -1088,8 +1156,11 @@
                 const totalCount = CHECKLIST_ITEMS.length;
                 const status = completedCount === totalCount ? '✅ Complete' : `⏳ ${completedCount}/${totalCount}`;
 
+                const deviceNumber = idx + 1;
+                const serialNumber = device.meta.deviceName || deviceId;
                 html += `    <div class="device">
-        <h2>${idx + 1}. ${device.meta.deviceName || deviceId} ${status}</h2>
+        <h2>${deviceNumber}. ${serialNumber} ${status}</h2>
+        <p style="font-family: monospace; color: #666; font-size: 12px;"><strong>Device ID:</strong> ${deviceId}</p>
 `;
                 if (device.notInFile) {
                     html += '        <p style="color: #e74c3c;">⚠️ <strong>Not in current file</strong></p>\n';
