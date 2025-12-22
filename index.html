@@ -840,26 +840,49 @@
             const columnSelect = document.getElementById('deviceNameColumn');
             columnSelect.innerHTML = '';
 
-            // Common column name patterns
-            const deviceNamePatterns = ['device name', 'name', 'device', 'computer name', 'hostname', 'display name'];
-            let autoSelected = false;
-
+            // First pass: look for exact "device name" match (highest priority)
+            let deviceNameCol = null;
             headerRow.forEach((col, idx) => {
                 const option = document.createElement('option');
                 option.value = idx;
                 option.textContent = `${idx}: ${col || '(empty)'}`;
                 columnSelect.appendChild(option);
 
-                if (!autoSelected && col) {
-                    const colLower = col.toLowerCase();
-                    if (deviceNamePatterns.some(pattern => colLower.includes(pattern))) {
-                        columnSelect.value = idx;
-                        autoSelected = true;
+                if (col) {
+                    const colLower = col.toLowerCase().trim();
+                    // Exact match for "device name" (but not "device id")
+                    if (colLower === 'device name' || (colLower.includes('device name') && !colLower.includes('device id'))) {
+                        deviceNameCol = idx;
                     }
                 }
             });
 
-            if (!autoSelected && headerRow.length > 0) {
+            // Second pass: if no exact match, look for other patterns
+            if (deviceNameCol === null) {
+                const deviceNamePatterns = [
+                    'computer name',
+                    'hostname',
+                    'display name',
+                    'name'
+                ];
+                
+                headerRow.forEach((col, idx) => {
+                    if (col && deviceNameCol === null) {
+                        const colLower = col.toLowerCase().trim();
+                        // Exclude "device id" and other ID columns
+                        if (!colLower.includes('device id') && !colLower.includes(' id') && 
+                            deviceNamePatterns.some(pattern => colLower.includes(pattern))) {
+                            deviceNameCol = idx;
+                        }
+                    }
+                });
+            }
+
+            // Set the selected value
+            if (deviceNameCol !== null) {
+                columnSelect.value = deviceNameCol;
+            } else if (headerRow.length > 0) {
+                // Fallback to first column
                 columnSelect.value = 0;
             }
 
@@ -1048,6 +1071,7 @@
 
                 // Match devices from current Excel with saved state
                 const deviceMap = {};
+                const deviceNameMap = {}; // Map to store deviceName by uniqueId
                 rows.slice(1).forEach((row, rowIdx) => {
                     const deviceName = String(row[columns.deviceName] || '').trim();
                     const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
@@ -1056,6 +1080,7 @@
                     
                     if (state.selectedDeviceIds.includes(uniqueId)) {
                         deviceMap[uniqueId] = row;
+                        deviceNameMap[uniqueId] = deviceName; // Store the serial number
                     }
                 });
                 
@@ -1082,8 +1107,26 @@
                     // Update meta from current Excel if available
                     if (deviceMap[id]) {
                         const row = deviceMap[id];
+                        // Extract serial number from "Device name" column (not Device ID)
+                        const serialNumber = String(row[columns.deviceName] || '').trim();
+                        // Verify it's not a UUID (Device IDs are UUIDs with dashes)
+                        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(serialNumber);
+                        
+                        // If we got a UUID, the column mapping is wrong - try to find the actual device name
+                        let actualSerialNumber = serialNumber;
+                        if (isUUID && columns.deviceId !== null) {
+                            // The deviceName column might be wrong, let's check all columns for a numeric serial
+                            row.forEach((cell, colIdx) => {
+                                const cellStr = String(cell || '').trim();
+                                // Look for a long numeric string (serial number pattern)
+                                if (cellStr && /^\d{10,}$/.test(cellStr) && colIdx !== columns.deviceId) {
+                                    actualSerialNumber = cellStr;
+                                }
+                            });
+                        }
+                        
                         state.devices[id].meta = {
-                            deviceName: String(row[columns.deviceName] || '').trim(),
+                            deviceName: actualSerialNumber, // This is the serial number from "Device name" column
                             model: columns.model !== null ? String(row[columns.model] || '').trim() : '',
                             category: columns.category !== null ? String(row[columns.category] || '').trim() : '',
                             lastCheckIn: columns.lastCheckIn !== null ? String(row[columns.lastCheckIn] || '').trim() : '',
@@ -1096,6 +1139,16 @@
                         state.devices[id].notInFile = false;
                     } else {
                         // Device not in current file, but keep existing data
+                        // If deviceName is missing, try to preserve it from existing meta
+                        if (!state.devices[id].meta || !state.devices[id].meta.deviceName) {
+                            if (!state.devices[id].meta) {
+                                state.devices[id].meta = {};
+                            }
+                            // Try to extract from deviceNameMap if available
+                            if (deviceNameMap[id]) {
+                                state.devices[id].meta.deviceName = deviceNameMap[id];
+                            }
+                        }
                         state.devices[id].notInFile = true;
                     }
 
@@ -1151,7 +1204,11 @@
                 const header = document.createElement('div');
                 header.className = 'device-header';
                 const deviceNumber = idx + 1;
-                const serialNumber = device.meta.deviceName || deviceId;
+                // Get serial number from device name (this is the actual serial number from "Device name" column)
+                // Device ID is the UUID, deviceName is the serial number
+                const serialNumber = (device.meta && device.meta.deviceName) 
+                    ? device.meta.deviceName 
+                    : 'Serial Number Not Available';
                 header.innerHTML = `
                     <div style="flex: 1;">
                         <div style="display: flex; align-items: center; margin-bottom: 8px;">
