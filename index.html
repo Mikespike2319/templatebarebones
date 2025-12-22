@@ -597,6 +597,11 @@
 
             generateChecklistBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
+                if (generateChecklistBtn.disabled) {
+                    showMessage('selectionSection', 'Please select exactly 10 devices first', 'error');
+                    return;
+                }
                 generateChecklist();
             });
 
@@ -1025,85 +1030,91 @@
         }
 
         function generateChecklist() {
-            if (state.selectedDeviceIds.length !== 10) {
-                showMessage('uploadMessages', 'Please select exactly 10 devices', 'error');
-                return;
-            }
-            
-            if (!rows || rows.length === 0) {
-                showMessage('uploadMessages', 'No data available. Please upload a file first.', 'error');
-                return;
-            }
-            
-            if (columns.deviceName === undefined) {
-                showMessage('uploadMessages', 'Device name column not detected. Please select it manually.', 'error');
-                return;
-            }
-
-            // Match devices from current Excel with saved state
-            const deviceMap = {};
-            rows.slice(1).forEach((row, rowIdx) => {
-                const deviceName = String(row[columns.deviceName] || '').trim();
-                const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
-                const model = columns.model !== null ? String(row[columns.model] || '').trim() : '';
-                const uniqueId = deviceId || `${deviceName}_${model}` || `row_${rowIdx}`;
+            try {
+                if (state.selectedDeviceIds.length !== 10) {
+                    showMessage('selectionSection', 'Please select exactly 10 devices', 'error');
+                    return;
+                }
                 
-                if (state.selectedDeviceIds.includes(uniqueId)) {
-                    deviceMap[uniqueId] = row;
+                if (!rows || rows.length === 0) {
+                    showMessage('selectionSection', 'No data available. Please upload a file first.', 'error');
+                    return;
                 }
-            });
-            
-            // Track that these devices have been selected
-            state.selectedDeviceIds.forEach(id => {
-                if (!state.previouslySelectedIds.includes(id)) {
-                    state.previouslySelectedIds.push(id);
-                }
-            });
-
-            // Initialize or update device data
-            state.selectedDeviceIds.forEach(id => {
-                if (!state.devices[id]) {
-                    state.devices[id] = {
-                        meta: {},
-                        checklist: {},
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-                        completedAt: null,
-                        notInFile: false
-                    };
+                
+                if (columns.deviceName === undefined || columns.deviceName === null) {
+                    showMessage('selectionSection', 'Device name column not detected. Please select it manually.', 'error');
+                    return;
                 }
 
-                // Update meta from current Excel if available
-                if (deviceMap[id]) {
-                    const row = deviceMap[id];
-                    state.devices[id].meta = {
-                        deviceName: String(row[columns.deviceName] || '').trim(),
-                        model: columns.model !== null ? String(row[columns.model] || '').trim() : '',
-                        category: columns.category !== null ? String(row[columns.category] || '').trim() : '',
-                        lastCheckIn: columns.lastCheckIn !== null ? String(row[columns.lastCheckIn] || '').trim() : '',
-                        compliance: columns.compliance !== null ? String(row[columns.compliance] || '').trim() : '',
-                        osVersion: columns.osVersion !== null ? String(row[columns.osVersion] || '').trim() : '',
-                        patchLevel: columns.patchLevel !== null ? String(row[columns.patchLevel] || '').trim() : '',
-                        managedBy: columns.managedBy !== null ? String(row[columns.managedBy] || '').trim() : '',
-                        ownership: columns.ownership !== null ? String(row[columns.ownership] || '').trim() : ''
-                    };
-                    state.devices[id].notInFile = false;
-                } else {
-                    state.devices[id].notInFile = true;
-                }
-
-                // Initialize checklist items if not present
-                CHECKLIST_ITEMS.forEach(item => {
-                    if (state.devices[id].checklist[item.key] === undefined) {
-                        state.devices[id].checklist[item.key] = false;
+                // Match devices from current Excel with saved state
+                const deviceMap = {};
+                rows.slice(1).forEach((row, rowIdx) => {
+                    const deviceName = String(row[columns.deviceName] || '').trim();
+                    const deviceId = columns.deviceId !== null ? String(row[columns.deviceId] || '').trim() : null;
+                    const model = columns.model !== null ? String(row[columns.model] || '').trim() : '';
+                    const uniqueId = deviceId || `${deviceName}_${model}` || `row_${rowIdx}`;
+                    
+                    if (state.selectedDeviceIds.includes(uniqueId)) {
+                        deviceMap[uniqueId] = row;
                     }
                 });
-            });
+                
+                // Track that these devices have been selected
+                state.selectedDeviceIds.forEach(id => {
+                    if (!state.previouslySelectedIds.includes(id)) {
+                        state.previouslySelectedIds.push(id);
+                    }
+                });
 
-            saveState();
-            renderChecklist();
-            document.getElementById('selectionSection').classList.add('hidden');
-            document.getElementById('checklistSection').classList.remove('hidden');
+                // Initialize or update device data
+                state.selectedDeviceIds.forEach(id => {
+                    if (!state.devices[id]) {
+                        state.devices[id] = {
+                            meta: {},
+                            checklist: {},
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
+                            completedAt: null,
+                            notInFile: false
+                        };
+                    }
+
+                    // Update meta from current Excel if available
+                    if (deviceMap[id]) {
+                        const row = deviceMap[id];
+                        state.devices[id].meta = {
+                            deviceName: String(row[columns.deviceName] || '').trim(),
+                            model: columns.model !== null ? String(row[columns.model] || '').trim() : '',
+                            category: columns.category !== null ? String(row[columns.category] || '').trim() : '',
+                            lastCheckIn: columns.lastCheckIn !== null ? String(row[columns.lastCheckIn] || '').trim() : '',
+                            compliance: columns.compliance !== null ? String(row[columns.compliance] || '').trim() : '',
+                            osVersion: columns.osVersion !== null ? String(row[columns.osVersion] || '').trim() : '',
+                            patchLevel: columns.patchLevel !== null ? String(row[columns.patchLevel] || '').trim() : '',
+                            managedBy: columns.managedBy !== null ? String(row[columns.managedBy] || '').trim() : '',
+                            ownership: columns.ownership !== null ? String(row[columns.ownership] || '').trim() : ''
+                        };
+                        state.devices[id].notInFile = false;
+                    } else {
+                        // Device not in current file, but keep existing data
+                        state.devices[id].notInFile = true;
+                    }
+
+                    // Initialize checklist items if not present
+                    CHECKLIST_ITEMS.forEach(item => {
+                        if (state.devices[id].checklist[item.key] === undefined) {
+                            state.devices[id].checklist[item.key] = false;
+                        }
+                    });
+                });
+
+                saveState();
+                renderChecklist();
+                document.getElementById('selectionSection').classList.add('hidden');
+                document.getElementById('checklistSection').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error in generateChecklist:', error);
+                showMessage('selectionSection', 'Error generating checklist: ' + error.message, 'error');
+            }
         }
 
         function loadSavedChecklist() {
@@ -1119,7 +1130,7 @@
             const container = document.getElementById('checklistContainer');
             container.innerHTML = '';
 
-            state.selectedDeviceIds.forEach(deviceId => {
+            state.selectedDeviceIds.forEach((deviceId, idx) => {
                 const device = state.devices[deviceId];
                 if (!device) return;
 
